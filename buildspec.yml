@@ -1,6 +1,7 @@
 version: 0.2
-shell: bash
+
 env:
+  shell: bash
   variables:
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
     DOTNET_NOLOGO: "true"
