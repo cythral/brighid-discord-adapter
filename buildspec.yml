@@ -19,23 +19,14 @@ phases:
   pre_build:
     commands:
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - ./scripts/codebuild-extras.sh
 
   build:
     commands:
-      - export image="$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER"
-
       - dotnet restore
       - dotnet publish --no-restore
       - dotnet test --logger trx --no-build
-
-      - |
-        set -eo pipefail
-        docker build -t $image .
-
-        if [ "${CODEBUILD_WEBHOOK_TRIGGER:-branch/master}" = "branch/master" ]; then \
-          docker push $REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER; \
-          docker push $REPOSITORY_URI:nats2.1-$CODEBUILD_BUILD_NUMBER; \
-        fi
+      - ./scripts/ci-docker-build.sh $REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
 
 reports:
   test-results:
