@@ -1,0 +1,26 @@
+<Project>
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <LangVersion>9.0</LangVersion>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <RestoreLockedMode>true</RestoreLockedMode>
+        <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+        <BaseOutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/</BaseOutputPath>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)\.editorconfig')">
+        <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="3.8.0" PrivateAssets="all" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321" PrivateAssets="all" />
+    </ItemGroup>
+</Project>  
