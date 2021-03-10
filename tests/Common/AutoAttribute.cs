@@ -13,6 +13,7 @@ internal class AutoAttribute : AutoDataAttribute
     {
         var fixture = new Fixture();
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
+        fixture.Customizations.Add(new OptionsRelay());
         fixture.Customizations.Insert(-1, new TargetRelay());
         return fixture;
     }
