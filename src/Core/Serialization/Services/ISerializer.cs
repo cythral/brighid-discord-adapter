@@ -14,7 +14,16 @@ namespace Brighid.Discord.Serialization
         /// <typeparam name="TSerializableType">The type of object to serialize.</typeparam>
         /// <param name="serializable">The object to serialize.</param>
         /// <param name="cancellationToken">Token used to cancel the task.</param>
-        /// <returns>The created task.</returns>
+        /// <returns>The serialized string.</returns>
         Task<string> Serialize<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deserializes text into an object.
+        /// </summary>
+        /// <typeparam name="TResultType">The resulting object's type.</typeparam>
+        /// <param name="deserializable">The text to deserialize.</param>
+        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <returns>The resulting type.</returns>
+        Task<TResultType?> Deserialize<TResultType>(string deserializable, CancellationToken cancellationToken);
     }
 }
