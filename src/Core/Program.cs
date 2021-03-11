@@ -1,14 +1,33 @@
-﻿using System;
+﻿using System.Threading.Tasks;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 #pragma warning disable SA1600, CS1591
 
-namespace Core
+namespace Brighid.Discord
 {
     public class Program
     {
-        public static void Main()
+        public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+        public static IStartup CreateStartup(IConfiguration configuration)
+        {
+            return new Startup(configuration);
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) =>
+                {
+                    CreateStartup(context.Configuration).ConfigureServices(services);
+                    services.AddSingleton<IHost, DiscordAdapterHost>();
+                });
         }
     }
 }
