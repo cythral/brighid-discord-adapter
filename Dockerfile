@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0.103 AS development
+FROM mcr.microsoft.com/dotnet/sdk:5.0.201 AS development
 ENV \
     CONFIGURATION=Release \
     DLL_PATH=/app/bin/Core/Release/net5.0/publish/Core.dll
@@ -11,7 +11,7 @@ RUN if [ ! -f ${DLL_PATH} ]; then dotnet publish; fi
 EXPOSE 80
 ENTRYPOINT ["dotnet", "watch", "--project", "/app/src/Core", "run"]
 
-FROM mcr.microsoft.com/dotnet/runtime:5.0.3 AS production
+FROM mcr.microsoft.com/dotnet/runtime:5.0.4 AS production
 
 WORKDIR /app
 COPY --from=development /app/bin/Core/Release/net5.0/publish /app
