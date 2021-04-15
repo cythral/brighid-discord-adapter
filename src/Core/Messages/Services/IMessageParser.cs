@@ -1,6 +1,4 @@
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Brighid.Discord.Messages
 {
@@ -10,19 +8,11 @@ namespace Brighid.Discord.Messages
     public interface IMessageParser
     {
         /// <summary>
-        /// Parses a stream of data into a gateway message, with event data included.
-        /// </summary>
-        /// <param name="stream">The stream with data to parse.</param>
-        /// <param name="cancellationToken">Token used to cancel the task.</param>
-        /// <returns>The parsed message.</returns>
-        Task<GatewayMessage> Parse(Stream stream, CancellationToken cancellationToken);
-
-        /// <summary>
         /// Parses a message's event data if present and creates a new message with deserialized event data.
         /// </summary>
         /// <param name="message">A message with raw event data.</param>
-        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <param name="options">Json Serializer Options to use when reading data.</param>
         /// <returns>Message with event data included.</returns>
-        Task<GatewayMessage> ParseEventData(GatewayMessageWithoutData message, CancellationToken cancellationToken);
+        GatewayMessage ParseEventData(GatewayMessageWithoutData message, JsonSerializerOptions options);
     }
 }

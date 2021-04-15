@@ -19,6 +19,8 @@ namespace Brighid.Discord.EventParserGenerator
         private readonly string[] usings = new string[]
         {
             "System",
+            "System.Text.Json",
+            "System.Text.Json.Serialization",
             "System.Threading",
             "System.Threading.Tasks",
             "Brighid.Discord.Events",
@@ -78,7 +80,7 @@ namespace Brighid.Discord.EventParserGenerator
             var parameters = SeparatedList(new ParameterSyntax[]
             {
                 Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName("GatewayMessageWithoutData"), identifier, null),
-                Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName("CancellationToken"), Identifier("cancellationToken"), null),
+                Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName("JsonSerializerOptions"), Identifier("options"), null),
             });
 
             IEnumerable<StatementSyntax> GenerateBody()
@@ -92,7 +94,7 @@ namespace Brighid.Discord.EventParserGenerator
                                   let subpatterns = SeparatedList(new SubpatternSyntax[] { codePattern, namePattern })
                                   let positionalPattern = PositionalPatternClause(subpatterns)
                                   let recursivePattern = RecursivePattern(ParseTypeName("GatewayMessageWithoutData"), positionalPattern, null, null)
-                                  select SwitchExpressionArm(recursivePattern, ParseExpression($"message.WithData(await serializer.Deserialize<{ev.Node.Identifier.Value}>(data.GetRawText(), cancellationToken))"))).ToList();
+                                  select SwitchExpressionArm(recursivePattern, ParseExpression($"message.WithData(JsonSerializer.Deserialize<{ev.Node.Identifier.Value}>(data.GetRawText(), options))"))).ToList();
 
                 var discardPattern = SwitchExpressionArm(DiscardPattern(), ParseExpression("message.WithData(null)"));
                 switchArms.Add(discardPattern);
@@ -103,8 +105,8 @@ namespace Brighid.Discord.EventParserGenerator
                 yield return ReturnStatement(switchExpression);
             }
 
-            return MethodDeclaration(ParseTypeName($"Task<GatewayMessage>"), "ParseEventData")
-                .WithModifiers(TokenList(Token(PublicKeyword), Token(AsyncKeyword)))
+            return MethodDeclaration(ParseTypeName($"GatewayMessage"), "ParseEventData")
+                .WithModifiers(TokenList(Token(PublicKeyword)))
                 .WithParameterList(ParameterList(parameters))
                 .WithBody(Block(GenerateBody()));
         }

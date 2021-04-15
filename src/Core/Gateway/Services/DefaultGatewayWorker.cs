@@ -1,9 +1,11 @@
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Messages;
+using Brighid.Discord.Serialization;
 
 namespace Brighid.Discord.Gateway
 {
@@ -13,17 +15,17 @@ namespace Brighid.Discord.Gateway
         private readonly Thread thread;
         private readonly Channel<GatewayMessageChunk> channel;
         private readonly Stream stream;
-        private readonly IMessageParser parser;
+        private readonly ISerializer serializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayWorker" /> class.
         /// </summary>
-        /// <param name="parser">The parser used to parse messages/event data.</param>
+        /// <param name="serializer">serializer.</param>
         public DefaultGatewayWorker(
-            IMessageParser parser
+            ISerializer serializer
         )
         {
-            this.parser = parser;
+            this.serializer = serializer;
             channel = Channel.CreateUnbounded<GatewayMessageChunk>();
             thread = new Thread(Run);
             stream = new MemoryStream();
@@ -61,7 +63,8 @@ namespace Brighid.Discord.Gateway
                     cancellationToken.ThrowIfCancellationRequested();
                     stream.Position = 0;
 
-                    _ = await parser.Parse(stream, cancellationToken);
+                    var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
+                    Console.WriteLine(await serializer.Serialize(message, cancellationToken));
                     stream.SetLength(0);
                 }
             }
