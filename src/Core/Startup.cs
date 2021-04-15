@@ -1,5 +1,6 @@
 using Amazon.SimpleNotificationService;
 
+using Brighid.Discord.Gateway;
 using Brighid.Discord.Messages;
 using Brighid.Discord.Serialization;
 
@@ -27,6 +28,11 @@ namespace Brighid.Discord
         {
             services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
             services.AddSingleton<ISerializer, JsonSerializer>();
+
+            var gatewayOptions = configuration.GetSection("Gateway");
+            services.Configure<GatewayOptions>(gatewayOptions);
+            services.AddSingleton<IGatewayWorker, DefaultGatewayWorker>();
+            services.AddSingleton<IGatewayService, DefaultGatewayService>();
             ConfigureMessageServices(services);
         }
 
@@ -35,6 +41,7 @@ namespace Brighid.Discord
             var snsMessageEmitterOptions = configuration.GetSection("Sns");
             services.Configure<SnsMessageEmitterOptions>(snsMessageEmitterOptions);
             services.AddSingleton<IMessageEmitter, SnsMessageEmitter>();
+            services.AddSingleton<IMessageParser, GeneratedMessageParser>();
         }
     }
 }

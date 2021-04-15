@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +34,21 @@ namespace Brighid.Discord.Serialization
             var cancellationToken = new CancellationToken(false);
 
             var result = await serializer.Deserialize<TestObject>(deserializable, cancellationToken);
+
+            result!.A.Should().Be("A");
+            result!.B.Should().Be("B");
+        }
+
+        [Test, Auto]
+        public async Task Deserialize_DeserializesStreamsToObjects(
+            [Target] JsonSerializer serializer
+        )
+        {
+            var deserializableBytes = Encoding.UTF8.GetBytes("{\"A\":\"A\",\"B\":\"B\"}");
+            var deserializableStream = new MemoryStream(deserializableBytes);
+            var cancellationToken = new CancellationToken(false);
+
+            var result = await serializer.Deserialize<TestObject>(deserializableStream, cancellationToken);
 
             result!.A.Should().Be("A");
             result!.B.Should().Be("B");
