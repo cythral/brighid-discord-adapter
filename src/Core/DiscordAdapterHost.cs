@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Gateway;
 using Brighid.Discord.Messages;
 using Brighid.Discord.Serialization;
 
@@ -37,13 +38,15 @@ namespace Brighid.Discord
             logger.LogInformation("Started DiscordAdapterHost.");
             Services.GetRequiredService<IMessageEmitter>();
             Services.GetRequiredService<ISerializer>();
-            await Task.CompletedTask;
+
+            var gateway = Services.GetRequiredService<IGatewayService>();
+            await gateway.Run(cancellationToken);
         }
 
         /// <inheritdoc />
         public async Task StopAsync(CancellationToken cancellationToken = default)
         {
-            logger.LogInformation("Started DiscordAdapterHost.");
+            logger.LogInformation("Stopped DiscordAdapterHost.");
             await Task.CompletedTask;
         }
 

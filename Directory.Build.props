@@ -11,9 +11,10 @@
     <BaseOutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/</BaseOutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
-  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)\.editorconfig')">
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig" />
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory).editorconfig')">
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory).editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Visible="false" />

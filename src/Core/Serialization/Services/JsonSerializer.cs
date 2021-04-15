@@ -22,6 +22,7 @@ namespace Brighid.Discord.Serialization
         /// <returns>The serialized string.</returns>
         public async Task<string> Serialize<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             using var stream = new JsonStringStream();
             await SystemTextJsonSerializer.SerializeAsync(stream, serializable, cancellationToken: cancellationToken);
             return stream.Result;
@@ -33,12 +34,26 @@ namespace Brighid.Discord.Serialization
         /// <typeparam name="TResultType">The resulting object's type.</typeparam>
         /// <param name="deserializable">The JSON to deserialize.</param>
         /// <param name="cancellationToken">Token used to cancel the task.</param>
-        /// <returns>The resulting type.</returns>
+        /// <returns>The resulting object.</returns>
         public async Task<TResultType?> Deserialize<TResultType>(string deserializable, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var bytes = Encoding.UTF8.GetBytes(deserializable);
             using var stream = new MemoryStream(bytes);
             return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(stream, cancellationToken: cancellationToken);
+        }
+
+        /// <summary>
+        /// Deserializes a stream containing JSON into an object.
+        /// </summary>
+        /// <typeparam name="TResultType">The resulting object's type.</typeparam>
+        /// <param name="deserializable">The stream to deserialize from.</param>
+        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <returns>The resulting object.</returns>
+        public async Task<TResultType?> Deserialize<TResultType>(Stream deserializable, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(deserializable, cancellationToken: cancellationToken);
         }
 
 #pragma warning disable IDE0060, SA1313, CA1822

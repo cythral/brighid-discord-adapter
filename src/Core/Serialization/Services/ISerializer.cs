@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +24,16 @@ namespace Brighid.Discord.Serialization
         /// <typeparam name="TResultType">The resulting object's type.</typeparam>
         /// <param name="deserializable">The text to deserialize.</param>
         /// <param name="cancellationToken">Token used to cancel the task.</param>
-        /// <returns>The resulting type.</returns>
+        /// <returns>The resulting object.</returns>
         Task<TResultType?> Deserialize<TResultType>(string deserializable, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deserializes a stream into an object.
+        /// </summary>
+        /// <typeparam name="TResultType">The resulting object's type.</typeparam>
+        /// <param name="deserializable">The stream to deserialize.</param>
+        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <returns>The resulting object.</returns>
+        Task<TResultType?> Deserialize<TResultType>(Stream deserializable, CancellationToken cancellationToken);
     }
 }
