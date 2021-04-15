@@ -54,6 +54,11 @@ dotnet_analyzer_diagnostic.category-Style.severity = error
 dotnet_diagnostic.IDE0058.severity = none
 dotnet_diagnostic.IDE0008.severity = none
 
+dotnet_diagnostic.SA1633.severity = none
+
+# Using directive inside namespace
+dotnet_diagnostic.SA1200.severity = none
+
 [tests/**.{cs,csx}]
 # Unused parameters
 dotnet_diagnostic.CA1801.severity = none
@@ -73,3 +78,10 @@ dotnet_diagnostic.CS8019.severity = none
 
 # Accessibility modifiers on assembly classes
 dotnet_diagnostic.IDE0040.severity = none
+
+# Using directive inside namespace
+dotnet_diagnostic.SA1200.severity = none
+
+# XML Comments
+dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.SA1601.severity = none
