@@ -1,8 +1,12 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Brighid.Discord.Messages;
 
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -13,6 +17,20 @@ namespace Brighid.Discord.Serialization
     /// </summary>
     public class JsonSerializer : ISerializer
     {
+        private readonly JsonSerializerOptions options;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonSerializer" /> class.
+        /// </summary>
+        /// <param name="gatewayMessageConverter">Converter to convert gateway messages to/from JSON.</param>
+        public JsonSerializer(
+            JsonConverter<GatewayMessage> gatewayMessageConverter
+        )
+        {
+            options = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+            options.Converters.Add(gatewayMessageConverter);
+        }
+
         /// <summary>
         /// Serializes an object to JSON.
         /// </summary>
@@ -24,7 +42,7 @@ namespace Brighid.Discord.Serialization
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var stream = new JsonStringStream();
-            await SystemTextJsonSerializer.SerializeAsync(stream, serializable, cancellationToken: cancellationToken);
+            await SystemTextJsonSerializer.SerializeAsync(stream, serializable, options, cancellationToken);
             return stream.Result;
         }
 
@@ -40,7 +58,7 @@ namespace Brighid.Discord.Serialization
             cancellationToken.ThrowIfCancellationRequested();
             var bytes = Encoding.UTF8.GetBytes(deserializable);
             using var stream = new MemoryStream(bytes);
-            return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(stream, cancellationToken: cancellationToken);
+            return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(stream, options, cancellationToken);
         }
 
         /// <summary>
@@ -53,7 +71,7 @@ namespace Brighid.Discord.Serialization
         public async Task<TResultType?> Deserialize<TResultType>(Stream deserializable, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(deserializable, cancellationToken: cancellationToken);
+            return await SystemTextJsonSerializer.DeserializeAsync<TResultType>(deserializable, options, cancellationToken);
         }
 
 #pragma warning disable IDE0060, SA1313, CA1822
