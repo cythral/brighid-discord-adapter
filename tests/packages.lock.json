@@ -103,15 +103,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.12",
-        "contentHash": "Pqnw8X7w1I/bYZw3+t3Qvxnw2Cz/euL39H0F4cSaS2tUI0TnIsiR7vMrNZvi/PZFfcOi6k17xCGr1jBvgj6a0w=="
+        "resolved": "3.7.0.13",
+        "contentHash": "8z7RHLvY/bQP3F55AL3keG3/6Y9O15RWFUhz1a585+UAFVvFD/eejn443s4C0O3k5TLnxf1u5M0qblIZbNMgqw=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.0.12",
-        "contentHash": "U+3bd/WWzu6nTyRgdixL2l8G936AR8wYffSg1t5tY7CIQ6zl+gYAFqAchWRuFRtV2YFZf9j6l/HsD9lxbVENzQ==",
+        "resolved": "3.7.0.13",
+        "contentHash": "DHBcUHPEFcdGij7r1iKIB2T7ByspdBp501ysbOH7KrUGDDwNIhcM/l8wi3Y0gf9KWTaCwstYh+7mBdPiFgUB9g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.12, 3.8.0)"
+          "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
         }
       },
       "Castle.Core": {
@@ -1561,7 +1561,7 @@
       "core": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SimpleNotificationService": "3.7.0.12",
+          "AWSSDK.SimpleNotificationService": "3.7.0.13",
           "Common": "1.0.0",
           "EventParserGenerator": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
