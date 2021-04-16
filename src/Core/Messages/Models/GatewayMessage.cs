@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.Gateway;
-
 namespace Brighid.Discord.Messages
 {
     /// <summary>

@@ -25,6 +25,7 @@ namespace Brighid.Discord
             services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
 
             services.ConfigureSerializationServices();
+            services.ConfigureEventsServices();
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
         }

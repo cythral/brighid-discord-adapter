@@ -1563,7 +1563,7 @@
         "dependencies": {
           "AWSSDK.SimpleNotificationService": "3.7.0.13",
           "Brighid.Discord.Common": "1.0.0",
-          "EventParserGenerator": "1.0.0",
+          "Generators": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Logging": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
@@ -1571,7 +1571,7 @@
           "Serilog.AspNetCore": "4.1.0"
         }
       },
-      "eventparsergenerator": {
+      "generators": {
         "type": "Project",
         "dependencies": {
           "Brighid.Discord.Common": "1.0.0",

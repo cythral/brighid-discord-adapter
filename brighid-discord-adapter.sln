@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C6EE7D1E-380
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{C83AC63E-ACA3-46A1-8C9E-7EF1FE5BFF3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventParserGenerator", "src\EventParserGenerator\EventParserGenerator.csproj", "{738352A9-4807-48E4-8BFD-D330B45C2F2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generators", "src\Generators\Generators.csproj", "{738352A9-4807-48E4-8BFD-D330B45C2F2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Common.csproj", "{0E179619-9F77-4262-9DCC-3177AB716E26}"
 EndProject

@@ -11,10 +11,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
-namespace Brighid.Discord.EventParserGenerator
+namespace Brighid.Discord.Generators
 {
     [Generator]
-    public class Generator : ISourceGenerator
+    public class EventDataParserGenerator : ISourceGenerator
     {
         private readonly string[] usings = new string[]
         {

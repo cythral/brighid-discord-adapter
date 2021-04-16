@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Events;
 using Brighid.Discord.Messages;
 using Brighid.Discord.Serialization;
 
@@ -15,6 +16,7 @@ namespace Brighid.Discord.Gateway
         private readonly IChannel<GatewayMessageChunk> channel;
         private readonly ISerializer serializer;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
+        private readonly IEventRouter eventRouter;
         private readonly ILogger<DefaultGatewayRxWorker> logger;
         private CancellationToken cancellationToken;
         private IWorkerThread? workerThread;
@@ -25,15 +27,18 @@ namespace Brighid.Discord.Gateway
         /// </summary>
         /// <param name="serializer">Serializer to use for serializing messages.</param>
         /// <param name="gatewayUtilsFactory">Factory to create various utils with.</param>
+        /// <param name="eventRouter">Router to route events to controllers.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public DefaultGatewayRxWorker(
             ISerializer serializer,
             IGatewayUtilsFactory gatewayUtilsFactory,
+            IEventRouter eventRouter,
             ILogger<DefaultGatewayRxWorker> logger
         )
         {
             this.serializer = serializer;
             this.gatewayUtilsFactory = gatewayUtilsFactory;
+            this.eventRouter = eventRouter;
             this.logger = logger;
             channel = gatewayUtilsFactory.CreateChannel<GatewayMessageChunk>();
         }
@@ -88,7 +93,13 @@ namespace Brighid.Discord.Gateway
 
                     var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
                     gateway!.SequenceNumber = message.SequenceNumber;
-                    message.Data?.Handle(gateway!, cancellationToken);
+
+                    if (message.Data != null)
+                    {
+#pragma warning disable CS4014 // We want to continue processing messages while the controller runs
+                        eventRouter.Route(message.Data, cancellationToken);
+#pragma warning restore CS4014
+                    }
 
                     logger.LogInformation("{@workerName} Received message: {@message}", workerName, message);
                     stream.SetLength(0);

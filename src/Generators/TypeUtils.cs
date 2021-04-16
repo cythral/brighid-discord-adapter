@@ -1,4 +1,4 @@
-#pragma warning disable SA1204, SA1009, CS1591, SA1600, SA1200, SA1633
+#pragma warning disable SA1204, SA1009, CS1591, SA1600, SA1200, SA1633, IDE0072
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Reflection;
 
 using Microsoft.CodeAnalysis;
 
-namespace Brighid.Discord.EventParserGenerator
+namespace Brighid.Discord.Generators
 {
     public static class TypeUtils
     {
@@ -23,8 +23,12 @@ namespace Brighid.Discord.EventParserGenerator
         {
             var parameters = from arg in attributeData.ConstructorArguments
                              where arg.Type != null
-                             let type = Assembly.Load(arg.Type!.ContainingAssembly.Name).GetType(arg.Type.ToString()!)
-                             select type != null ? Cast(arg.Value!, type) : arg.Value;
+                             let type = LoadType(arg!.Type)
+                             select arg.Kind switch
+                             {
+                                 TypedConstantKind.Type => LoadType(arg.Value as INamedTypeSymbol),
+                                 _ => type != null ? Cast(arg.Value!, type) : arg.Value,
+                             };
 
             var result = (T?)Activator.CreateInstance(typeof(T), parameters.ToArray());
             if (result == null)
@@ -41,6 +45,13 @@ namespace Brighid.Discord.EventParserGenerator
             }
 
             return result;
+        }
+
+        public static Type? LoadType(ITypeSymbol? symbol)
+        {
+            return symbol == null
+                ? null
+                : Assembly.Load(symbol.ContainingAssembly.Name).GetType(symbol.ToString()!);
         }
 
         public static bool IsSymbolEqualToType(INamedTypeSymbol? symbol, Type? type)
