@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using AutoFixture.AutoNSubstitute;
+using AutoFixture.NUnit3;
 
 using Brighid.Discord.Gateway;
 
@@ -16,21 +17,22 @@ using static NSubstitute.Arg;
 
 namespace Brighid.Discord.Events
 {
-    public class HelloEventTests
+    public class HelloEventControllerTests
     {
         [TestFixture]
         public class HandleTests
         {
             [Test, Auto]
             public async Task ShouldThrowIfCanceled(
-                [Substitute] IGatewayService gateway,
-                uint interval
+                uint interval,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
             )
             {
                 var cancellationToken = new CancellationToken(true);
                 var @event = new HelloEvent { HeartbeatInterval = interval };
 
-                Func<Task> func = () => @event.Handle(gateway, cancellationToken);
+                Func<Task> func = () => controller.Handle(@event, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
                 gateway.DidNotReceive().StartHeartbeat(Any<uint>());
@@ -38,14 +40,15 @@ namespace Brighid.Discord.Events
 
             [Test, Auto]
             public async Task ShouldStartHeartbeat(
-                [Substitute] IGatewayService gateway,
-                uint interval
+                uint interval,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
             )
             {
                 var cancellationToken = new CancellationToken(false);
                 var @event = new HelloEvent { HeartbeatInterval = interval };
 
-                await @event.Handle(gateway, cancellationToken);
+                await controller.Handle(@event, cancellationToken);
 
                 gateway.Received().StartHeartbeat(interval);
             }

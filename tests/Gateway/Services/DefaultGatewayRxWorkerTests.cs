@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Events;
 using Brighid.Discord.Messages;
+using Brighid.Discord.Serialization;
 
 using FluentAssertions;
 
@@ -285,6 +287,62 @@ namespace Brighid.Discord.Gateway
             }
 
             [Test, Auto]
+            public async Task RunShouldDeserializeTheMessageIfEndOfMessageIsReached(
+                byte[] bytes,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
+                stream.When(x => x.SetLength(Any<long>())).Do(x =>
+                {
+                    source.Cancel();
+                });
+
+                worker.Start(gateway, source);
+                await worker.Run();
+
+                await serializer.Received().Deserialize<GatewayMessage>(Is(stream), Is(source.Token));
+            }
+
+            [Test, Auto]
+            public async Task RunShouldRouteTheMessageIfEndOfMessageIsReached(
+                byte[] bytes,
+                uint interval,
+                int sequenceNumber,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Frozen, Substitute] IEventRouter router,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var @event = new HelloEvent { HeartbeatInterval = interval };
+                var message = new GatewayMessage { SequenceNumber = sequenceNumber, Data = @event };
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                serializer.Deserialize<GatewayMessage>(Any<Stream>(), Any<CancellationToken>()).Returns(message);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
+                stream.When(x => x.SetLength(Any<long>())).Do(x =>
+                {
+                    source.Cancel();
+                });
+
+                worker.Start(gateway, source);
+                await worker.Run();
+
+                await router.Received().Route(Is(@event), Is(source.Token));
+            }
+
+            [Test, Auto]
             public async Task RunShouldNotTruncateTheStreamIfEndOfMessageIsNotReached(
                 byte[] bytes,
                 [Frozen, Substitute] Stream stream,
@@ -306,6 +364,88 @@ namespace Brighid.Discord.Gateway
                 await worker.Run();
 
                 stream.DidNotReceive().SetLength(0);
+            }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task RunShouldNotDeserializeTheMessageIfEndOfMessageIsNotReached(
+                byte[] bytes,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
+                stream.When(x => x.WriteAsync(Any<ReadOnlyMemory<byte>>(), Any<CancellationToken>())).Do(x =>
+                {
+                    source.Cancel();
+                });
+
+                worker.Start(gateway, source);
+                await worker.Run();
+
+                await serializer.DidNotReceive().Deserialize<GatewayMessage>(Is(stream), Is(source.Token));
+            }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task RunShouldNotRouteTheMessageIfEndOfMessageIsNotReached(
+                byte[] bytes,
+                uint interval,
+                int sequenceNumber,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Frozen, Substitute] IEventRouter router,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
+                stream.When(x => x.WriteAsync(Any<ReadOnlyMemory<byte>>(), Any<CancellationToken>())).Do(x =>
+                {
+                    source.Cancel();
+                });
+
+                worker.Start(gateway, source);
+                await worker.Run();
+
+                await router.DidNotReceive().Route(Any<IGatewayEvent>(), Any<CancellationToken>());
+            }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task RunShouldNotRouteTheMessageIfEndOfMessageIsReachedButEventDataIsNull(
+                byte[] bytes,
+                uint interval,
+                int sequenceNumber,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Frozen, Substitute] IEventRouter router,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
+                serializer.Deserialize<GatewayMessage>(Any<Stream>(), Any<CancellationToken>()).Returns(x =>
+                {
+                    source.Cancel();
+                    return new GatewayMessage { };
+                });
+
+                worker.Start(gateway, source);
+                await worker.Run();
+
+                await router.DidNotReceive().Route(Any<IGatewayEvent>(), Any<CancellationToken>());
             }
         }
     }

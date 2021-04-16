@@ -1645,7 +1645,7 @@
       "Brighid.Discord.Common": {
         "type": "Project"
       },
-      "eventparsergenerator": {
+      "generators": {
         "type": "Project",
         "dependencies": {
           "Brighid.Discord.Common": "1.0.0",
