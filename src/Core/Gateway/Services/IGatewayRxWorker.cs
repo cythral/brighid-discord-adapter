@@ -8,12 +8,18 @@ namespace Brighid.Discord.Gateway
     /// <summary>
     /// A worker to receive bytes from a buffer and parse them into a message.
     /// </summary>
-    public interface IGatewayWorker
+    public interface IGatewayRxWorker
     {
         /// <summary>
-        /// Start the gateway worker.
+        /// Start the worker.
         /// </summary>
-        void Start();
+        /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
+        void Start(CancellationTokenSource cancellationTokenSource);
+
+        /// <summary>
+        /// Stop the gateway worker.
+        /// </summary>
+        void Stop();
 
         /// <summary>
         /// Emit bytes to the worker for processing.

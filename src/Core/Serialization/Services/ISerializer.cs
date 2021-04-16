@@ -19,6 +19,15 @@ namespace Brighid.Discord.Serialization
         Task<string> Serialize<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Serializes an object to a byte stream.
+        /// </summary>
+        /// <typeparam name="TSerializableType">The type of object to serialize to JSON.</typeparam>
+        /// <param name="serializable">The object to serialize to JSON.</param>
+        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <returns>The serialized string.</returns>
+        Task<byte[]> SerializeToBytes<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Deserializes text into an object.
         /// </summary>
         /// <typeparam name="TResultType">The resulting object's type.</typeparam>

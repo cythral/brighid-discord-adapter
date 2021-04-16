@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -47,6 +48,21 @@ namespace Brighid.Discord.Serialization
         }
 
         /// <summary>
+        /// Serializes an object to a JSON byte stream.
+        /// </summary>
+        /// <typeparam name="TSerializableType">The type of object to serialize to JSON.</typeparam>
+        /// <param name="serializable">The object to serialize to JSON.</param>
+        /// <param name="cancellationToken">Token used to cancel the task.</param>
+        /// <returns>The serialized string.</returns>
+        public async Task<byte[]> SerializeToBytes<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var stream = new JsonByteStream();
+            await SystemTextJsonSerializer.SerializeAsync(stream, serializable, options, cancellationToken);
+            return stream.Result.ToArray();
+        }
+
+        /// <summary>
         /// Deserializes JSON into an object.
         /// </summary>
         /// <typeparam name="TResultType">The resulting object's type.</typeparam>
@@ -75,6 +91,53 @@ namespace Brighid.Discord.Serialization
         }
 
 #pragma warning disable IDE0060, SA1313, CA1822
+
+        /// <summary>
+        /// Implementation of a stream that, when written to, builds a list of bytes.  Reading and seeking
+        /// via the conventional methods are not supported. Reading can be done by accessing the Result property directly.
+        /// </summary>
+        private class JsonByteStream : Stream
+        {
+            public List<byte> Result { get; private set; } = new();
+
+            public override bool CanRead => false;
+
+            public override bool CanWrite => true;
+
+            public override bool CanSeek => false;
+
+            public override long Length => Result.Count;
+
+            public override long Position
+            {
+                get => Result.Count;
+                set => throw new NotSupportedException();
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                var span = buffer[offset..(offset + count)];
+                Result.AddRange(span);
+            }
+
+            public override int Read(byte[] _buffer, int _offset, int _count)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override long Seek(long _offset, SeekOrigin _origin)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void SetLength(long _value)
+            {
+            }
+
+            public override void Flush()
+            {
+            }
+        }
 
         /// <summary>
         /// Implementation of a stream that, when written to, builds a string.  Reading and seeking

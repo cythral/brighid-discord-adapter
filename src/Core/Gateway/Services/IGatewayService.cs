@@ -1,6 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Messages;
+
 namespace Brighid.Discord.Gateway
 {
     /// <summary>
@@ -9,10 +11,22 @@ namespace Brighid.Discord.Gateway
     public interface IGatewayService
     {
         /// <summary>
-        /// Starts the gateway service and begin listening for messages.
+        /// Start the gateway service.
         /// </summary>
+        /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
+        void Start(CancellationTokenSource cancellationTokenSource);
+
+        /// <summary>
+        /// Stop the gateway service.
+        /// </summary>
+        void Stop();
+
+        /// <summary>
+        /// Sends a message to the gateway.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        Task Run(CancellationToken cancellationToken = default);
+        Task Send(GatewayMessage message, CancellationToken cancellationToken = default);
     }
 }
