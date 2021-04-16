@@ -46,9 +46,9 @@ namespace Brighid.Discord.Gateway
         }
 
         /// <inheritdoc />
-        public async Task CreateDelay(int millisecondsDelay, CancellationToken cancellationToken)
+        public async Task CreateDelay(uint millisecondsDelay, CancellationToken cancellationToken)
         {
-            await Task.Delay(millisecondsDelay, cancellationToken);
+            await Task.Delay((int)millisecondsDelay, cancellationToken);
         }
     }
 }

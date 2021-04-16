@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Events;
 using Brighid.Discord.Messages;
 
 using FluentAssertions;
@@ -62,7 +63,7 @@ namespace Brighid.Discord.Gateway
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 gateway.Start(source);
 
-                rxWorker.Received().Start(Is(source));
+                rxWorker.Received().Start(Is(gateway), Is(source));
             }
 
             [Test, Auto]
@@ -151,6 +152,31 @@ namespace Brighid.Discord.Gateway
 
                 txWorker.Received().Stop();
             }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task StopShouldStopTheHeartbeat(
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                factory.CreateDelay(Any<uint>(), Any<CancellationToken>()).Returns(x =>
+                {
+                    return Task.Delay(10);
+                });
+
+                gateway.Start(source);
+                gateway.StartHeartbeat(10);
+                await Task.Delay(10);
+                gateway.Stop();
+                await Task.Delay(20);
+                txWorker.ClearReceivedCalls();
+                await Task.Delay(20);
+                await txWorker.DidNotReceiveWithAnyArgs().Emit(Any<GatewayMessage>(), Any<CancellationToken>());
+            }
         }
 
         [TestFixture]
@@ -165,6 +191,9 @@ namespace Brighid.Discord.Gateway
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
                 var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                gateway.Start(source);
                 await gateway.Send(message, cancellationToken);
 
                 await txWorker.Received().Emit(Is(message), Is(cancellationToken));
@@ -207,6 +236,101 @@ namespace Brighid.Discord.Gateway
                 Func<Task> func = () => gateway.Send(message, operationCancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
+            }
+        }
+
+        [TestFixture]
+        public class StartHeartbeat
+        {
+            [Test, Auto]
+            public void ShouldThrowIfGatewayHasntBeenStarted(
+                uint interval,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                Action func = () => gateway.StartHeartbeat(interval);
+
+                func.Should().Throw<OperationCanceledException>();
+            }
+
+            [Test, Auto]
+            public void ShouldThrowIfGatewayWasStopped(
+                uint interval,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                gateway.Start(source);
+                source.Cancel();
+
+                Action func = () => gateway.StartHeartbeat(interval);
+
+                func.Should().Throw<OperationCanceledException>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldStartSendingAHeartbeatToTheTxWorker(
+                uint interval,
+                int sequenceNumber,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                factory.CreateDelay(Any<uint>(), Any<CancellationToken>()).Returns(x =>
+                {
+                    source.Cancel();
+                    return Task.CompletedTask;
+                });
+
+                gateway.SequenceNumber = sequenceNumber;
+                gateway.Start(source);
+                gateway.StartHeartbeat(interval);
+
+                await txWorker.Received().Emit(
+                    Is<GatewayMessage>(message =>
+                        message.OpCode == GatewayOpCode.Heartbeat &&
+                        (HeartbeatEvent?)message.Data == sequenceNumber
+                    ),
+                    Any<CancellationToken>()
+                );
+            }
+        }
+
+        [TestFixture]
+        public class StopHeartbeat
+        {
+            [Test, Auto, Timeout(1000)]
+            public async Task ShouldStopSendingHeartbeatsToTheTxWorker(
+                uint interval,
+                int sequenceNumber,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                factory.CreateDelay(Any<uint>(), Any<CancellationToken>()).Returns(x =>
+                {
+                    return Task.Delay(10);
+                });
+
+                gateway.SequenceNumber = sequenceNumber;
+                gateway.Start(source);
+                gateway.StartHeartbeat(interval);
+                await Task.Delay(10);
+                gateway.StopHeartbeat();
+                await Task.Delay(20);
+                txWorker.ClearReceivedCalls();
+                await Task.Delay(20);
+                await txWorker.DidNotReceiveWithAnyArgs().Emit(Any<GatewayMessage>(), Any<CancellationToken>());
             }
         }
 

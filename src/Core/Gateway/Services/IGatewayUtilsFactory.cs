@@ -43,6 +43,6 @@ namespace Brighid.Discord.Gateway
         /// <param name="millisecondsDelay">Milliseconds to delay for.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        Task CreateDelay(int millisecondsDelay, CancellationToken cancellationToken);
+        Task CreateDelay(uint millisecondsDelay, CancellationToken cancellationToken);
     }
 }

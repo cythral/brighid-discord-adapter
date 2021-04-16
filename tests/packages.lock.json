@@ -1555,14 +1555,14 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
-      "common": {
+      "Brighid.Discord.Common": {
         "type": "Project"
       },
       "core": {
         "type": "Project",
         "dependencies": {
           "AWSSDK.SimpleNotificationService": "3.7.0.13",
-          "Common": "1.0.0",
+          "Brighid.Discord.Common": "1.0.0",
           "EventParserGenerator": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Logging": "5.0.0",
@@ -1574,7 +1574,7 @@
       "eventparsergenerator": {
         "type": "Project",
         "dependencies": {
-          "Common": "1.0.0",
+          "Brighid.Discord.Common": "1.0.0",
           "Microsoft.CodeAnalysis": "3.9.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.9.0"
         }

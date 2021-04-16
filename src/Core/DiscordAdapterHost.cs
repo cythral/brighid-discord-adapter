@@ -52,6 +52,10 @@ namespace Brighid.Discord
 
             // Tests:
             await gateway.Send(new GatewayMessage { OpCode = GatewayOpCode.Hello }, cancellationToken);
+            await Task.Delay(5000);
+            await StopAsync();
+            await Task.Delay(1000);
+            await StartAsync();
         }
 
         /// <inheritdoc />

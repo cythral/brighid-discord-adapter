@@ -1642,13 +1642,13 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "common": {
+      "Brighid.Discord.Common": {
         "type": "Project"
       },
       "eventparsergenerator": {
         "type": "Project",
         "dependencies": {
-          "Common": "1.0.0",
+          "Brighid.Discord.Common": "1.0.0",
           "Microsoft.CodeAnalysis": "3.9.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.9.0"
         }

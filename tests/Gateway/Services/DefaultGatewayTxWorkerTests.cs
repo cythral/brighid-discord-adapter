@@ -153,7 +153,7 @@ namespace Brighid.Discord.Gateway
                     return false;
                 });
 
-                factory.CreateDelay(Any<int>(), Any<CancellationToken>()).Returns(async x =>
+                factory.CreateDelay(Any<uint>(), Any<CancellationToken>()).Returns(async x =>
                 {
                     if (++tries == 2)
                     {

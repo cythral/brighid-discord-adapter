@@ -18,6 +18,7 @@ namespace Brighid.Discord.Gateway
         private readonly ILogger<DefaultGatewayRxWorker> logger;
         private CancellationToken cancellationToken;
         private IWorkerThread? workerThread;
+        private IGatewayService? gateway;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayRxWorker" /> class.
@@ -38,9 +39,10 @@ namespace Brighid.Discord.Gateway
         }
 
         /// <inheritdoc />
-        public void Start(CancellationTokenSource cancellationTokenSource)
+        public void Start(IGatewayService gateway, CancellationTokenSource cancellationTokenSource)
         {
             cancellationToken = cancellationTokenSource.Token;
+            this.gateway = gateway;
             workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, workerName);
             workerThread.Start(cancellationTokenSource);
         }
@@ -85,6 +87,9 @@ namespace Brighid.Discord.Gateway
                     stream.Position = 0;
 
                     var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
+                    gateway!.SequenceNumber = message.SequenceNumber;
+                    message.Data?.Handle(gateway!, cancellationToken);
+
                     logger.LogInformation("{@workerName} Received message: {@message}", workerName, message);
                     stream.SetLength(0);
                 }

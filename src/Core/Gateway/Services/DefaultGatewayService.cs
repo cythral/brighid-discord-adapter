@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Events;
 using Brighid.Discord.Messages;
 
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,9 @@ namespace Brighid.Discord.Gateway
         private readonly byte[] buffer;
         private readonly Memory<byte> memoryBuffer;
         private IClientWebSocket? webSocket;
-        private CancellationToken cancellationToken;
+        private CancellationToken cancellationToken = new(true);
+        private Task? heartbeatTask;
+        private CancellationTokenSource? heartbeatCancellationTokenSource;
         private IWorkerThread? workerThread;
 
         /// <summary>
@@ -50,12 +53,15 @@ namespace Brighid.Discord.Gateway
         }
 
         /// <inheritdoc />
+        public int? SequenceNumber { get; set; }
+
+        /// <inheritdoc />
         public void Start(CancellationTokenSource cancellationTokenSource)
         {
             cancellationToken = cancellationTokenSource.Token;
             workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, workerThreadName);
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
-            rxWorker.Start(cancellationTokenSource);
+            rxWorker.Start(this, cancellationTokenSource);
             txWorker.Start(webSocket, cancellationTokenSource);
             workerThread.Start(cancellationTokenSource);
         }
@@ -63,10 +69,11 @@ namespace Brighid.Discord.Gateway
         /// <inheritdoc />
         public void Stop()
         {
-            webSocket?.Abort();
+            StopHeartbeat();
             workerThread?.Stop();
             rxWorker.Stop();
             txWorker.Stop();
+            webSocket?.Abort();
             webSocket = null;
             workerThread = null;
         }
@@ -77,6 +84,22 @@ namespace Brighid.Discord.Gateway
             this.cancellationToken.ThrowIfCancellationRequested();
             cancellationToken.ThrowIfCancellationRequested();
             await txWorker.Emit(message, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public void StartHeartbeat(uint heartbeatInterval)
+        {
+            logger.LogInformation("{@workerName} Starting Heartbeat. Interval: {@heartbeatInterval}", workerThreadName, heartbeatInterval);
+            cancellationToken.ThrowIfCancellationRequested();
+            heartbeatCancellationTokenSource = new CancellationTokenSource();
+            heartbeatTask = Heartbeat(heartbeatInterval, heartbeatCancellationTokenSource.Token);
+        }
+
+        /// <inheritdoc />
+        public void StopHeartbeat()
+        {
+            logger.LogInformation("{@workerName} Stopping Heartbeat. Last Sequence: {@sequenceNumber}", workerThreadName, SequenceNumber);
+            heartbeatCancellationTokenSource?.Cancel();
         }
 
         /// <summary>
@@ -93,6 +116,18 @@ namespace Brighid.Discord.Gateway
                 var result = await webSocket!.Receive(memoryBuffer, cancellationToken);
                 var chunk = new GatewayMessageChunk(memoryBuffer, result.Count, result.EndOfMessage);
                 await rxWorker.Emit(chunk, cancellationToken);
+            }
+        }
+
+        private async Task Heartbeat(uint heartbeatInterval, CancellationToken cancellationToken)
+        {
+            while (!this.cancellationToken.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+            {
+                await gatewayUtilsFactory.CreateDelay(heartbeatInterval, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };
+                await txWorker.Emit(message, cancellationToken);
             }
         }
     }
