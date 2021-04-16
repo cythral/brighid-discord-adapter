@@ -1,3 +1,5 @@
+using System.IO;
+
 using Brighid.Discord.Gateway;
 
 using Microsoft.Extensions.Configuration;
@@ -19,8 +21,11 @@ namespace Brighid.Discord
         {
             var gatewayOptions = configuration.GetSection("Gateway");
             services.Configure<GatewayOptions>(gatewayOptions);
-            services.AddSingleton<IGatewayWorker, DefaultGatewayWorker>();
+            services.AddSingleton<IGatewayRxWorker, DefaultGatewayRxWorker>();
+            services.AddSingleton<IGatewayTxWorker, DefaultGatewayTxWorker>();
             services.AddSingleton<IGatewayService, DefaultGatewayService>();
+            services.AddSingleton<IGatewayUtilsFactory, DefaultGatewayUtilsFactory>();
+            services.AddTransient(provider => new MemoryStream());
         }
     }
 }
