@@ -122,6 +122,24 @@ namespace Brighid.Discord.Serialization
             result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"user\":[ ]?{{(.*?)\"id\":[ ]?{userId}(.*?)}}(.*?)}}", $"Data should contain userId of {userId}");
         }
 
+        [Test, Auto]
+        public async Task HeartbeatMessagesShouldSerialize(
+            int sequenceNumber
+        )
+        {
+            var cancellationToken = new CancellationToken(false);
+            var serializer = CreateSerializer();
+            var gatewayMessage = new GatewayMessage
+            {
+                OpCode = GatewayOpCode.Heartbeat,
+                Data = new HeartbeatEvent(sequenceNumber),
+            };
+
+            var result = await serializer.Serialize(gatewayMessage, cancellationToken);
+            result.Should().MatchRegex("\"op\":[ ]?1", "Op Code should equal 1.");
+            result.Should().MatchRegex($"\"d\":[ ]?{sequenceNumber}", $"Data should equal the sequence number ({sequenceNumber})");
+        }
+
         private Stream CreatePayloadStream(string payload)
         {
             var bytes = Encoding.UTF8.GetBytes(payload);

@@ -13,8 +13,9 @@ namespace Brighid.Discord.Gateway
         /// <summary>
         /// Start the worker.
         /// </summary>
+        /// <param name="gateway">The gateway to work on.</param>
         /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
-        void Start(CancellationTokenSource cancellationTokenSource);
+        void Start(IGatewayService gateway, CancellationTokenSource cancellationTokenSource);
 
         /// <summary>
         /// Stop the gateway worker.

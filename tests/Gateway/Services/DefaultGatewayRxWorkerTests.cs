@@ -27,12 +27,13 @@ namespace Brighid.Discord.Gateway
             [Test, Auto]
             public void StartShouldCreateWorkerThread(
                 [Frozen, Substitute] IGatewayUtilsFactory gatewayUtilsFactory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker rxWorker
             )
             {
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                rxWorker.Start(source);
+                rxWorker.Start(gateway, source);
 
                 gatewayUtilsFactory.Received().CreateWorkerThread(Is((Func<Task>)rxWorker.Run), Is("Gateway RX"));
             }
@@ -40,12 +41,13 @@ namespace Brighid.Discord.Gateway
             [Test, Auto]
             public void StartShouldStartTheWorkerThread(
                 [Frozen, Substitute] IWorkerThread workerThread,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker rxWorker
             )
             {
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                rxWorker.Start(source);
+                rxWorker.Start(gateway, source);
 
                 workerThread.Received().Start(Is(source));
             }
@@ -57,12 +59,13 @@ namespace Brighid.Discord.Gateway
             [Test, Auto]
             public void StopShouldStopTheWorkerThread(
                 [Frozen, Substitute] IWorkerThread workerThread,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker rxWorker
             )
             {
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                rxWorker.Start(source);
+                rxWorker.Start(gateway, source);
                 workerThread.ClearReceivedCalls();
                 rxWorker.Stop();
 
@@ -91,6 +94,7 @@ namespace Brighid.Discord.Gateway
             [Test, Auto]
             public async Task SendShouldThrowIfTheGatewayWasStopped(
                 string chunk,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -98,7 +102,7 @@ namespace Brighid.Discord.Gateway
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 source.Cancel();
 
                 var operationCancellationToken = new CancellationToken(false);
@@ -110,6 +114,7 @@ namespace Brighid.Discord.Gateway
             [Test, Auto]
             public async Task SendShouldThrowIfTheOperationWasCanceled(
                 string chunk,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -117,7 +122,7 @@ namespace Brighid.Discord.Gateway
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-                worker.Start(source);
+                worker.Start(gateway, source);
 
                 var operationCancellationToken = new CancellationToken(true);
                 Func<Task> func = () => worker.Emit(message, operationCancellationToken);
@@ -135,6 +140,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -146,7 +152,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 factory.Received().CreateStream();
@@ -158,6 +164,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -169,7 +176,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 await channel.Received().WaitToRead(Is(source.Token));
@@ -181,6 +188,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -197,7 +205,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 await channel.DidNotReceive().Read(Is(source.Token));
@@ -209,6 +217,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -221,7 +230,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 await channel.Received().Read(Is(source.Token));
@@ -233,6 +242,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -244,7 +254,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 await stream.Received().WriteAsync(Is<ReadOnlyMemory<byte>>(givenBytes => Encoding.UTF8.GetString(bytes) == Encoding.UTF8.GetString(bytes)), Is(source.Token));
@@ -256,6 +266,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -267,7 +278,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 stream.Received().SetLength(0);
@@ -279,6 +290,7 @@ namespace Brighid.Discord.Gateway
                 [Frozen, Substitute] Stream stream,
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
                 [Target] DefaultGatewayRxWorker worker
             )
             {
@@ -290,7 +302,7 @@ namespace Brighid.Discord.Gateway
                     source.Cancel();
                 });
 
-                worker.Start(source);
+                worker.Start(gateway, source);
                 await worker.Run();
 
                 stream.DidNotReceive().SetLength(0);

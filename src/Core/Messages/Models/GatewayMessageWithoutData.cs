@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Brighid.Discord.Gateway;
+
 namespace Brighid.Discord.Messages
 {
     /// <summary>
