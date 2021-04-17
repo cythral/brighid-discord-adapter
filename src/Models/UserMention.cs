@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 namespace Brighid.Discord.Models
 {
     /// <summary>
-    /// Discord user.
+    /// A mentioned Discord User.
     /// </summary>
-    public struct User
+    public struct UserMention
     {
         /// <summary>
         /// Gets or sets the user's id.
@@ -84,5 +84,11 @@ namespace Brighid.Discord.Models
         /// </summary>
         [JsonPropertyName("public_flags")]
         public int? PublicFlags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the guild member info.
+        /// </summary>
+        [JsonPropertyName("member")]
+        public GuildMember Member { get; set; }
     }
 }

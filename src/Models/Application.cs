@@ -11,8 +11,7 @@ namespace Brighid.Discord.Models
         /// Gets or sets the id of the app.
         /// </summary>
         [JsonPropertyName("id")]
-        [JsonNumberHandling(JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString)]
-        public ulong Id { get; set; }
+        public Snowflake Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the app.
