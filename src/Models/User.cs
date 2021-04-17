@@ -11,6 +11,7 @@ namespace Brighid.Discord.Models
         /// Gets or sets the user's id.
         /// </summary>
         [JsonPropertyName("id")]
+        [JsonNumberHandling(JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString)]
         public ulong Id { get; set; }
 
         /// <summary>

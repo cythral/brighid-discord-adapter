@@ -119,7 +119,7 @@ namespace Brighid.Discord.Serialization
             result.Should().MatchRegex($"\"s\":[ ]?{sequenceNumber}", $"Sequence number should equal {sequenceNumber}");
             result.Should().MatchRegex($"\"t\":[ ]?\"READY\"", $"Event name should equal READY");
             result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"v\":[ ]?{version}(.*?)}}", $"Data should contain version of {version}");
-            result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"user\":[ ]?{{(.*?)\"id\":[ ]?{userId}(.*?)}}(.*?)}}", $"Data should contain userId of {userId}");
+            result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"user\":[ ]?{{(.*?)\"id\":[ ]?\"{userId}\"(.*?)}}(.*?)}}", $"Data should contain userId of {userId}");
         }
 
         [Test, Auto]

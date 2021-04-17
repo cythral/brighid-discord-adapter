@@ -1,8 +1,11 @@
+using System;
+
 namespace Brighid.Discord.Models
 {
     /// <summary>
     /// A Gateway Intent.
     /// </summary>
+    [Flags]
     public enum Intent
     {
         /// <summary>
