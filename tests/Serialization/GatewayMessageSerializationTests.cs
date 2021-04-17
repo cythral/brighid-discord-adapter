@@ -75,7 +75,7 @@ namespace Brighid.Discord.Serialization
                 ""d"": {{ 
                     ""v"": {version},
                     ""user"": {{
-                        ""id"": {userId}
+                        ""id"": ""{userId}""
                     }}
                 }}
             }}");
@@ -87,7 +87,7 @@ namespace Brighid.Discord.Serialization
 
             var readyEvent = result.Data.As<ReadyEvent>();
             readyEvent.GatewayVersion.Should().Be(version);
-            readyEvent.User.Id.Should().Be(userId);
+            readyEvent.User.Id.Should().Be(new Snowflake(userId));
         }
 
         [Test, Auto]

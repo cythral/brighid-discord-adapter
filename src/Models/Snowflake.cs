@@ -21,5 +21,14 @@ namespace Brighid.Discord.Models
         /// Gets the snowflake value.
         /// </summary>
         public ulong Value { get; init; }
+
+        /// <summary>
+        /// Converts a ulong into a snowflake.
+        /// </summary>
+        /// <param name="value">The ulong value to convert.</param>
+        public static implicit operator Snowflake(ulong value)
+        {
+            return new Snowflake(value);
+        }
     }
 }
