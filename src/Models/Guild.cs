@@ -11,8 +11,7 @@ namespace Brighid.Discord.Models
         /// Gets or sets the guild id.
         /// </summary>
         [JsonPropertyName("id")]
-        [JsonNumberHandling(JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString)]
-        public ulong Id { get; set; }
+        public Snowflake Id { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this guild is unavailable due to an outage.

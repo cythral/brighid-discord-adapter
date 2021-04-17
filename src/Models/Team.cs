@@ -18,7 +18,7 @@ namespace Brighid.Discord.Models
         /// Gets or sets the unique id of the team.
         /// </summary>
         [JsonPropertyName("id")]
-        public ulong Id { get; set; }
+        public Snowflake Id { get; set; }
 
         /// <summary>
         /// Gets or sets the members of the team.
@@ -30,6 +30,6 @@ namespace Brighid.Discord.Models
         /// Gets or sets the user id of the current team owner.
         /// </summary>
         [JsonPropertyName("owner_user_id")]
-        public ulong OwnerUserId { get; set; }
+        public Snowflake OwnerUserId { get; set; }
     }
 }
