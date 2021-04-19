@@ -114,6 +114,9 @@ Resources:
           Packaging: ZIP
           EncryptionKey: !ImportValue cfn-utilities:ArtifactKeyArn
 
+  SnsTopic:
+    Type: AWS::SNS::Topic
+
   SupersessionQueue:
     Type: AWS::SQS::Queue
     Properties:
