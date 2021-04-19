@@ -8,6 +8,7 @@ using AutoFixture.NUnit3;
 
 using Brighid.Discord.Gateway;
 using Brighid.Discord.Messages;
+using Brighid.Discord.Metrics;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
@@ -142,6 +143,18 @@ namespace Brighid.Discord.Events
                 identifyEvent.Intents.Should().HaveFlag(Intent.Guilds);
                 identifyEvent.Intents.Should().HaveFlag(Intent.GuildMessages);
                 identifyEvent.Intents.Should().HaveFlag(Intent.DirectMessages);
+            }
+
+            [Test, Auto]
+            public async Task ShouldReportHelloEventMetric(
+                [Frozen, Substitute] IMetricReporter reporter,
+                [Target] HelloEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                await controller.Handle(new HelloEvent { }, cancellationToken);
+
+                await reporter.Received().Report(Is(default(HelloEventMetric)), Is(cancellationToken));
             }
         }
     }

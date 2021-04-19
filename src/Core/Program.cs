@@ -24,13 +24,8 @@ namespace Brighid.Discord
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
-
             return Host.CreateDefaultBuilder(args)
-                .UseSerilog()
+                .UseSerilog(dispose: true)
                 .ConfigureServices((context, services) =>
                 {
                     CreateStartup(context.Configuration).ConfigureServices(services);

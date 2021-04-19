@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 
 using Brighid.Discord.Models;
 
+using Destructurama.Attributed;
+
 namespace Brighid.Discord.Events
 {
     /// <summary>
@@ -14,6 +16,7 @@ namespace Brighid.Discord.Events
         /// Gets or sets the authentication token.
         /// </summary>
         [JsonPropertyName("token")]
+        [NotLogged]
         public string Token { get; set; }
 
         /// <summary>

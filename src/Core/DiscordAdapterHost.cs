@@ -15,9 +15,10 @@ namespace Brighid.Discord
     /// <summary>
     /// The application runner.
     /// </summary>
+    [LogCategory(LogCategoryName)]
     public class DiscordAdapterHost : IHost
     {
-        private const string hostName = "Discord Adapter Host";
+        private const string LogCategoryName = "Discord Adapter Host";
         private readonly ILogger<DiscordAdapterHost> logger;
         private IGatewayService? gateway;
 
@@ -37,7 +38,7 @@ namespace Brighid.Discord
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            logger.LogInformation("{@hostName} Starting.", hostName);
+            logger.LogInformation("Starting.");
             await Task.CompletedTask;
 
             Services.GetRequiredService<IMessageEmitter>();
@@ -48,7 +49,7 @@ namespace Brighid.Discord
             var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             gateway.Start(source);
 
-            logger.LogInformation("{@hostName} Started.", hostName);
+            logger.LogInformation("Started.");
 
             // Tests:
             // await gateway.Send(new GatewayMessage { OpCode = GatewayOpCode.Hello }, cancellationToken);
@@ -61,15 +62,16 @@ namespace Brighid.Discord
         /// <inheritdoc />
         public async Task StopAsync(CancellationToken cancellationToken = default)
         {
-            logger.LogInformation("{@hostName} Stopping.", hostName);
-            await Task.CompletedTask;
-
-            if (gateway != null)
+            if (gateway == null)
             {
-                gateway.Stop();
+                logger.LogInformation("Nothing to stop.");
+                return;
             }
 
-            logger.LogInformation("{@hostName} Stopped.", hostName);
+            await Task.CompletedTask;
+            logger.LogInformation("Stopping.");
+            gateway.Stop();
+            logger.LogInformation("Stopped.");
         }
 
         /// <inheritdoc />

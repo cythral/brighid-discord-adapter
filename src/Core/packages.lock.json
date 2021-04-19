@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v5.0": {
+      "AWSSDK.CloudWatch": {
+        "type": "Direct",
+        "requested": "[3.7.1.9, )",
+        "resolved": "3.7.1.9",
+        "contentHash": "ze0Ls+92WqRz4Bf+N3tOna5eUjha+56O6zVHHa19/jvw1hZoTvMQH7weRSjw7LMjgDVdliLsTMGwijn3GWGhNQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
+        }
+      },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
         "requested": "[3.7.0.13, )",
@@ -9,6 +18,15 @@
         "contentHash": "DHBcUHPEFcdGij7r1iKIB2T7ByspdBp501ysbOH7KrUGDDwNIhcM/l8wi3Y0gf9KWTaCwstYh+7mBdPiFgUB9g==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
+        }
+      },
+      "Destructurama.Attributed": {
+        "type": "Direct",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "WKW8UJQMf0fB2CsalGW4wyW+ObNtnnxQtuOd8SoZPIy+sCeL3r3G8bMmGipLitWkr3As5E9i2Bnlokw3EFYRaQ==",
+        "dependencies": {
+          "Serilog": "2.6.0"
         }
       },
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {

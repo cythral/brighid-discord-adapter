@@ -13,6 +13,8 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using static NSubstitute.Arg;
+
 namespace Brighid.Discord.Gateway
 {
     public class DefaultGatewayUtilsFactoryTests
@@ -21,10 +23,12 @@ namespace Brighid.Discord.Gateway
         public void CreateShouldCreateWorkerWithLogger(
             string workerName,
             [Substitute] Func<Task> runAsync,
-            [Frozen, Substitute] ILogger<DefaultGatewayUtilsFactory> logger,
+            [Frozen, Substitute] ILoggerFactory loggerFactory,
+            [Frozen, Substitute] ILogger logger,
             [Target] DefaultGatewayUtilsFactory factory
         )
         {
+            loggerFactory.CreateLogger(Any<string>()).Returns(logger);
             var workerThread = factory.CreateWorkerThread(runAsync, workerName);
             var cancellationToken = new CancellationToken(false);
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -34,6 +38,7 @@ namespace Brighid.Discord.Gateway
             workerThread.Start(cancellationTokenSource);
             workerThread.Stop();
 
+            loggerFactory.Received().CreateLogger(Is(workerName));
             logger.ReceivedWithAnyArgs().Log(LogLevel.Information, null);
         }
 
