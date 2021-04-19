@@ -10,9 +10,10 @@ using Microsoft.Extensions.Logging;
 namespace Brighid.Discord.Gateway
 {
     /// <inheritdoc />
+    [LogCategory(WorkerThreadName)]
     public partial class DefaultGatewayRxWorker : IGatewayRxWorker
     {
-        private const string workerName = "Gateway RX";
+        private const string WorkerThreadName = "Gateway RX";
         private readonly IChannel<GatewayMessageChunk> channel;
         private readonly ISerializer serializer;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
@@ -48,7 +49,7 @@ namespace Brighid.Discord.Gateway
         {
             cancellationToken = cancellationTokenSource.Token;
             this.gateway = gateway;
-            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, workerName);
+            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
             workerThread.Start(cancellationTokenSource);
         }
 
@@ -99,12 +100,10 @@ namespace Brighid.Discord.Gateway
 
                     if (message.Data != null)
                     {
-#pragma warning disable CS4014 // We want to continue processing messages while the controller runs
-                        eventRouter.Route(message.Data, cancellationToken);
-#pragma warning restore CS4014
+                        _ = eventRouter.Route(message.Data, cancellationToken);
                     }
 
-                    logger.LogInformation("{@workerName} Received message: {@message}", workerName, message);
+                    logger.LogInformation("Received message: {@message}", message);
                     stream.SetLength(0);
                 }
             }

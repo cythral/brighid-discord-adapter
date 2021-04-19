@@ -11,9 +11,10 @@ using Microsoft.Extensions.Options;
 namespace Brighid.Discord.Gateway
 {
     /// <inheritdoc />
+    [LogCategory(WorkerThreadName)]
     public class DefaultGatewayService : IGatewayService
     {
-        private const string workerThreadName = "Gateway Master";
+        private const string WorkerThreadName = "Gateway Master";
         private readonly GatewayOptions options;
         private readonly IGatewayRxWorker rxWorker;
         private readonly IGatewayTxWorker txWorker;
@@ -23,7 +24,6 @@ namespace Brighid.Discord.Gateway
         private readonly Memory<byte> memoryBuffer;
         private IClientWebSocket? webSocket;
         private CancellationToken cancellationToken = new(true);
-        private Task? heartbeatTask;
         private CancellationTokenSource? heartbeatCancellationTokenSource;
         private IWorkerThread? workerThread;
 
@@ -59,7 +59,7 @@ namespace Brighid.Discord.Gateway
         public void Start(CancellationTokenSource cancellationTokenSource)
         {
             cancellationToken = cancellationTokenSource.Token;
-            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, workerThreadName);
+            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
             rxWorker.Start(this, cancellationTokenSource);
             txWorker.Start(webSocket, cancellationTokenSource);
@@ -89,16 +89,16 @@ namespace Brighid.Discord.Gateway
         /// <inheritdoc />
         public void StartHeartbeat(uint heartbeatInterval)
         {
-            logger.LogInformation("{@workerName} Starting Heartbeat. Interval: {@heartbeatInterval}", workerThreadName, heartbeatInterval);
+            logger.LogInformation("Starting Heartbeat. Interval: {@heartbeatInterval}", heartbeatInterval);
             cancellationToken.ThrowIfCancellationRequested();
             heartbeatCancellationTokenSource = new CancellationTokenSource();
-            heartbeatTask = Heartbeat(heartbeatInterval, heartbeatCancellationTokenSource.Token);
+            _ = Heartbeat(heartbeatInterval, heartbeatCancellationTokenSource.Token);
         }
 
         /// <inheritdoc />
         public void StopHeartbeat()
         {
-            logger.LogInformation("{@workerName} Stopping Heartbeat. Last Sequence: {@sequenceNumber}", workerThreadName, SequenceNumber);
+            logger.LogInformation("Stopping Heartbeat. Last Sequence: {@sequenceNumber}", SequenceNumber);
             heartbeatCancellationTokenSource?.Cancel();
         }
 

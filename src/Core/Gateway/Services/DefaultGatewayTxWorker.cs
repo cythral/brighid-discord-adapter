@@ -10,9 +10,10 @@ using Microsoft.Extensions.Logging;
 namespace Brighid.Discord.Gateway
 {
     /// <inheritdoc />
+    [LogCategory(WorkerThreadName)]
     public partial class DefaultGatewayTxWorker : IGatewayTxWorker
     {
-        private const string workerName = "Gateway TX";
+        private const string WorkerThreadName = "Gateway TX";
         private readonly IChannel<GatewayMessage> channel;
         private readonly ISerializer serializer;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
@@ -44,7 +45,7 @@ namespace Brighid.Discord.Gateway
         {
             cancellationToken = cancellationTokenSource.Token;
             this.webSocket = webSocket;
-            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, workerName);
+            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
             workerThread.Start(cancellationTokenSource);
         }
 
@@ -62,7 +63,6 @@ namespace Brighid.Discord.Gateway
             cancellationToken.ThrowIfCancellationRequested();
             await channel.Write(message, cancellationToken);
         }
-#pragma warning disable SA1515, SA1512
 
         /// <summary>
         /// Runs the Gateway TX Worker.
@@ -85,7 +85,7 @@ namespace Brighid.Discord.Gateway
                 var message = await channel.Read(cancellationToken);
                 var serializedMessage = await serializer.SerializeToBytes(message, cancellationToken);
 
-                logger.LogInformation("{@workerName} Sending Message: {@message}", workerName, message);
+                logger.LogInformation("Sending Message: {@message}", message);
                 await webSocket!.Send(serializedMessage, WebSocketMessageType.Text, true, cancellationToken);
             }
         }

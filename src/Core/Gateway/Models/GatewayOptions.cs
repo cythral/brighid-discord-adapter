@@ -1,5 +1,7 @@
 using System;
 
+using Destructurama.Attributed;
+
 namespace Brighid.Discord.Gateway
 {
     /// <summary>
@@ -20,6 +22,7 @@ namespace Brighid.Discord.Gateway
         /// <summary>
         /// Gets or sets the gateway's token.
         /// </summary>
+        [NotLogged]
         public string Token { get; set; } = string.Empty;
 
         /// <summary>

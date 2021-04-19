@@ -101,6 +101,14 @@
           "System.ComponentModel.Annotations": "4.3.0"
         }
       },
+      "AWSSDK.CloudWatch": {
+        "type": "Transitive",
+        "resolved": "3.7.1.9",
+        "contentHash": "ze0Ls+92WqRz4Bf+N3tOna5eUjha+56O6zVHHa19/jvw1hZoTvMQH7weRSjw7LMjgDVdliLsTMGwijn3GWGhNQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
+        }
+      },
       "AWSSDK.Core": {
         "type": "Transitive",
         "resolved": "3.7.0.13",
@@ -129,6 +137,14 @@
           "System.Reflection.Emit": "4.3.0",
           "System.Reflection.TypeExtensions": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
+        }
+      },
+      "Destructurama.Attributed": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "WKW8UJQMf0fB2CsalGW4wyW+ObNtnnxQtuOd8SoZPIy+sCeL3r3G8bMmGipLitWkr3As5E9i2Bnlokw3EFYRaQ==",
+        "dependencies": {
+          "Serilog": "2.6.0"
         }
       },
       "Fare": {
@@ -1561,8 +1577,10 @@
       "core": {
         "type": "Project",
         "dependencies": {
+          "AWSSDK.CloudWatch": "3.7.1.9",
           "AWSSDK.SimpleNotificationService": "3.7.0.13",
           "Brighid.Discord.Common": "1.0.0",
+          "Destructurama.Attributed": "2.0.0",
           "Generators": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Logging": "5.0.0",

@@ -10,15 +10,15 @@ namespace Brighid.Discord.Gateway
     /// <inheritdoc />
     public class DefaultGatewayUtilsFactory : IGatewayUtilsFactory
     {
-        private readonly ILogger<DefaultGatewayUtilsFactory> logger;
+        private readonly ILoggerFactory loggerFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayUtilsFactory" /> class.
         /// </summary>
-        /// <param name="logger">Logger used to log information to some destination(s).</param>
-        public DefaultGatewayUtilsFactory(ILogger<DefaultGatewayUtilsFactory> logger)
+        /// <param name="loggerFactory">Logger factory for creating logger objects.</param>
+        public DefaultGatewayUtilsFactory(ILoggerFactory loggerFactory)
         {
-            this.logger = logger;
+            this.loggerFactory = loggerFactory;
         }
 
         /// <inheritdoc />
@@ -30,6 +30,7 @@ namespace Brighid.Discord.Gateway
         /// <inheritdoc />
         public IWorkerThread CreateWorkerThread(Func<Task> runAsync, string workerName)
         {
+            var logger = loggerFactory.CreateLogger(workerName);
             return new WorkerThread(runAsync, workerName, logger);
         }
 

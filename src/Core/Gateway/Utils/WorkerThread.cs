@@ -18,7 +18,7 @@ namespace Brighid.Discord.Gateway
         /// Initializes a new instance of the <see cref="WorkerThread" /> class.
         /// </summary>
         /// <param name="runAsync">The async function to run on its own thread.</param>
-        /// <param name="workerName">Name of the worker.</param>
+        /// <param name="workerName">The name of the worker thread.</param>
         /// <param name="logger">Logger used to log information to a destination.</param>
         public WorkerThread(Func<Task> runAsync, string workerName, ILogger logger)
         {
@@ -33,7 +33,7 @@ namespace Brighid.Discord.Gateway
         /// <inheritdoc />
         public void Start(CancellationTokenSource cancellationTokenSource)
         {
-            logger.LogInformation("{@workerName} Starting Worker Thread.", Name);
+            logger.LogInformation("Starting Worker Thread.");
             this.cancellationTokenSource = cancellationTokenSource;
             thread = new Thread(Run);
             thread.Start();
@@ -42,7 +42,7 @@ namespace Brighid.Discord.Gateway
         /// <inheritdoc />
         public void Stop()
         {
-            logger.LogInformation("{@workerName} Stopping Worker Thread.", Name);
+            logger.LogInformation("Stopping Worker Thread.");
             if (thread == null)
             {
                 return;
@@ -58,20 +58,20 @@ namespace Brighid.Discord.Gateway
             thread = null;
         }
 
-        private void Run()
+        private async void Run()
         {
             try
             {
-                logger.LogInformation("{@workerName} Worker Thread Started.", Name);
-                runAsync().GetAwaiter().GetResult();
+                logger.LogInformation("Worker Thread Started.");
+                await runAsync();
             }
             catch (OperationCanceledException)
             {
-                logger.LogInformation("{@workerName} Worker Thread Stopped Gracefully.", Name);
+                logger.LogInformation("Worker Thread Stopped Gracefully.");
             }
             catch (Exception exception)
             {
-                logger.LogError("{@workerName} Raised exception {@exception}", Name, exception);
+                logger.LogError("Raised exception {@exception}", exception);
             }
         }
     }

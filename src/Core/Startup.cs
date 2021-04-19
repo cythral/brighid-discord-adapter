@@ -1,7 +1,13 @@
+using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
+
+using Destructurama;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using Serilog;
 
 namespace Brighid.Discord
 {
@@ -17,17 +23,30 @@ namespace Brighid.Discord
         public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .Destructure.UsingAttributes()
+                .Enrich.FromLogContext()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}")
+                .CreateLogger();
         }
 
         /// <inheritdoc />
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
-
+            ConfigureAwsServices(services);
+            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             services.ConfigureSerializationServices();
             services.ConfigureEventsServices();
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
+            services.ConfigureMetricServices(configuration);
+        }
+
+        private static void ConfigureAwsServices(IServiceCollection services)
+        {
+            services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
+            services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
         }
     }
 }
