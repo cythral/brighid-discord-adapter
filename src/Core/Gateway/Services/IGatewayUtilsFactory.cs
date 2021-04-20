@@ -44,5 +44,14 @@ namespace Brighid.Discord.Gateway
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
         Task CreateDelay(uint millisecondsDelay, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Creates a task that completes after a delay between <paramref name="minimum" /> milliseconds and <paramref name="maximum" /> milliseconds.
+        /// </summary>
+        /// <param name="minimum">Minimum milliseconds to delay for.</param>
+        /// <param name="maximum">Maximum milliseconds to delay for.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        Task CreateRandomDelay(uint minimum, uint maximum, CancellationToken cancellationToken);
     }
 }

@@ -11,7 +11,7 @@ phases:
   install:
     runtime-versions:
       docker: 19
-    
+
     commands:
       - dotnet-install.sh --jsonfile global.json
       - dotnet --info
@@ -19,14 +19,22 @@ phases:
   pre_build:
     commands:
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - ./scripts/codebuild-extras.sh
+      - . ./scripts/codebuild-extras.sh
 
   build:
     commands:
+      - IMAGE=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - dotnet restore
       - dotnet publish --no-restore
       - dotnet test --logger trx --no-build
-      - ./scripts/ci-docker-build.sh $REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
+      - ./scripts/create-config-files.sh $IMAGE
+      - ./scripts/ci-docker-build.sh $IMAGE
+
+artifacts:
+  discard-paths: yes
+  files:
+    - "deploy/brighid-discord-adapter.template.yml"
+    - "brighid-discord-adapter.*.config.json"
 
 reports:
   test-results:

@@ -13,9 +13,10 @@ namespace Brighid.Discord.Gateway
         /// <summary>
         /// Start the worker.
         /// </summary>
+        /// <param name="gateway">The gateway service to use.</param>
         /// <param name="webSocket">The webSocket to send messages to.</param>
         /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
-        void Start(IClientWebSocket webSocket, CancellationTokenSource cancellationTokenSource);
+        void Start(IGatewayService gateway, IClientWebSocket webSocket, CancellationTokenSource cancellationTokenSource);
 
         /// <summary>
         /// Stop the gateway worker.

@@ -16,6 +16,16 @@ namespace Brighid.Discord.Gateway
         int? SequenceNumber { get; set; }
 
         /// <summary>
+        /// Gets or sets the session id.
+        /// </summary>
+        string? SessionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the initial handshake with discord is complete.
+        /// </summary>
+        bool IsReady { get; set; }
+
+        /// <summary>
         /// Start the gateway service.
         /// </summary>
         /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
@@ -25,6 +35,14 @@ namespace Brighid.Discord.Gateway
         /// Stop the gateway service.
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Restarts the gateway service.
+        /// </summary>
+        /// <param name="resume">Whether or not to resume after reconnecting.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        Task Restart(bool resume = true, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to the gateway.

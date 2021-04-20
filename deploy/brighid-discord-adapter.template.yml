@@ -1,0 +1,126 @@
+Description: Brighid Discord to SNS Adapter
+Parameters:
+  Image:
+    Type: String
+    Description: URI of the Docker Image to pull.
+
+  GatewayUri:
+    Type: String
+    Description: URI of the Discord WebSocket Gateway.
+
+  GatewayToken:
+    Type: String
+    Description: Token to use for authenticating against the Discord gateway.
+
+  MetricsNamespace:
+    Type: String
+    Description: Namespace to publish metrics under.
+
+  MessageTopicArn:
+    Type: String
+    Description: ARN of the SNS Topic to publish messages to.
+
+  EnableServiceStopping:
+    Type: String
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether or not to enable service stopping on the cluster
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref AWS::StackName
+      Tags:
+        - Key: ENABLE_SERVICE_STOPPING
+          Value: !Ref EnableServiceStopping
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: !Split
+            - ","
+            - !ImportValue cfn-utilities:SubnetIds
+          SecurityGroups:
+            - !ImportValue cfn-utilities:WebSecurityGroupId
+          AssignPublicIp: ENABLED
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 1
+        MaximumPercent: 200
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: "256"
+      Memory: "512"
+      Family: !Ref AWS::StackName
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt TaskRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+        - Name: discord-adapter
+          Essential: true
+          Image: !Ref Image
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: brighid
+          Environment:
+            - Name: Encrypted__Gateway__Token
+              Value: !Ref GatewayToken
+            - Name: Gateway__Uri
+              Value: !Ref GatewayUri
+            - Name: Metrics__Namespace
+              Value: !Ref MetricsNamespace
+            - Name: Sns__TopicArn
+              Value: !Ref MessageTopicArn
+
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+
+  TaskPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Roles:
+        - !Ref TaskRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: !Ref MessageTopicArn
+
+          - Effect: Allow
+            Action: cloudwatch:PutMetricData
+            Resource: "*"
+            Condition:
+              StringEquals:
+                cloudwatch:namespace: !Ref MetricsNamespace
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14

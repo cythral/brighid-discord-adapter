@@ -25,6 +25,7 @@ namespace Brighid.Discord
             services.AddSingleton<IGatewayTxWorker, DefaultGatewayTxWorker>();
             services.AddSingleton<IGatewayService, DefaultGatewayService>();
             services.AddSingleton<IGatewayUtilsFactory, DefaultGatewayUtilsFactory>();
+            services.AddSingleton<IGatewayRestartService, DefaultGatewayRestartService>();
             services.AddTransient(provider => new MemoryStream());
         }
     }

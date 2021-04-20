@@ -114,8 +114,39 @@ Resources:
           Packaging: ZIP
           EncryptionKey: !ImportValue cfn-utilities:ArtifactKeyArn
 
-  SnsTopic:
+  DevMessageTopic:
     Type: AWS::SNS::Topic
+
+  DevMessageTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref DevMessageTopic
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: "*"
+            Principal:
+              AWS: !ImportValue cfn-metadata:DevAccountId
+
+  ProdMessageTopic:
+    Type: AWS::SNS::Topic
+
+  ProdMessageTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref ProdMessageTopic
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: "*"
+            Principal:
+              AWS: !ImportValue cfn-metadata:ProdAccountId
 
   SupersessionQueue:
     Type: AWS::SQS::Queue
@@ -165,6 +196,8 @@ Resources:
         ApprovalNotificationFunction: !ImportValue cfn-core:ApprovalNotificationFunctionArn
         FileFromZipArn: !ImportValue cfn-core:ExtractFileFromZipFunctionArn
         AccountId: !Ref AWS::AccountId
+        DevMessageTopicArn: !Ref DevMessageTopic
+        ProdMessageTopicArn: !Ref ProdMessageTopic
     Metadata:
       cfn-lint:
         config:

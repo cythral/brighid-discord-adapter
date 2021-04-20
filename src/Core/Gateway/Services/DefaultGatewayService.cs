@@ -18,6 +18,7 @@ namespace Brighid.Discord.Gateway
         private readonly GatewayOptions options;
         private readonly IGatewayRxWorker rxWorker;
         private readonly IGatewayTxWorker txWorker;
+        private readonly IGatewayRestartService restartService;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
         private readonly ILogger<DefaultGatewayService> logger;
         private readonly byte[] buffer;
@@ -32,12 +33,14 @@ namespace Brighid.Discord.Gateway
         /// </summary>
         /// <param name="rxWorker">The worker to use for receiving message chunks and parsing messages.</param>
         /// <param name="txWorker">The worker to use for sending messages to the gateway.</param>
+        /// <param name="restartService">Service used to restart the gateway.</param>
         /// <param name="gatewayUtilsFactory">Factory to create various utils with.</param>
         /// <param name="options">Options to use for interacting with the gateway.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public DefaultGatewayService(
             IGatewayRxWorker rxWorker,
             IGatewayTxWorker txWorker,
+            IGatewayRestartService restartService,
             IGatewayUtilsFactory gatewayUtilsFactory,
             IOptions<GatewayOptions> options,
             ILogger<DefaultGatewayService> logger
@@ -45,6 +48,7 @@ namespace Brighid.Discord.Gateway
         {
             this.rxWorker = rxWorker;
             this.txWorker = txWorker;
+            this.restartService = restartService;
             this.gatewayUtilsFactory = gatewayUtilsFactory;
             this.options = options.Value;
             this.logger = logger;
@@ -56,13 +60,22 @@ namespace Brighid.Discord.Gateway
         public int? SequenceNumber { get; set; }
 
         /// <inheritdoc />
+        public string? SessionId { get; set; }
+
+        /// <inheritdoc />
+        public bool IsReady { get; set; }
+
+        /// <inheritdoc />
         public void Start(CancellationTokenSource cancellationTokenSource)
         {
             cancellationToken = cancellationTokenSource.Token;
             workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
+
             rxWorker.Start(this, cancellationTokenSource);
-            txWorker.Start(webSocket, cancellationTokenSource);
+            txWorker.Start(this, webSocket, cancellationTokenSource);
+
+            workerThread.OnUnexpectedStop = () => Restart();
             workerThread.Start(cancellationTokenSource);
         }
 
@@ -76,6 +89,13 @@ namespace Brighid.Discord.Gateway
             webSocket?.Abort();
             webSocket = null;
             workerThread = null;
+            IsReady = false;
+        }
+
+        /// <inheritdoc />
+        public async Task Restart(bool resume = true, CancellationToken cancellationToken = default)
+        {
+            await restartService.Restart(this, resume, cancellationToken);
         }
 
         /// <inheritdoc />

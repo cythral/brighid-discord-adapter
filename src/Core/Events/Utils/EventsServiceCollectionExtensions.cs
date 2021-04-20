@@ -17,7 +17,11 @@ namespace Brighid.Discord
         {
             services.AddSingleton<IEventRouter, GeneratedEventRouter>();
             services.AddSingleton<HelloEventController>();
+            services.AddSingleton<InvalidSessionEventController>();
             services.AddSingleton<MessageCreateEventController>();
+            services.AddSingleton<ReadyEventController>();
+            services.AddSingleton<ReconnectEventController>();
+            services.AddSingleton<ResumedEventController>();
         }
     }
 }

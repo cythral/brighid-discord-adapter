@@ -20,12 +20,19 @@ namespace Brighid.Discord.Gateway
         /// <param name="runAsync">The async function to run on its own thread.</param>
         /// <param name="workerName">The name of the worker thread.</param>
         /// <param name="logger">Logger used to log information to a destination.</param>
-        public WorkerThread(Func<Task> runAsync, string workerName, ILogger logger)
+        public WorkerThread(
+            Func<Task> runAsync,
+            string workerName,
+            ILogger logger
+        )
         {
             this.runAsync = runAsync;
             this.logger = logger;
             Name = workerName;
         }
+
+        /// <inheritdoc />
+        public OnUnexpectedStop? OnUnexpectedStop { get; set; }
 
         /// <inheritdoc />
         public string Name { get; }
@@ -64,6 +71,7 @@ namespace Brighid.Discord.Gateway
             {
                 logger.LogInformation("Worker Thread Started.");
                 await runAsync();
+                throw new OperationCanceledException();
             }
             catch (OperationCanceledException)
             {
@@ -72,6 +80,11 @@ namespace Brighid.Discord.Gateway
             catch (Exception exception)
             {
                 logger.LogError("Raised exception {@exception}", exception);
+
+                if (OnUnexpectedStop != null)
+                {
+                    await OnUnexpectedStop();
+                }
             }
         }
     }
