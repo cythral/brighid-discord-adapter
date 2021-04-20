@@ -11,7 +11,7 @@ phases:
   install:
     runtime-versions:
       docker: 19
-    
+
     commands:
       - dotnet-install.sh --jsonfile global.json
       - dotnet --info
@@ -26,7 +26,14 @@ phases:
       - dotnet restore
       - dotnet publish --no-restore
       - dotnet test --logger trx --no-build
+      - ./scripts/create-config-files.sh
       - ./scripts/ci-docker-build.sh $REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
+
+artifacts:
+  discard-paths: yes
+  files:
+    - "deploy/brighid-discord-adapter.template.yml"
+    - "brighid-discord-adapter.*.config.json"
 
 reports:
   test-results:

@@ -1,0 +1,6 @@
+{
+    "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
+    "GatewayToken": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQErKyn5bs+TG8DEmywk8XRsAAAAiTCBhgYJKoZIhvcNAQcGoHkwdwIBADByBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDP0tn6Qn+9RWOPv9PAIBEIBFFIpQNZPiMPdBbvk8HMoPwE+ZzAU5kQms3MdeJ1narGn/FsIbE7UgaXD5QBmKy5sAlE+jI/WhAuW6L3SLWDpWDsOJcLhS",
+    "MetricsNamespace": "BrighidDiscordAdapter",
+    "EnableServiceStopping": "false"
+}
