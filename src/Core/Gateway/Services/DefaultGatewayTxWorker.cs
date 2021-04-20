@@ -41,11 +41,12 @@ namespace Brighid.Discord.Gateway
         }
 
         /// <inheritdoc />
-        public void Start(IClientWebSocket webSocket, CancellationTokenSource cancellationTokenSource)
+        public void Start(IGatewayService gateway, IClientWebSocket webSocket, CancellationTokenSource cancellationTokenSource)
         {
             cancellationToken = cancellationTokenSource.Token;
             this.webSocket = webSocket;
             workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
+            workerThread.OnUnexpectedStop = () => gateway.Restart();
             workerThread.Start(cancellationTokenSource);
         }
 

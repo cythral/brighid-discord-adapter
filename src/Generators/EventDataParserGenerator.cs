@@ -94,7 +94,7 @@ namespace Brighid.Discord.Generators
                                   let subpatterns = SeparatedList(new SubpatternSyntax[] { codePattern, namePattern })
                                   let positionalPattern = PositionalPatternClause(subpatterns)
                                   let recursivePattern = RecursivePattern(ParseTypeName("GatewayMessageWithoutData"), positionalPattern, null, null)
-                                  select SwitchExpressionArm(recursivePattern, ParseExpression($"message.WithData(JsonSerializer.Deserialize<{ev.Node.Identifier.Value}>(data.GetRawText(), options))"))).ToList();
+                                  select SwitchExpressionArm(recursivePattern, ParseExpression($"message.WithData(JsonSerializer.Deserialize<{ev.Node.Identifier.Value}>(text, options))"))).ToList();
 
                 var discardPattern = SwitchExpressionArm(DiscardPattern(), ParseExpression("message.WithData(null)"));
                 switchArms.Add(discardPattern);
@@ -102,6 +102,7 @@ namespace Brighid.Discord.Generators
                 var switchExpression = SwitchExpression(IdentifierName(identifier), Token(SwitchKeyword), Token(OpenBraceToken), SeparatedList(switchArms), Token(CloseBraceToken));
 
                 yield return ParseStatement("message.ExtensionData.TryGetValue(\"d\", out var data);");
+                yield return ParseStatement("var text = (data.ValueKind == JsonValueKind.Undefined) ? \"{}\" : data.GetRawText();");
                 yield return ReturnStatement(switchExpression);
             }
 

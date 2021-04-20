@@ -38,11 +38,11 @@ namespace Brighid.Discord.Events
         /// <inheritdoc />
         public async Task Handle(MessageCreateEvent @event, CancellationToken cancellationToken)
         {
+            using var scope = logger.BeginScope("{@Event}", nameof(MessageCreateEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var scope = logger.BeginScope("{@Event}", nameof(MessageCreateEvent));
+            _ = reporter.Report(default(MessageCreateEventMetric), cancellationToken);
             await emitter.Emit(@event.Message, cancellationToken);
-            await reporter.Report(default(MessageCreateEventMetric), cancellationToken);
         }
     }
 }

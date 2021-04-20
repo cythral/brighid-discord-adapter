@@ -48,24 +48,43 @@ namespace Brighid.Discord.Events
         {
             using var scope = logger.BeginScope("{@Event}", nameof(HelloEvent));
             cancellationToken.ThrowIfCancellationRequested();
+
+            _ = reporter.Report(default(HelloEventMetric), cancellationToken);
             gateway.StartHeartbeat(@event.HeartbeatInterval);
 
-            var message = new GatewayMessage { OpCode = GatewayOpCode.Identify, Data = CreateIdentifyEvent() };
+            var message = gateway.SessionId == null || gateway.SequenceNumber == null ? CreateIdentifyMessage() : CreateResumeMessage();
             await gateway.Send(message, cancellationToken);
-            await reporter.Report(default(HelloEventMetric), cancellationToken);
         }
 
-        private IdentifyEvent CreateIdentifyEvent()
+        private GatewayMessage CreateIdentifyMessage()
         {
-            return new IdentifyEvent
+            return new GatewayMessage
             {
-                Token = options.Token,
-                Intents = Intent.Guilds | Intent.GuildMessages | Intent.DirectMessages,
-                ConnectionProperties = new()
+                OpCode = GatewayOpCode.Identify,
+                Data = new IdentifyEvent
                 {
-                    OperatingSystem = Environment.OSVersion.Platform.ToString(),
-                    Browser = options.LibraryName,
-                    Device = options.LibraryName,
+                    Token = options.Token,
+                    Intents = Intent.Guilds | Intent.GuildMessages | Intent.DirectMessages,
+                    ConnectionProperties = new()
+                    {
+                        OperatingSystem = Environment.OSVersion.Platform.ToString(),
+                        Browser = options.LibraryName,
+                        Device = options.LibraryName,
+                    },
+                },
+            };
+        }
+
+        private GatewayMessage CreateResumeMessage()
+        {
+            return new GatewayMessage
+            {
+                OpCode = GatewayOpCode.Resume,
+                Data = new ResumeEvent
+                {
+                    Token = options.Token,
+                    SessionId = gateway.SessionId!,
+                    SequenceNumber = gateway.SequenceNumber,
                 },
             };
         }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,6 +53,26 @@ namespace Brighid.Discord.Gateway
                 rxWorker.Start(gateway, source);
 
                 workerThread.Received().Start(Is(source));
+            }
+
+            [Test, Auto]
+            public async Task StartShouldSetupGatewayToRestartOnUnexpectedStops(
+                [Frozen, Substitute] IWorkerThread workerThread,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                worker.Start(gateway, source);
+
+                workerThread.Received().OnUnexpectedStop = Any<OnUnexpectedStop>();
+                var arg = (from call in workerThread.ReceivedCalls()
+                           where call.GetMethodInfo().Name.Contains(nameof(workerThread.OnUnexpectedStop))
+                           select (OnUnexpectedStop)call.GetArguments()[0]).First();
+
+                await arg();
+                await gateway.Received().Restart();
             }
         }
 
