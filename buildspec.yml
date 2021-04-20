@@ -23,11 +23,12 @@ phases:
 
   build:
     commands:
+      - IMAGE=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - dotnet restore
       - dotnet publish --no-restore
       - dotnet test --logger trx --no-build
-      - ./scripts/create-config-files.sh
-      - ./scripts/ci-docker-build.sh $REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
+      - ./scripts/create-config-files.sh $IMAGE
+      - ./scripts/ci-docker-build.sh $IMAGE
 
 artifacts:
   discard-paths: yes
