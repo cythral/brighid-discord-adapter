@@ -50,6 +50,7 @@ namespace Brighid.Discord.Gateway
             cancellationToken = cancellationTokenSource.Token;
             this.gateway = gateway;
             workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
+            workerThread.OnUnexpectedStop = () => gateway.Restart();
             workerThread.Start(cancellationTokenSource);
         }
 

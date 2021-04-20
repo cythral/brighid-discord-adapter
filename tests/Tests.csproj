@@ -17,6 +17,5 @@
 
     <ItemGroup>
         <ProjectReference Include="../src/Core/Core.csproj" />
-        <ProjectReference Include="../src/Common/Common.csproj" />
     </ItemGroup>
 </Project>

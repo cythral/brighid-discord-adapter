@@ -60,101 +60,336 @@ namespace Brighid.Discord.Events
             }
 
             [Test, Auto]
-            public async Task ShouldSendIdentifyOpCode(
-                string token,
-                [Frozen, Options] IOptions<GatewayOptions> options,
-                [Frozen, Substitute] IGatewayService gateway,
-                [Target] HelloEventController controller
-            )
-            {
-                options.Value.Token = token;
-                var cancellationToken = new CancellationToken(false);
-                var @event = new HelloEvent { };
-                await controller.Handle(@event, cancellationToken);
-
-                await gateway.ReceivedWithAnyArgs().Send(default, default);
-
-                var message = (GatewayMessage)gateway.ReceivedCalls().ElementAt(1).GetArguments()[0];
-                message.OpCode.Should().Be(GatewayOpCode.Identify);
-            }
-
-            [Test, Auto]
-            public async Task ShouldSendIdentifyWithToken(
-                string token,
-                [Frozen, Options] IOptions<GatewayOptions> options,
-                [Frozen, Substitute] IGatewayService gateway,
-                [Target] HelloEventController controller
-            )
-            {
-                options.Value.Token = token;
-                var cancellationToken = new CancellationToken(false);
-                var @event = new HelloEvent { };
-                await controller.Handle(@event, cancellationToken);
-
-                await gateway.ReceivedWithAnyArgs().Send(default, default);
-
-                var message = (GatewayMessage)gateway.ReceivedCalls().ElementAt(1).GetArguments()[0];
-                var identifyEvent = (IdentifyEvent)message.Data!;
-
-                identifyEvent.Token.Should().Be(options.Value.Token);
-            }
-
-            [Test, Auto]
-            public async Task ShouldSendIdentifyWithConnectionProperties(
-                string libraryName,
-                [Frozen, Options] IOptions<GatewayOptions> options,
-                [Frozen, Substitute] IGatewayService gateway,
-                [Target] HelloEventController controller
-            )
-            {
-                options.Value.LibraryName = libraryName;
-                var cancellationToken = new CancellationToken(false);
-                var @event = new HelloEvent { };
-                await controller.Handle(@event, cancellationToken);
-
-                await gateway.ReceivedWithAnyArgs().Send(default, default);
-
-                var message = (GatewayMessage)gateway.ReceivedCalls().ElementAt(1).GetArguments()[0];
-                var identifyEvent = (IdentifyEvent)message.Data!;
-
-                identifyEvent.ConnectionProperties.OperatingSystem.Should().Be(Environment.OSVersion.Platform.ToString());
-                identifyEvent.ConnectionProperties.Browser.Should().Be(libraryName);
-                identifyEvent.ConnectionProperties.Device.Should().Be(libraryName);
-            }
-
-            [Test, Auto]
-            public async Task ShouldSendIdentifyWithIntents(
-                string libraryName,
-                [Frozen, Options] IOptions<GatewayOptions> options,
-                [Frozen, Substitute] IGatewayService gateway,
-                [Target] HelloEventController controller
-            )
-            {
-                options.Value.LibraryName = libraryName;
-                var cancellationToken = new CancellationToken(false);
-                var @event = new HelloEvent { };
-                await controller.Handle(@event, cancellationToken);
-
-                await gateway.ReceivedWithAnyArgs().Send(default, default);
-
-                var message = (GatewayMessage)gateway.ReceivedCalls().ElementAt(1).GetArguments()[0];
-                var identifyEvent = (IdentifyEvent)message.Data!;
-
-                identifyEvent.Intents.Should().HaveFlag(Intent.Guilds);
-                identifyEvent.Intents.Should().HaveFlag(Intent.GuildMessages);
-                identifyEvent.Intents.Should().HaveFlag(Intent.DirectMessages);
-            }
-
-            [Test, Auto]
             public async Task ShouldReportHelloEventMetric(
-                [Frozen, Substitute] IMetricReporter reporter,
-                [Target] HelloEventController controller
-            )
+                    [Frozen, Substitute] IMetricReporter reporter,
+                    [Target] HelloEventController controller
+                )
             {
                 var cancellationToken = new CancellationToken(false);
                 await controller.Handle(new HelloEvent { }, cancellationToken);
 
                 await reporter.Received().Report(Is(default(HelloEventMetric)), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldResumeIfBothSessionIdAndSequenceNumberAreNotNull(
+                string sessionId,
+                int sequenceNumber,
+                [Frozen, Options] IOptions<GatewayOptions> options,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
+            )
+            {
+                gateway.SessionId = sessionId;
+                gateway.SequenceNumber = sequenceNumber;
+
+                var cancellationToken = new CancellationToken(false);
+                var @event = new HelloEvent { };
+                await controller.Handle(@event, cancellationToken);
+
+                await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                var message = (from call in gateway.ReceivedCalls()
+                               where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                               select (GatewayMessage)call.GetArguments()[0]).First();
+
+                message.Data.Should().BeOfType<ResumeEvent>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldIdentifyIfSessionIdIsNullButSequenceNumberIsNot(
+                int sequenceNumber,
+                [Frozen, Options] IOptions<GatewayOptions> options,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
+            )
+            {
+                gateway.SessionId = null;
+                gateway.SequenceNumber = sequenceNumber;
+
+                var cancellationToken = new CancellationToken(false);
+                var @event = new HelloEvent { };
+                await controller.Handle(@event, cancellationToken);
+
+                await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                var message = (from call in gateway.ReceivedCalls()
+                               where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                               select (GatewayMessage)call.GetArguments()[0]).First();
+
+                message.Data.Should().BeOfType<IdentifyEvent>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldIdentifyIfSequenceNumberIsNullButSessionIdIsNot(
+                string sessionId,
+                [Frozen, Options] IOptions<GatewayOptions> options,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
+            )
+            {
+                gateway.SessionId = sessionId;
+                gateway.SequenceNumber = null;
+
+                var cancellationToken = new CancellationToken(false);
+                var @event = new HelloEvent { };
+                await controller.Handle(@event, cancellationToken);
+
+                await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                var message = (from call in gateway.ReceivedCalls()
+                               where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                               select (GatewayMessage)call.GetArguments()[0]).First();
+
+                message.Data.Should().BeOfType<IdentifyEvent>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldIdentifyIfBothSequenceNumberAndSessionIdAreNull(
+                [Frozen, Options] IOptions<GatewayOptions> options,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] HelloEventController controller
+            )
+            {
+                gateway.SessionId = null;
+                gateway.SequenceNumber = null;
+
+                var cancellationToken = new CancellationToken(false);
+                var @event = new HelloEvent { };
+                await controller.Handle(@event, cancellationToken);
+
+                await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                var message = (from call in gateway.ReceivedCalls()
+                               where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                               select (GatewayMessage)call.GetArguments()[0]).First();
+
+                message.Data.Should().BeOfType<IdentifyEvent>();
+            }
+
+            [TestFixture]
+            public class ResumeFlow
+            {
+                [Test, Auto]
+                public async Task ShouldSendResumeOpCode(
+                    string token,
+                    string sessionId,
+                    int sequenceNumber,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = sessionId;
+                    gateway.SequenceNumber = sequenceNumber;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    message.OpCode.Should().Be(GatewayOpCode.Resume);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendResumeWithToken(
+                    string token,
+                    string sessionId,
+                    int sequenceNumber,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = sessionId;
+                    gateway.SequenceNumber = sequenceNumber;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var resumeEvent = (ResumeEvent)message.Data!;
+                    resumeEvent.Token.Should().Be(token);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendResumeWithGatewaySessionId(
+                    string token,
+                    string sessionId,
+                    int sequenceNumber,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = sessionId;
+                    gateway.SequenceNumber = sequenceNumber;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var resumeEvent = (ResumeEvent)message.Data!;
+                    resumeEvent.SessionId.Should().Be(sessionId);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendResumeWithGatewaySequenceNumber(
+                    string token,
+                    string sessionId,
+                    int sequenceNumber,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = sessionId;
+                    gateway.SequenceNumber = sequenceNumber;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var resumeEvent = (ResumeEvent)message.Data!;
+                    resumeEvent.SequenceNumber.Should().Be(sequenceNumber);
+                }
+            }
+
+            [TestFixture]
+            public class IdentifyFlow
+            {
+                [Test, Auto]
+                public async Task ShouldSendIdentifyOpCode(
+                    string token,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = null;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    message.OpCode.Should().Be(GatewayOpCode.Identify);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendIdentifyWithToken(
+                    string token,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.Token = token;
+                    gateway.SessionId = null;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var identifyEvent = (IdentifyEvent)message.Data!;
+
+                    identifyEvent.Token.Should().Be(options.Value.Token);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendIdentifyWithConnectionProperties(
+                    string libraryName,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.LibraryName = libraryName;
+                    gateway.SessionId = null;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var identifyEvent = (IdentifyEvent)message.Data!;
+
+                    identifyEvent.ConnectionProperties.OperatingSystem.Should().Be(Environment.OSVersion.Platform.ToString());
+                    identifyEvent.ConnectionProperties.Browser.Should().Be(libraryName);
+                    identifyEvent.ConnectionProperties.Device.Should().Be(libraryName);
+                }
+
+                [Test, Auto]
+                public async Task ShouldSendIdentifyWithIntents(
+                    string libraryName,
+                    [Frozen, Options] IOptions<GatewayOptions> options,
+                    [Frozen, Substitute] IGatewayService gateway,
+                    [Target] HelloEventController controller
+                )
+                {
+                    options.Value.LibraryName = libraryName;
+                    gateway.SessionId = null;
+
+                    var cancellationToken = new CancellationToken(false);
+                    var @event = new HelloEvent { };
+                    await controller.Handle(@event, cancellationToken);
+
+                    await gateway.ReceivedWithAnyArgs().Send(default, default);
+
+                    var message = (from call in gateway.ReceivedCalls()
+                                   where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
+                                   select (GatewayMessage)call.GetArguments()[0]).First();
+
+                    var identifyEvent = (IdentifyEvent)message.Data!;
+
+                    identifyEvent.Intents.Should().HaveFlag(Intent.Guilds);
+                    identifyEvent.Intents.Should().HaveFlag(Intent.GuildMessages);
+                    identifyEvent.Intents.Should().HaveFlag(Intent.DirectMessages);
+                }
             }
         }
     }

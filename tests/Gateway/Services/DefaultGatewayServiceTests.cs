@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -77,7 +78,7 @@ namespace Brighid.Discord.Gateway
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 gateway.Start(source);
 
-                txWorker.Received().Start(Is(clientWebSocket), Is(source));
+                txWorker.Received().Start(Is(gateway), Is(clientWebSocket), Is(source));
             }
 
             [Test, Auto]
@@ -91,6 +92,26 @@ namespace Brighid.Discord.Gateway
                 gateway.Start(source);
 
                 workerThread.Received().Start(Is(source));
+            }
+
+            [Test, Auto]
+            public async Task StartShouldSetupGatewayToRestartOnUnexpectedStops(
+                [Frozen, Substitute] IGatewayRestartService restartService,
+                [Frozen, Substitute] IWorkerThread workerThread,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                gateway.Start(source);
+
+                workerThread.Received().OnUnexpectedStop = Any<OnUnexpectedStop>();
+                var arg = (from call in workerThread.ReceivedCalls()
+                           where call.GetMethodInfo().Name.Contains(nameof(workerThread.OnUnexpectedStop))
+                           select (OnUnexpectedStop)call.GetArguments()[0]).First();
+
+                await arg();
+                await restartService.Received().Restart(Is(gateway), Is(true), Any<CancellationToken>());
             }
         }
 
@@ -176,6 +197,41 @@ namespace Brighid.Discord.Gateway
                 txWorker.ClearReceivedCalls();
                 await Task.Delay(20);
                 await txWorker.DidNotReceiveWithAnyArgs().Emit(Any<GatewayMessage>(), Any<CancellationToken>());
+            }
+
+            [Test, Auto, Timeout(1000)]
+            public void StopShouldSetIsReadyToFalse(
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                gateway.IsReady = true;
+                gateway.Start(source);
+                gateway.Stop();
+
+                gateway.IsReady.Should().BeFalse();
+            }
+        }
+
+        [TestFixture]
+        public class RestartTests
+        {
+            [Test, Auto]
+            public async Task ShouldCallTheRestartService(
+                bool resume,
+                [Frozen, Substitute] IGatewayRestartService restartService,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+
+                await gateway.Restart(resume, cancellationToken);
+
+                await restartService.Received().Restart(Is(gateway), Is(resume), Is(cancellationToken));
             }
         }
 

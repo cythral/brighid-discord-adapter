@@ -1,3 +1,5 @@
+using System;
+
 using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
 
@@ -35,6 +37,7 @@ namespace Brighid.Discord
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureAwsServices(services);
+            services.AddSingleton<Random>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             services.ConfigureSerializationServices();
             services.ConfigureEventsServices();
