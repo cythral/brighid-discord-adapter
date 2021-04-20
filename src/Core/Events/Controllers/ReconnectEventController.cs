@@ -42,12 +42,15 @@ namespace Brighid.Discord.Events
         /// <inheritdoc />
         public async Task Handle(ReconnectEvent @event, CancellationToken cancellationToken)
         {
-            using var scope = logger.BeginScope("{@Event}", nameof(ReconnectEvent));
-            cancellationToken.ThrowIfCancellationRequested();
-            var cancellationTokenSource = new CancellationTokenSource();
+            using (var scope = logger.BeginScope("{@Event}", nameof(ReconnectEvent)))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var cancellationTokenSource = new CancellationTokenSource();
 
-            _ = reporter.Report(default(ReconnectEventMetric), cancellationToken);
-            await gateway.Restart();
+                _ = reporter.Report(default(ReconnectEventMetric), cancellationToken);
+            }
+
+            await gateway.Restart(cancellationToken: CancellationToken.None);
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Brighid.Discord.Gateway
 {
     /// <inheritdoc />
+    [LogCategory("Gateway Restarter")]
     public class DefaultGatewayRestartService : IGatewayRestartService
     {
         private readonly IGatewayUtilsFactory utilsFactory;

@@ -33,9 +33,9 @@ namespace Brighid.Discord.Events
         /// <inheritdoc />
         public async Task Handle(ReadyEvent @event, CancellationToken cancellationToken)
         {
+            await Task.CompletedTask;
             using var scope = logger.BeginScope("{@Event}", nameof(ReadyEvent));
             cancellationToken.ThrowIfCancellationRequested();
-            await Task.CompletedTask;
 
             gateway.SessionId = @event.SessionId;
             gateway.IsReady = true;
