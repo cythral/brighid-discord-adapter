@@ -75,7 +75,7 @@
           "Token.$": "$$.Task.Token",
           "EnvironmentName": "dev",
           "ParameterOverrides": {
-            "MessageTopicArn.$": "${MessageTopicArn}"
+            "MessageTopicArn": "${MessageTopicArn}"
           },
           "CommitInfo": {
             "GithubOwner": "${GithubOwner}",
@@ -135,7 +135,7 @@
           ],
           "EnvironmentName": "prod",
           "ParameterOverrides": {
-            "MessageTopicArn.$": "${MessageTopicArn}"
+            "MessageTopicArn": "${MessageTopicArn}"
           },
           "CommitInfo": {
             "GithubOwner": "${GithubOwner}",
