@@ -1,6 +1,6 @@
 {
-    "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
-    "GatewayToken": "AQICAHjCPp/4JJqnSjdP1A4JZ+E3yC2Gqmk9GshiMiqu57jujwHRTAwY3Zh7PB8tDt6Ta335AAAAiTCBhgYJKoZIhvcNAQcGoHkwdwIBADByBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDGb3jhz/rpCB+fviPQIBEIBFbNqZv2ywgej6MmzzrPbqjNCMzXEdInt04s7G1bsskDVBuxkScKe7hxV2+EC5nXGdB1KKhJyDND7rPLNnnE1KOA6mSqS7",
-    "MetricsNamespace": "BrighidDiscordAdapter",
-    "EnableServiceStopping": "true"
+  "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
+  "GatewayToken": "AQICAHjCPp/4JJqnSjdP1A4JZ+E3yC2Gqmk9GshiMiqu57jujwF3IBfwfHUC5xJjj9LciUbsAAAAnTCBmgYJKoZIhvcNAQcGoIGMMIGJAgEAMIGDBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKkfYweUsr4WCtNlIgIBEIBWBij3YkYY8LidrA7tYv6f4cOFx7STWOOUQgg/N2KAh8Nrl35AyBLbyt8xx3LLeEDSG0jNuofavmdcnF+gd00ah8dlVAcNdKTp63X4AeM/49j/Fz6MPQ0=",
+  "MetricsNamespace": "BrighidDiscordAdapter",
+  "EnableServiceStopping": "true"
 }

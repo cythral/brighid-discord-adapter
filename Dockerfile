@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0.202 AS development
+ARG DOTNET_SDK_VERSION
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION} AS development
 ENV \
     CONFIGURATION=Release \
     DLL_PATH=/app/bin/Core/Release/net5.0/publish/Core.dll
