@@ -42,15 +42,15 @@ namespace Brighid.Discord.Events
         /// <inheritdoc />
         public async Task Handle(InvalidSessionEvent @event, CancellationToken cancellationToken)
         {
-            using var scope = logger.BeginScope("{@Event}", nameof(InvalidSessionEvent));
-            cancellationToken.ThrowIfCancellationRequested();
-            var cancellationTokenSource = new CancellationTokenSource();
+            using (var scope = logger.BeginScope("{@Event}", nameof(InvalidSessionEvent)))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var cancellationTokenSource = new CancellationTokenSource();
 
-            _ = reporter.Report(default(InvalidSessionEventMetric), cancellationToken);
+                _ = reporter.Report(default(InvalidSessionEventMetric), cancellationToken);
+            }
 
-#pragma warning disable CA2016 // Forwarding the cancellationToken here would cause an issue during restart
-            await gateway.Restart(@event.IsResumable);
-#pragma warning restore CA2016
+            await gateway.Restart(@event.IsResumable, CancellationToken.None);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Brighid.Discord.Messages
     /// <summary>
     /// An object that can emit messages to SNS.
     /// </summary>
+    [LogCategory("Message Emitter")]
     public class SnsMessageEmitter : IMessageEmitter
     {
         private readonly IAmazonSimpleNotificationService snsClient;
@@ -53,12 +54,14 @@ namespace Brighid.Discord.Messages
         /// <returns>The resulting task.</returns>
         public async Task Emit<TMessageType>(TMessageType message, CancellationToken cancellationToken = default)
         {
+            using var scope = logger.BeginScope("{@ApiCall}", "sns:Publish");
+
             var serializedMessage = await serializer.Serialize(message, cancellationToken);
             var request = new PublishRequest { TopicArn = options.TopicArn, Message = serializedMessage };
-            logger.LogInformation("Sending sns:PublishAsync with request: {@request}", request);
+            logger.LogInformation("Sending request: {@request}", request);
 
             var response = await snsClient.PublishAsync(request, cancellationToken);
-            logger.LogInformation("Received sns:PublishAsync response: {@response}", response);
+            logger.LogInformation("Received response: {@response}", response);
         }
     }
 }

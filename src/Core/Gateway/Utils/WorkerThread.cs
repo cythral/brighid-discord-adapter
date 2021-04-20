@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +11,6 @@ namespace Brighid.Discord.Gateway
     {
         private readonly ILogger logger;
         private readonly Func<Task> runAsync;
-        private readonly List<OnUnexpectedStop> onStoppedEventHandlers = new();
         private CancellationTokenSource? cancellationTokenSource;
         private Thread? thread;
 
@@ -73,6 +71,7 @@ namespace Brighid.Discord.Gateway
             {
                 logger.LogInformation("Worker Thread Started.");
                 await runAsync();
+                throw new OperationCanceledException();
             }
             catch (OperationCanceledException)
             {

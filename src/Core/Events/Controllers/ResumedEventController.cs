@@ -39,7 +39,7 @@ namespace Brighid.Discord.Events
         public async Task Handle(ResumedEvent @event, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
-            using var scope = logger.BeginScope("{@Event}", nameof(ReadyEvent));
+            using var scope = logger.BeginScope("{@Event}", nameof(ResumedEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
             _ = reporter.Report(default(ResumedEventMetric), cancellationToken);
