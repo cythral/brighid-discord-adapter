@@ -60,6 +60,7 @@ Resources:
     Properties:
       Cpu: "256"
       Memory: "512"
+      Family: !Ref AWS::StackName
       NetworkMode: awsvpc
       ExecutionRoleArn: !GetAtt TaskRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
@@ -74,7 +75,6 @@ Resources:
             Options:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: !Ref AWS::StackName
           Environment:
             - Name: Encrypted__Gateway__Token
               Value: !Ref GatewayToken
@@ -103,6 +103,8 @@ Resources:
   TaskPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      Roles:
+        - !Ref TaskRole
       PolicyDocument:
         Version: 2012-10-17
         Statement:
