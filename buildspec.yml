@@ -19,7 +19,7 @@ phases:
   pre_build:
     commands:
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - ./scripts/codebuild-extras.sh
+      - . ./scripts/codebuild-extras.sh
 
   build:
     commands:
