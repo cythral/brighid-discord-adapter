@@ -27,6 +27,8 @@ namespace Brighid.Discord
             services.AddSingleton<IGatewayUtilsFactory, DefaultGatewayUtilsFactory>();
             services.AddSingleton<IGatewayRestartService, DefaultGatewayRestartService>();
             services.AddTransient(provider => new MemoryStream());
+
+            services.UseBrighidIdentityLoginProviders();
         }
     }
 }
