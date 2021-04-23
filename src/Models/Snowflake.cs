@@ -30,5 +30,14 @@ namespace Brighid.Discord.Models
         {
             return new Snowflake(value);
         }
+
+        /// <summary>
+        /// Converts a snowflake to a string.
+        /// </summary>
+        /// <param name="snowflake">The snowflake to convert.</param>
+        public static implicit operator string(Snowflake snowflake)
+        {
+            return snowflake.Value.ToString();
+        }
     }
 }

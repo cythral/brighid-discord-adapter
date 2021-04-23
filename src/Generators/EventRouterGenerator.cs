@@ -93,7 +93,7 @@ namespace Brighid.Discord.Generators
                                   let typeSymbol = (INamedTypeSymbol)ev.Attribute.ConstructorArguments[0].Value!
                                   let designatedName = typeSymbol.Name.ToLower() + "Instance"
                                   let pattern = DeclarationPattern(ParseName(typeSymbol.Name), SingleVariableDesignation(Identifier(designatedName)))
-                                  select SwitchExpressionArm(pattern, ParseExpression($"serviceProvider.GetRequiredService<{ev.Node.Identifier.Text}>().Handle({designatedName}, cancellationToken)"))).ToList();
+                                  select SwitchExpressionArm(pattern, ParseExpression($"scope.ServiceProvider.GetRequiredService<{ev.Node.Identifier.Text}>().Handle({designatedName}, cancellationToken)"))).ToList();
 
                 var separators = (from ev in controllers
                                   select Token(CommaToken).WithLeadingTrivia(ParseLeadingTrivia("\r\n"))).ToList();
@@ -106,6 +106,7 @@ namespace Brighid.Discord.Generators
                 var awaitExpression = AwaitExpression(parenthesizedExpression);
 
                 yield return ParseStatement("cancellationToken.ThrowIfCancellationRequested();");
+                yield return ParseStatement("using var scope = serviceProvider.CreateScope();");
                 yield return ExpressionStatement(awaitExpression);
             }
 

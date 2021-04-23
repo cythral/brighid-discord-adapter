@@ -37,10 +37,12 @@ namespace Brighid.Discord
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureAwsServices(services);
-            services.AddSingleton<Random>();
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            ConfigureMiscServices(services);
+
+            services.ConfigureBrighidIdentity("Identity");
             services.ConfigureSerializationServices();
             services.ConfigureEventsServices();
+            services.ConfigureUsersServices();
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
             services.ConfigureMetricServices(configuration);
@@ -50,6 +52,12 @@ namespace Brighid.Discord
         {
             services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
             services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
+        }
+
+        private void ConfigureMiscServices(IServiceCollection services)
+        {
+            services.AddSingleton<Random>();
+            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
         }
     }
 }

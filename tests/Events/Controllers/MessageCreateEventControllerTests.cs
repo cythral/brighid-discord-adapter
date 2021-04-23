@@ -8,6 +8,7 @@ using AutoFixture.NUnit3;
 using Brighid.Discord.Messages;
 using Brighid.Discord.Metrics;
 using Brighid.Discord.Models;
+using Brighid.Discord.Users;
 
 using FluentAssertions;
 
@@ -42,19 +43,47 @@ namespace Brighid.Discord.Events
             }
 
             [Test, Auto]
-            public async Task ShouldEmitMessage(
+            public async Task ShouldEmitMessageIfUserIsRegistered(
                 string content,
+                Snowflake userId,
                 [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                var message = new Message { Content = content };
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author };
                 var @event = new MessageCreateEvent { Message = message };
+
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
 
                 await controller.Handle(@event, cancellationToken);
 
                 await emitter.Received().Emit(Is(message), Is(cancellationToken));
+                await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotEmitMessageIfUserIsNotRegistered(
+                string content,
+                Snowflake userId,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author };
+                var @event = new MessageCreateEvent { Message = message };
+
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(false);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await emitter.DidNotReceive().Emit(Is(message), Is(cancellationToken));
+                await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
             }
 
             [Test, Auto]
