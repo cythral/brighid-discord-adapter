@@ -4,21 +4,21 @@
     ".NETCoreApp,Version=v5.0": {
       "AutoFixture.AutoNSubstitute": {
         "type": "Direct",
-        "requested": "[4.16.0, )",
-        "resolved": "4.16.0",
-        "contentHash": "YwSKoMTvrnynHH6PC/taN4ybMJID5eMOB6mi6FEA3vD4vcoi4dMJHPXc37gqFgmKe7yCgYmh1Oz0f12IiwsflA==",
+        "requested": "[4.17.0, )",
+        "resolved": "4.17.0",
+        "contentHash": "iWsRiDQ7T8s6F4mvYbSvPTq0GDtxJD6D+E1Fu9gVbHUvJiNikC1yIDNTH+3tQF7RK864HH/3R8ETj9m2X8UXvg==",
         "dependencies": {
-          "AutoFixture": "4.16.0",
+          "AutoFixture": "4.17.0",
           "NSubstitute": "[2.0.3, 5.0.0)"
         }
       },
       "AutoFixture.NUnit3": {
         "type": "Direct",
-        "requested": "[4.16.0, )",
-        "resolved": "4.16.0",
-        "contentHash": "RfIyrgyreMVfFJEr2M/4qTvXSrRkjJkIeGTg25zZLnUpmfh5CXmFOS/7+QWfpSSH2wRqxrGy9UDL0zDUPtc4qg==",
+        "requested": "[4.17.0, )",
+        "resolved": "4.17.0",
+        "contentHash": "v5VkKkzHSsjdRNOccst/nYkiJsXdAWwKmgxidlToL9FFQAHicCT1zwl0IF4pGbwpAmqKi4+dl4qZ+31iyeAXmg==",
         "dependencies": {
-          "AutoFixture": "4.16.0",
+          "AutoFixture": "4.17.0",
           "NUnit": "[3.7.0, 4.0.0)"
         }
       },
@@ -94,8 +94,8 @@
       },
       "AutoFixture": {
         "type": "Transitive",
-        "resolved": "4.16.0",
-        "contentHash": "tjcVRKCaoNr+KQudX6xVph4ulxdtyB4kXQyZi/EjMEwp+xLAHJlZdmtVHdRmogLAupEK1UHbR7YIRAyPoPUMjA==",
+        "resolved": "4.17.0",
+        "contentHash": "efMRCG3Epc4QDELwdmQGf6/caQUleRXPRCnLAq5gLMpTuOTcOQWV12vEJ8qo678Rj97/TjjxHYu/34rGkXdVAA==",
         "dependencies": {
           "Fare": "[2.1.1, 3.0.0)",
           "System.ComponentModel.Annotations": "4.3.0"
@@ -103,23 +103,23 @@
       },
       "AWSSDK.CloudWatch": {
         "type": "Transitive",
-        "resolved": "3.7.1.9",
-        "contentHash": "ze0Ls+92WqRz4Bf+N3tOna5eUjha+56O6zVHHa19/jvw1hZoTvMQH7weRSjw7LMjgDVdliLsTMGwijn3GWGhNQ==",
+        "resolved": "3.7.1.10",
+        "contentHash": "m14+aAxwiZzVmpEmeZjhtUHrIER2/4rm2OuYkjdshlvB17MqVdsXiLNkAGbv5QYm4DO8eamv1sPz3HgyapgiWw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
+          "AWSSDK.Core": "[3.7.0.14, 3.8.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.13",
-        "contentHash": "8z7RHLvY/bQP3F55AL3keG3/6Y9O15RWFUhz1a585+UAFVvFD/eejn443s4C0O3k5TLnxf1u5M0qblIZbNMgqw=="
+        "resolved": "3.7.0.14",
+        "contentHash": "n9V+mwRStMzXl/GnD+J0uwnySMUB/Ug+yJ0G2B4XBQZYIegWWfqeQT2KqaP4hI08L49vY6JDIWIKEW4sNidNEg=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.0.13",
-        "contentHash": "DHBcUHPEFcdGij7r1iKIB2T7ByspdBp501ysbOH7KrUGDDwNIhcM/l8wi3Y0gf9KWTaCwstYh+7mBdPiFgUB9g==",
+        "resolved": "3.7.0.14",
+        "contentHash": "JTKA9CD3f+Ue4dUVwEXHMFvfrXQbeWxVceT0j2eydDUoySFJoByOkXikWCorfqp9KSd6Gsob4UJ7bjyFcKM7Eg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.13, 3.8.0)"
+          "AWSSDK.Core": "[3.7.0.14, 3.8.0)"
         }
       },
       "Brighid.Identity.Client": {
@@ -1600,8 +1600,8 @@
       "core": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.1.9",
-          "AWSSDK.SimpleNotificationService": "3.7.0.13",
+          "AWSSDK.CloudWatch": "3.7.1.10",
+          "AWSSDK.SimpleNotificationService": "3.7.0.14",
           "Brighid.Discord.Common": "1.0.0",
           "Brighid.Identity.Client": "0.2.0-beta6",
           "Destructurama.Attributed": "2.0.0",
