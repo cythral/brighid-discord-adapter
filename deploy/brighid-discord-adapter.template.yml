@@ -27,6 +27,10 @@ Parameters:
       - "false"
     Description: Whether or not to enable service stopping on the cluster
 
+  IdentityServerUri:
+    Type: String
+    Description: URI of the identity server.
+
 Resources:
   IdentityApplication:
     Type: Custom::IdentityApplication
@@ -93,6 +97,8 @@ Resources:
               Value: !Ref MetricsNamespace
             - Name: Sns__TopicArn
               Value: !Ref MessageTopicArn
+            - Name: Identity__IdentityServerUri
+              Value: !Ref IdentityServerUri
             - Name: Identity__ClientId
               Value: !GetAtt IdentityApplication.Id
             - Name: Encrypted__Identity__ClientSecret
