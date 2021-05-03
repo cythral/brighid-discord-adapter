@@ -12,4 +12,4 @@ decrypt() {
 export Gateway__Token=$(decrypt ${Encrypted__Gateway__Token})
 export Identity__ClientSecret=$(decrypt ${Encrypted__Identity__ClientSecret})
 
-dotnet /app/Core.dll
+dotnet /app/GatewayAdapter.dll

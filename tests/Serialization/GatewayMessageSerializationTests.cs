@@ -3,15 +3,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Brighid.Discord.Events;
-using Brighid.Discord.Messages;
+using Brighid.Discord.GatewayAdapter.Events;
+using Brighid.Discord.GatewayAdapter.Messages;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
 
 using NUnit.Framework;
 
-namespace Brighid.Discord.Serialization
+namespace Brighid.Discord.GatewayAdapter.Serialization
 {
     [Category("Integration")]
     public class GatewayMessageSerializationTests

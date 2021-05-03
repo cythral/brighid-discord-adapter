@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Messages;
-using Brighid.Discord.Metrics;
+using Brighid.Discord.GatewayAdapter.Messages;
+using Brighid.Discord.GatewayAdapter.Metrics;
+using Brighid.Discord.GatewayAdapter.Users;
 using Brighid.Discord.Models;
-using Brighid.Discord.Users;
 
 using FluentAssertions;
 
@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Events
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class MessageCreateEventControllerTests
     {
