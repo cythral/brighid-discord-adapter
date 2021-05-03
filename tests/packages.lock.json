@@ -1597,7 +1597,7 @@
       "Brighid.Discord.Common": {
         "type": "Project"
       },
-      "core": {
+      "gatewayadapter": {
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.1.12",
@@ -1606,8 +1606,8 @@
           "Brighid.Identity.Client": "0.2.0-beta7",
           "Destructurama.Attributed": "2.0.0",
           "Generators": "1.0.0",
+          "Logging": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
-          "Microsoft.Extensions.Logging": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
           "Models": "1.0.0",
           "Serilog.AspNetCore": "4.1.0"
@@ -1619,6 +1619,12 @@
           "Brighid.Discord.Common": "1.0.0",
           "Microsoft.CodeAnalysis": "3.9.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.9.0"
+        }
+      },
+      "logging": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "5.0.0"
         }
       },
       "models": {

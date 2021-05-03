@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Metrics
+namespace Brighid.Discord.GatewayAdapter.Metrics
 {
     public class CloudWatchMetricReporterTests
     {

@@ -24,8 +24,8 @@ namespace Brighid.Discord.Generators
             "System.Text.Json.Serialization",
             "System.Threading",
             "System.Threading.Tasks",
-            "Brighid.Discord.Events",
-            "Brighid.Discord.Messages",
+            "Brighid.Discord.GatewayAdapter.Events",
+            "Brighid.Discord.GatewayAdapter.Messages",
             "Microsoft.Extensions.DependencyInjection",
         };
 
@@ -65,7 +65,7 @@ namespace Brighid.Discord.Generators
                 .WithModifiers(TokenList(Token(PublicKeyword), Token(PartialKeyword)))
                 .WithMembers(List(members));
 
-            var namespaceDeclaration = NamespaceDeclaration(ParseName("Brighid.Discord.Events"))
+            var namespaceDeclaration = NamespaceDeclaration(ParseName("Brighid.Discord.GatewayAdapter.Events"))
                 .WithMembers(List(new MemberDeclarationSyntax[] { classDeclaration }));
 
             var codes = ignoredCodes.Select(code => ParseExpression(code));

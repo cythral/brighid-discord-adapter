@@ -6,7 +6,7 @@ using Amazon.SimpleNotificationService.Model;
 
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Serialization;
+using Brighid.Discord.GatewayAdapter.Serialization;
 
 using Microsoft.Extensions.Options;
 
@@ -16,7 +16,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Messages
+namespace Brighid.Discord.GatewayAdapter.Messages
 {
     public class SnsMessageEmitterTests
     {
