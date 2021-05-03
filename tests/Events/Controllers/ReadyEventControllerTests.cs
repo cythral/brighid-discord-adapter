@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Gateway;
+using Brighid.Discord.GatewayAdapter.Gateway;
 
 using FluentAssertions;
 
@@ -13,7 +13,7 @@ using NSubstitute;
 
 using NUnit.Framework;
 
-namespace Brighid.Discord.Events
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class ReadyEventControllerTests
     {

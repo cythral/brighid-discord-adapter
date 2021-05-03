@@ -7,7 +7,7 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Messages;
+using Brighid.Discord.GatewayAdapter.Messages;
 using Brighid.Discord.Mocks;
 
 internal class AutoAttribute : AutoDataAttribute

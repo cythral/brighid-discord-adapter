@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Gateway;
-using Brighid.Discord.Messages;
-using Brighid.Discord.Metrics;
+using Brighid.Discord.GatewayAdapter.Gateway;
+using Brighid.Discord.GatewayAdapter.Messages;
+using Brighid.Discord.GatewayAdapter.Metrics;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
@@ -21,7 +21,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Events
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class HelloEventControllerTests
     {

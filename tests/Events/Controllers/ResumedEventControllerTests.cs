@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Gateway;
-using Brighid.Discord.Metrics;
+using Brighid.Discord.GatewayAdapter.Gateway;
+using Brighid.Discord.GatewayAdapter.Metrics;
 
 using FluentAssertions;
 
@@ -17,7 +17,7 @@ using NUnit.Framework;
 using static NSubstitute.Arg;
 #pragma warning disable SA1005
 
-namespace Brighid.Discord.Events
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class ResumedEventControllerTests
     {
