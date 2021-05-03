@@ -15,7 +15,7 @@ ENTRYPOINT ["dotnet", "watch", "--project", "/app/src/Core", "run"]
 FROM mcr.microsoft.com/dotnet/aspnet:5.0.4 AS production
 
 WORKDIR /app
-COPY --from=development /app/bin/Core/Release/net5.0/publish /app
+COPY --from=development /app/bin/GatewayAdapter/Release/net5.0/publish /app
 COPY entrypoint.sh /
 
 RUN  \
