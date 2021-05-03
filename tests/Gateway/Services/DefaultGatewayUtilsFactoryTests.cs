@@ -15,7 +15,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Gateway
+namespace Brighid.Discord.GatewayAdapter.Gateway
 {
     public class DefaultGatewayUtilsFactoryTests
     {

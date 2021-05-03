@@ -16,7 +16,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Users
+namespace Brighid.Discord.GatewayAdapter.Users
 {
     public class DefaultUserServiceTests
     {

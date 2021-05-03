@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Events;
-using Brighid.Discord.Messages;
+using Brighid.Discord.GatewayAdapter.Events;
+using Brighid.Discord.GatewayAdapter.Messages;
 
 using FluentAssertions;
 
@@ -21,7 +21,7 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Discord.Gateway
+namespace Brighid.Discord.GatewayAdapter.Gateway
 {
     public class DefaultGatewayServiceTests
     {
