@@ -124,11 +124,11 @@
       },
       "Brighid.Identity.Client": {
         "type": "Transitive",
-        "resolved": "0.2.0-beta7",
-        "contentHash": "p+IJDrt4KJHqxvcK5cTbj2p6e4Tieq1+jWXYSXP2iuOva3cDBUzo9lj4aAprMq8ECMJqW/jXZmVuPGehDZqAFQ==",
+        "resolved": "0.2.0-beta8",
+        "contentHash": "/4tj5qGRlmbV01lwplXtMvCn5IklZU2ll6vXuqa2+Oif9dQfdPzjm7Url2ZWTqxpmYU0oSVAIvaqVG3INF4o/Q==",
         "dependencies": {
           "Microsoft.Extensions.Configuration": "5.0.0",
-          "Microsoft.Extensions.DependencyInjection": "5.0.0",
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
           "Microsoft.Extensions.Http": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "5.0.0"
@@ -394,8 +394,8 @@
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "Rc2kb/p3Ze6cP6rhFC3PJRdWGbLvSHZc0ev7YlyeU6FmHciDMLrhoVoTUEzKPhN5ZjFgKF1Cf5fOz8mCMIkvpA==",
+        "resolved": "5.0.1",
+        "contentHash": "//mDNrYeiJ0eh/awFhDFJQzkRVra/njU5Y4fyK7X29g5HScrzbUkKOKlyTtygthcGFt4zNC8G5CFCjb/oizomA==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "5.0.0"
         }
@@ -1603,7 +1603,7 @@
           "AWSSDK.CloudWatch": "3.7.1.13",
           "AWSSDK.SimpleNotificationService": "3.7.1.2",
           "Brighid.Discord.Common": "1.0.0",
-          "Brighid.Identity.Client": "0.2.0-beta7",
+          "Brighid.Identity.Client": "0.2.0-beta8",
           "Destructurama.Attributed": "2.0.0",
           "Generators": "1.0.0",
           "Logging": "1.0.0",
