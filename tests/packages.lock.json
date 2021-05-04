@@ -1597,6 +1597,16 @@
       "Brighid.Discord.Common": {
         "type": "Project"
       },
+      "Brighid.Discord.RestQueue": {
+        "type": "Project",
+        "dependencies": {
+          "Logging": "1.0.0",
+          "Microsoft.Extensions.Hosting": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "Models": "1.0.0",
+          "Serilog.AspNetCore": "4.1.0"
+        }
+      },
       "gatewayadapter": {
         "type": "Project",
         "dependencies": {
