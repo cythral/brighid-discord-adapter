@@ -2,6 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.RestQueue.Requests;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -34,6 +37,7 @@ namespace Brighid.Discord.RestQueue
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Starting.");
+            Services.GetRequiredService<IUrlBuilder>();
             await Task.CompletedTask;
             logger.LogInformation("Started.");
         }

@@ -11,6 +11,6 @@ namespace Brighid.Discord.Models
         /// Endpoint to post a message to a channel.
         /// </summary>
         [ApiEndpoint(nameof(HttpMethod.Post), "/channels/{channel.id}/messages")]
-        ChannelCreateMessage,
+        ChannelCreateMessage = 0,
     }
 }
