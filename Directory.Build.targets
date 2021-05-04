@@ -1,0 +1,14 @@
+<Project>
+    <Target Name="Dockerize" Condition="Exists('$(MSBuildProjectDirectory)\Dockerfile')">
+        <ItemGroup>
+            <DockerBuildArgs Include="--file $(MSBuildProjectDirectory)\Dockerfile" />
+            <DockerBuildArgs Include="--tag $(DockerImageTag)" />
+            <DockerBuildArgs Include="--build-arg OUTPUT_DIRECTORY=$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory), $(OutputPath)))" />
+            <DockerBuildArgs Include="--build-arg PROJECT_DIRECTORY=$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory), $(MSBuildProjectDirectory)))" />
+            <DockerBuildArgs Include="--build-arg ASPNET_VERSION=$(BundledNETCoreAppPackageVersion)" />
+            <DockerBuildArgs Include="--build-arg ASSEMBLY_NAME=$(AssemblyName)" />
+        </ItemGroup>
+
+        <Exec Command="docker build --no-cache @(DockerBuildArgs, ' ') $(MSBuildThisFileDirectory)" />
+    </Target>
+</Project>
