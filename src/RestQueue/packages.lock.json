@@ -938,6 +938,9 @@
         "dependencies": {
           "Microsoft.Extensions.Logging": "5.0.0"
         }
+      },
+      "models": {
+        "type": "Project"
       }
     }
   }
