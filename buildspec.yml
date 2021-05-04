@@ -29,7 +29,12 @@ phases:
       - dotnet test --logger trx --no-build
 
       - ./scripts/create-config-files.sh $GATEWAY_ADAPTER_IMAGE_TAG
-      - dotnet build -t:BuildDockerImage
+      - dotnet build -t:Dockerize
+
+  post_build:
+    commands:
+      - ./scripts/push-docker-images.sh
+
 artifacts:
   discard-paths: yes
   files:

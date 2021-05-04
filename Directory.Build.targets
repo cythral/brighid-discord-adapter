@@ -1,5 +1,5 @@
 <Project>
-    <Target Name="BuildDockerImage" Condition="Exists('$(MSBuildProjectDirectory)\Dockerfile')">
+    <Target Name="Dockerize" Condition="Exists('$(MSBuildProjectDirectory)\Dockerfile')">
         <ItemGroup>
             <DockerBuildArgs Include="--file $(MSBuildProjectDirectory)\Dockerfile" />
             <DockerBuildArgs Include="--tag $(DockerImageTag)" />
