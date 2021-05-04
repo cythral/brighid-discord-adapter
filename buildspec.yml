@@ -23,13 +23,13 @@ phases:
 
   build:
     commands:
-      - IMAGE=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
+      - export GATEWAY_ADAPTER_IMAGE_TAG=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - dotnet restore
       - dotnet publish --no-restore
       - dotnet test --logger trx --no-build
-      - ./scripts/create-config-files.sh $IMAGE
-      - ./scripts/ci-docker-build.sh $IMAGE
 
+      - ./scripts/create-config-files.sh $GATEWAY_ADAPTER_IMAGE_TAG
+      - dotnet build -t:BuildDockerImage
 artifacts:
   discard-paths: yes
   files:

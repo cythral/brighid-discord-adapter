@@ -6,6 +6,11 @@
     <NoWarn>SA1633</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GATEWAY_ADAPTER_IMAGE_TAG Condition="$(GATEWAY_ADAPTER_IMAGE_TAG) == ''">brighid/discord-gateway-adapter</GATEWAY_ADAPTER_IMAGE_TAG>
+    <DockerImageTag>$(GATEWAY_ADAPTER_IMAGE_TAG)</DockerImageTag>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Brighid.Identity.Client" Version="0.2.0-beta7" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.1.12" />
