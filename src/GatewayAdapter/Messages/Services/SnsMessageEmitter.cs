@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 
-using Brighid.Discord.GatewayAdapter.Serialization;
+using Brighid.Discord.Serialization;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

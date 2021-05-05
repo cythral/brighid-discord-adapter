@@ -2,13 +2,12 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.GatewayAdapter.Events;
 using Brighid.Discord.Models;
 
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
 #pragma warning disable CS1591, SA1600
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class IMessageEventConverter<TMessageEvent> : JsonConverter<TMessageEvent>
         where TMessageEvent : IMessageEvent, new()

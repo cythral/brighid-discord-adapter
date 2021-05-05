@@ -24,7 +24,7 @@ internal class AutoAttribute : AutoDataAttribute
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
         fixture.Customizations.Add(new OptionsRelay());
         fixture.Customizations.Add(new TypeOmitter<IDictionary<string, JsonElement>>());
-        fixture.Customizations.Add(new TypeOmitter<JsonConverter<GatewayMessage>>());
+        fixture.Customizations.Add(new TypeOmitter<JsonConverter>());
         fixture.Customizations.Add(new TypeOmitter<ValueTask<GatewayMessageChunk>>());
         fixture.Customizations.Add(new TypeOmitter<GatewayMessageChunk>());
         fixture.Customizations.Add(new TypeOmitter<Task<GatewayMessage>>());

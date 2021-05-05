@@ -10,7 +10,7 @@ using AutoFixture.NUnit3;
 
 using Brighid.Discord.GatewayAdapter.Events;
 using Brighid.Discord.GatewayAdapter.Messages;
-using Brighid.Discord.GatewayAdapter.Serialization;
+using Brighid.Discord.Serialization;
 
 using FluentAssertions;
 

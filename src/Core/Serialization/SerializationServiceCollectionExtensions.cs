@@ -1,8 +1,6 @@
-using Brighid.Discord.GatewayAdapter.Serialization;
+using Brighid.Discord.Serialization;
 
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Brighid.Discord.GatewayAdapter
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Service collection extensions for Messages.

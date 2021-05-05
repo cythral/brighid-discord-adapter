@@ -2,7 +2,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.Serialization
 {
     /// <summary>
     /// Allows for serializing an object in memory to a text format that can be sent across a network.
