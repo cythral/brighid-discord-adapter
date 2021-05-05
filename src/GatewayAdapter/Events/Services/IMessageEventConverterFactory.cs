@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.GatewayAdapter.Events;
-
 #pragma warning disable CS1591, SA1600, SA1313
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.GatewayAdapter.Events
 {
     public class IMessageEventConverterFactory : JsonConverterFactory
     {

@@ -30,6 +30,7 @@ namespace Brighid.Discord.RestQueue
         {
             ConfigureMiscServices(services);
             services.ConfigureRequestsServices(configuration);
+            services.ConfigureSerializationServices();
         }
 
         private void ConfigureMiscServices(IServiceCollection services)

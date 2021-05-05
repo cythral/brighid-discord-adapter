@@ -1683,21 +1683,19 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "Brighid.Discord.Common": {
-        "type": "Project"
+      "Brighid.Discord.Core": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Extensions.Logging": "5.0.0"
+        }
       },
       "generators": {
         "type": "Project",
         "dependencies": {
-          "Brighid.Discord.Common": "1.0.0",
+          "Brighid.Discord.Core": "1.0.0",
           "Microsoft.CodeAnalysis": "3.9.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.9.0"
-        }
-      },
-      "logging": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.Logging": "5.0.0"
         }
       },
       "models": {

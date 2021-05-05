@@ -5,12 +5,10 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.GatewayAdapter.Messages;
-
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
 #pragma warning disable CS1591, SA1600
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.GatewayAdapter.Messages
 {
     public class GatewayMessageConverter : JsonConverter<GatewayMessage>
     {

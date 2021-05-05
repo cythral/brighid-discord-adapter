@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 #pragma warning disable IDE0050
 
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.Serialization
 {
     public class JsonSerializerTests
     {

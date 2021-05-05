@@ -7,11 +7,9 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Brighid.Discord.GatewayAdapter.Messages;
-
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.Serialization
 {
     /// <summary>
     /// Serializer that serializes to/from JSON.
@@ -23,13 +21,17 @@ namespace Brighid.Discord.GatewayAdapter.Serialization
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonSerializer" /> class.
         /// </summary>
-        /// <param name="gatewayMessageConverter">Converter to convert gateway messages to/from JSON.</param>
+        /// <param name="converters">Converters to add to the serializer options.</param>
         public JsonSerializer(
-            JsonConverter<GatewayMessage> gatewayMessageConverter
+            IEnumerable<JsonConverter> converters
         )
         {
             options = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-            options.Converters.Add(gatewayMessageConverter);
+
+            foreach (var converter in converters)
+            {
+                options.Converters.Add(converter);
+            }
         }
 
         /// <summary>

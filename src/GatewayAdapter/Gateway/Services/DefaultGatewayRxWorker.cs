@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.GatewayAdapter.Events;
 using Brighid.Discord.GatewayAdapter.Messages;
-using Brighid.Discord.GatewayAdapter.Serialization;
+using Brighid.Discord.Serialization;
 
 using Microsoft.Extensions.Logging;
 

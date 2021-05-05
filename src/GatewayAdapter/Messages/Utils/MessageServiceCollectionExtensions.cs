@@ -5,7 +5,7 @@ using Brighid.Discord.GatewayAdapter.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using GatewayMessageConverter = Brighid.Discord.GatewayAdapter.Serialization.GatewayMessageConverter;
+using GatewayMessageConverter = Brighid.Discord.GatewayAdapter.Messages.GatewayMessageConverter;
 
 namespace Brighid.Discord.GatewayAdapter
 {
@@ -24,7 +24,7 @@ namespace Brighid.Discord.GatewayAdapter
             var snsMessageEmitterOptions = configuration.GetSection("Sns");
             services.Configure<SnsMessageEmitterOptions>(snsMessageEmitterOptions);
             services.AddSingleton<IMessageEmitter, SnsMessageEmitter>();
-            services.AddSingleton<JsonConverter<GatewayMessage>, GatewayMessageConverter>();
+            services.AddSingleton<JsonConverter, GatewayMessageConverter>();
             services.AddSingleton<IMessageParser, GeneratedMessageParser>();
         }
     }

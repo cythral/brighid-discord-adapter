@@ -22,10 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Generators\Generators.csproj" OutputItemType="Analyzer" />
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Generators\Generators.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
+    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\Logging\Logging.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ using FluentAssertions;
 
 using NUnit.Framework;
 
-namespace Brighid.Discord.GatewayAdapter.Serialization
+namespace Brighid.Discord.Serialization
 {
     [Category("Integration")]
     public class GatewayMessageSerializationTests
@@ -209,7 +209,8 @@ namespace Brighid.Discord.GatewayAdapter.Serialization
         {
             var messageParser = new GeneratedMessageParser();
             var messageConverter = new GatewayMessageConverter(messageParser);
-            return new JsonSerializer(messageConverter);
+            var converters = new[] { messageConverter };
+            return new JsonSerializer(converters);
         }
     }
 }

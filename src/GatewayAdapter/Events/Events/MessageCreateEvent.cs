@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.GatewayAdapter.Serialization;
 using Brighid.Discord.Models;
 
 namespace Brighid.Discord.GatewayAdapter.Events
