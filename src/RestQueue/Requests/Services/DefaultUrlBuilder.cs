@@ -50,7 +50,7 @@ namespace Brighid.Discord.RestQueue.Requests
                     : $"/{part}";
             }
 
-            return new Uri(options.BaseUrl + result);
+            return new Uri(options.InvokeBaseUrl + result);
         }
 
         private bool IsParameter(string value, out string name)

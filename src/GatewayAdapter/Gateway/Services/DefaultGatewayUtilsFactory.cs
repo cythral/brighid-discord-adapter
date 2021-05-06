@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Threading;
+
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.GatewayAdapter.Gateway

@@ -1,3 +1,7 @@
+using Amazon.SQS;
+
+using Brighid.Discord.Threading;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,9 +37,11 @@ namespace Brighid.Discord.RestQueue
             services.ConfigureSerializationServices();
         }
 
-        private void ConfigureMiscServices(IServiceCollection services)
+        private static void ConfigureMiscServices(IServiceCollection services)
         {
+            services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            services.AddTransient(typeof(IChannel<>), typeof(Channel<>));
         }
     }
 }

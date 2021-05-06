@@ -11,6 +11,7 @@ using AutoFixture.NUnit3;
 using Brighid.Discord.GatewayAdapter.Events;
 using Brighid.Discord.GatewayAdapter.Messages;
 using Brighid.Discord.Serialization;
+using Brighid.Discord.Threading;
 
 using FluentAssertions;
 

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+#pragma warning disable SA1642
+
 namespace Brighid.Discord.Models
 {
     /// <summary>
@@ -10,7 +12,7 @@ namespace Brighid.Discord.Models
     public struct Request
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Request" /> struct.
+        /// Initializes a new <see cref="Request" /> record.
         /// </summary>
         /// <param name="endpoint">The endpoint to use for the request.</param>
         public Request(Endpoint endpoint)
