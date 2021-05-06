@@ -132,8 +132,14 @@ namespace Brighid.Discord.RestQueue.Requests
                                     select arg).First();
 
                 batchRequest.QueueUrl.Should().Be(options.QueueUrl.ToString());
-                batchRequest.Entries.Should().Contain(entry => entry.ReceiptHandle == message1.ReceiptHandle);
-                batchRequest.Entries.Should().Contain(entry => entry.ReceiptHandle == message2.ReceiptHandle);
+                batchRequest.Entries.Should().Contain(entry =>
+                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.ReceiptHandle == message1.ReceiptHandle
+                );
+                batchRequest.Entries.Should().Contain(entry =>
+                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.ReceiptHandle == message2.ReceiptHandle
+                );
             }
 
             [Test, Auto, Timeout(2000)]
@@ -166,8 +172,14 @@ namespace Brighid.Discord.RestQueue.Requests
                                     select arg).First();
 
                 batchRequest.QueueUrl.Should().Be(options.QueueUrl.ToString());
-                batchRequest.Entries.Should().Contain(entry => entry.ReceiptHandle == message1.ReceiptHandle);
-                batchRequest.Entries.Should().NotContain(entry => entry.ReceiptHandle == message2.ReceiptHandle);
+                batchRequest.Entries.Should().Contain(entry =>
+                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.ReceiptHandle == message1.ReceiptHandle
+                );
+                batchRequest.Entries.Should().NotContain(entry =>
+                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.ReceiptHandle == message2.ReceiptHandle
+                );
             }
 
             [Test, Auto, Timeout(2000)]
@@ -266,6 +278,32 @@ namespace Brighid.Discord.RestQueue.Requests
                 (await func.Should().ThrowAsync<Exception>())
                 .And.Message.Should().Be(exception.Message);
             }
+
+            [Test, Auto, Timeout(2000)]
+            public async Task ShouldThrowIfMessageFailedToDelete(
+                string response,
+                RequestMessage message,
+                Exception exception,
+                [Frozen] ISerializer serializer,
+                [Frozen] RequestOptions options,
+                [Frozen, Substitute] IAmazonSQS sqs,
+                [Target] SqsRequestMessageRelay relay,
+                CancellationToken cancellationToken
+            )
+            {
+                sqs.DeleteMessageBatchAsync(Any<DeleteMessageBatchRequest>(), Any<CancellationToken>()).Returns(new DeleteMessageBatchResponse
+                {
+                    Failed = new List<BatchResultErrorEntry>
+                    {
+                        new() { Id = message.Request.Id.ToString() },
+                    },
+                });
+
+                Func<Task> func = () => relay.Complete(message, response, cancellationToken);
+
+                (await func.Should().ThrowAsync<RequestMessageNotDeletedException>())
+                .And.RequestMessage.Should().Be(message);
+            }
         }
 
         [TestFixture]
@@ -344,7 +382,7 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id != null &&
+                    entry.Id == message.Request.Id.ToString() &&
                     entry.ReceiptHandle == message.ReceiptHandle &&
                     entry.VisibilityTimeout == visibilityTimeout
                 );
@@ -376,13 +414,13 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id != null &&
+                    entry.Id == message1.Request.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle &&
                     entry.VisibilityTimeout == message1VisibilityTimeout
                 );
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id != null &&
+                    entry.Id == message2.Request.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle &&
                     entry.VisibilityTimeout == message2VisibilityTimeout
                 );
@@ -422,13 +460,13 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id != null &&
+                    entry.Id == message1.Request.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle &&
                     entry.VisibilityTimeout == message1VisibilityTimeout
                 );
 
                 changeVisibilityEntries.Should().NotContain(entry =>
-                    entry.Id != null &&
+                    entry.Id == message2.Request.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle &&
                     entry.VisibilityTimeout == message2VisibilityTimeout
                 );
@@ -451,6 +489,33 @@ namespace Brighid.Discord.RestQueue.Requests
 
                 (await func.Should().ThrowAsync<Exception>())
                 .And.Should().Be(exception);
+            }
+
+            [Test, Auto, Timeout(2000)]
+            public async Task ShouldThrowIfMessageFailedToChangeTimeout(
+                string response,
+                uint visibilityTimeout,
+                RequestMessage message,
+                Exception exception,
+                [Frozen] ISerializer serializer,
+                [Frozen] RequestOptions options,
+                [Frozen, Substitute] IAmazonSQS sqs,
+                [Target] SqsRequestMessageRelay relay,
+                CancellationToken cancellationToken
+            )
+            {
+                sqs.ChangeMessageVisibilityBatchAsync(Any<string>(), Any<List<ChangeMessageVisibilityBatchRequestEntry>>(), Any<CancellationToken>()).Returns(new ChangeMessageVisibilityBatchResponse
+                {
+                    Failed = new List<BatchResultErrorEntry>
+                    {
+                        new() { Id = message.Request.Id.ToString() },
+                    },
+                });
+
+                Func<Task> func = () => relay.Fail(message, visibilityTimeout, cancellationToken);
+
+                (await func.Should().ThrowAsync<VisibilityTimeoutNotUpdatedException>())
+                .And.RequestMessage.Should().Be(message);
             }
         }
 

@@ -171,14 +171,25 @@ namespace Brighid.Discord.RestQueue.Requests
 
             try
             {
-                var entries = from message in messagesToDelete select new DeleteMessageBatchRequestEntry { Id = Guid.NewGuid().ToString(), ReceiptHandle = message.ReceiptHandle };
+                var entries = from message in messagesToDelete select new DeleteMessageBatchRequestEntry { Id = message.Request.Id.ToString(), ReceiptHandle = message.ReceiptHandle };
                 logger.LogInformation("Sending sqs:DeleteMessageBatch with {@count} entries", entries.Count());
 
                 var request = new DeleteMessageBatchRequest { QueueUrl = options.QueueUrl.ToString(), Entries = entries.ToList() };
                 var response = await sqs.DeleteMessageBatchAsync(request, workerCancellationToken);
                 logger.LogInformation("Received sqs:DeleteMessageBatch response: {@response}", response);
 
-                var finalizerTasks = from message in messagesToDelete select FinalizeMessage(message);
+                var messageDict = messagesToDelete.ToDictionary(message => message.Request.Id.ToString(), message => message);
+                var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
+
+                foreach (var failedMessageId in failedMessageIds)
+                {
+                    if (messageDict.Remove(failedMessageId, out var failedMessage))
+                    {
+                        failedMessage.Promise.SetException(new RequestMessageNotDeletedException(failedMessage));
+                    }
+                }
+
+                var finalizerTasks = from message in messageDict select FinalizeMessage(message.Value);
                 await Task.WhenAll(finalizerTasks);
             }
             catch (Exception exception)
@@ -205,7 +216,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var entries = from message in messagesToChange
                               select new ChangeMessageVisibilityBatchRequestEntry
                               {
-                                  Id = Guid.NewGuid().ToString(),
+                                  Id = message.Request.Id.ToString(),
                                   ReceiptHandle = message.ReceiptHandle,
                                   VisibilityTimeout = (int)message.VisibilityTimeout,
                               };
@@ -214,7 +225,18 @@ namespace Brighid.Discord.RestQueue.Requests
                 var response = await sqs.ChangeMessageVisibilityBatchAsync(options.QueueUrl.ToString(), entries.ToList(), workerCancellationToken);
                 logger.LogInformation("Received sqs:ChangeMessageVisibilityBatch response: {@response}", response);
 
-                foreach (var message in messagesToChange)
+                var messageDict = messagesToChange.ToDictionary(message => message.Request.Id.ToString(), message => message);
+                var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
+
+                foreach (var failedMessageId in failedMessageIds)
+                {
+                    if (messageDict.Remove(failedMessageId, out var failedMessage))
+                    {
+                        failedMessage.Promise.SetException(new VisibilityTimeoutNotUpdatedException(failedMessage));
+                    }
+                }
+
+                foreach (var (_, message) in messageDict)
                 {
                     message.Promise.SetResult();
                 }
