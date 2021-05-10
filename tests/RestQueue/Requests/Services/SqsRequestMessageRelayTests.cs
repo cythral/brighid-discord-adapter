@@ -164,7 +164,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var task2CancellationTokenSource = new CancellationTokenSource();
                 var task2 = relay.Complete(message2, statusCode, null, task2CancellationTokenSource.Token);
 
-                task2CancellationTokenSource.CancelAfter(2);
+                task2CancellationTokenSource.CancelAfter(1);
 
                 Func<Task> func = () => Task.WhenAll(task1, task2);
 
@@ -456,7 +456,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var message2CancellationSource = new CancellationTokenSource();
                 var task1 = relay.Fail(message1, message1VisibilityTimeout, message1CancellationToken);
                 var task2 = relay.Fail(message2, message2VisibilityTimeout, message2CancellationSource.Token);
-                message2CancellationSource.CancelAfter(2);
+                message2CancellationSource.CancelAfter(1);
 
                 try
                 {
