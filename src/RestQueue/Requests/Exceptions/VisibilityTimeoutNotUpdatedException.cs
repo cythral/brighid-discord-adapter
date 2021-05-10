@@ -12,7 +12,7 @@ namespace Brighid.Discord.RestQueue.Requests
         /// </summary>
         /// <param name="message">The message that failed to update.</param>
         public VisibilityTimeoutNotUpdatedException(RequestMessage message)
-            : base($"Request {message.Request.Id}'s visibility timeout failed to update.")
+            : base($"Request {message.RequestDetails.Id}'s visibility timeout failed to update.")
         {
             RequestMessage = message;
         }

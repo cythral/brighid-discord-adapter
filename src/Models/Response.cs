@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text.Json.Serialization;
 
 namespace Brighid.Discord.Models
@@ -15,9 +16,15 @@ namespace Brighid.Discord.Models
         public Guid RequestId { get; set; }
 
         /// <summary>
+        /// Gets or sets the response status code.
+        /// </summary>
+        [JsonPropertyName("s")]
+        public HttpStatusCode StatusCode { get; set; }
+
+        /// <summary>
         /// Gets or sets the response.
         /// </summary>
-        [JsonPropertyName("m")]
-        public string Message { get; set; }
+        [JsonPropertyName("b")]
+        public string? Body { get; set; }
     }
 }

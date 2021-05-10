@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -66,11 +67,12 @@ namespace Brighid.Discord.RestQueue.Requests
         }
 
         /// <inheritdoc />
-        public async Task Complete(RequestMessage message, string? response = null, CancellationToken cancellationToken = default)
+        public async Task Complete(RequestMessage message, HttpStatusCode statusCode, string? response = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             message.State = RequestMessageState.Succeeded;
             message.CancellationToken = cancellationToken;
+            message.ResponseCode = statusCode;
             message.Response = response;
 
             await completeQueue.WaitToWrite(cancellationToken);
@@ -128,7 +130,7 @@ namespace Brighid.Discord.RestQueue.Requests
             try
             {
                 var request = await serializer.Deserialize<Request>(message.Body, cancellationToken);
-                return new RequestMessage { Request = request, ReceiptHandle = message.ReceiptHandle };
+                return new RequestMessage { RequestDetails = request, ReceiptHandle = message.ReceiptHandle };
             }
             catch (Exception exception)
             {
@@ -171,14 +173,14 @@ namespace Brighid.Discord.RestQueue.Requests
 
             try
             {
-                var entries = from message in messagesToDelete select new DeleteMessageBatchRequestEntry { Id = message.Request.Id.ToString(), ReceiptHandle = message.ReceiptHandle };
+                var entries = from message in messagesToDelete select new DeleteMessageBatchRequestEntry { Id = message.RequestDetails.Id.ToString(), ReceiptHandle = message.ReceiptHandle };
                 logger.LogInformation("Sending sqs:DeleteMessageBatch with {@count} entries", entries.Count());
 
                 var request = new DeleteMessageBatchRequest { QueueUrl = options.QueueUrl.ToString(), Entries = entries.ToList() };
                 var response = await sqs.DeleteMessageBatchAsync(request, workerCancellationToken);
                 logger.LogInformation("Received sqs:DeleteMessageBatch response: {@response}", response);
 
-                var messageDict = messagesToDelete.ToDictionary(message => message.Request.Id.ToString(), message => message);
+                var messageDict = messagesToDelete.ToDictionary(message => message.RequestDetails.Id.ToString(), message => message);
                 var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
 
                 foreach (var failedMessageId in failedMessageIds)
@@ -216,7 +218,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var entries = from message in messagesToChange
                               select new ChangeMessageVisibilityBatchRequestEntry
                               {
-                                  Id = message.Request.Id.ToString(),
+                                  Id = message.RequestDetails.Id.ToString(),
                                   ReceiptHandle = message.ReceiptHandle,
                                   VisibilityTimeout = (int)message.VisibilityTimeout,
                               };
@@ -225,7 +227,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var response = await sqs.ChangeMessageVisibilityBatchAsync(options.QueueUrl.ToString(), entries.ToList(), workerCancellationToken);
                 logger.LogInformation("Received sqs:ChangeMessageVisibilityBatch response: {@response}", response);
 
-                var messageDict = messagesToChange.ToDictionary(message => message.Request.Id.ToString(), message => message);
+                var messageDict = messagesToChange.ToDictionary(message => message.RequestDetails.Id.ToString(), message => message);
                 var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
 
                 foreach (var failedMessageId in failedMessageIds)
@@ -254,7 +256,7 @@ namespace Brighid.Discord.RestQueue.Requests
         {
             workerCancellationToken.ThrowIfCancellationRequested();
 
-            if (message.Response == null || message.Request.ResponseQueueURL == null)
+            if (message.Response == null || message.RequestDetails.ResponseQueueURL == null)
             {
                 message.Promise.TrySetResult();
                 return;
@@ -262,11 +264,11 @@ namespace Brighid.Discord.RestQueue.Requests
 
             try
             {
-                var response = new Response { RequestId = message.Request.Id, Message = message.Response };
+                var response = new Response { RequestId = message.RequestDetails.Id, StatusCode = message.ResponseCode, Body = message.Response };
                 var payload = await serializer.Serialize(response, workerCancellationToken);
 
                 logger.LogInformation("Sending sqs:SendMessage with message: {@message}", message);
-                var sendMessageResponse = await sqs.SendMessageAsync(message.Request.ResponseQueueURL.ToString(), payload, workerCancellationToken);
+                var sendMessageResponse = await sqs.SendMessageAsync(message.RequestDetails.ResponseQueueURL.ToString(), payload, workerCancellationToken);
                 logger.LogInformation("Received sqs:SendMessage response: {@response}", sendMessageResponse);
 
                 message.Promise.TrySetResult();

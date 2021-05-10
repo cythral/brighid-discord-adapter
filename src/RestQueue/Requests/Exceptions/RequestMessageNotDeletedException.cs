@@ -12,7 +12,7 @@ namespace Brighid.Discord.RestQueue.Requests
         /// </summary>
         /// <param name="message">The request message that failed to delete.</param>
         public RequestMessageNotDeletedException(RequestMessage message)
-            : base($"Request {message.Request.Id} failed to delete in the queue.")
+            : base($"Request {message.RequestDetails.Id} failed to delete in the queue.")
         {
             RequestMessage = message;
         }

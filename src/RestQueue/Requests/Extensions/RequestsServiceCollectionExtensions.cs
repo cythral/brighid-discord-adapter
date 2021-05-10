@@ -1,3 +1,5 @@
+using System.Net.Http;
+
 using Brighid.Discord.RestQueue.Requests;
 
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<RequestOptions>(configuration.GetSection("Requests"));
             services.AddSingleton<IUrlBuilder, DefaultUrlBuilder>();
             services.AddSingleton<IRequestMessageRelay, SqsRequestMessageRelay>();
+            services.AddSingleton<IRequestInvoker, DefaultRequestInvoker>();
+            services.AddSingleton<HttpMessageInvoker, HttpClient>();
         }
     }
 }
