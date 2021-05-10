@@ -13,11 +13,11 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
-        "requested": "[3.7.1.2, )",
-        "resolved": "3.7.1.2",
-        "contentHash": "LwLtKTvfwGjeKxYzGmEzukx6U03+/LN9m0oTB+ejSZGjOBv/0pEXI3V1Ta7b0kCPq/O5hvSbzHy4GWPaFybDuw==",
+        "requested": "[3.7.1.3, )",
+        "resolved": "3.7.1.3",
+        "contentHash": "FV+LUQK6xDT50+jf58t1ugLDpqA+le2WcZ1XXFoMFVUWIXj9NvvFpJ/RgTJYqRzpqvwr+f4n0LklKO5YB0vN/Q==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.17, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.18, 4.0.0)"
         }
       },
       "Brighid.Identity.Client": {
