@@ -9,27 +9,22 @@ namespace Brighid.Discord.Models
     /// <summary>
     /// Represents an API request to be made.
     /// </summary>
-    public struct Request
+    public class Request
     {
         /// <summary>
-        /// Initializes a new <see cref="Request" /> record.
+        /// Initializes a new <see cref="Request" /> class.
         /// </summary>
         /// <param name="endpoint">The endpoint to use for the request.</param>
         public Request(Endpoint endpoint)
         {
-            Id = Guid.NewGuid();
             Endpoint = endpoint;
-            RequestBody = null;
-            ResponseQueueURL = null;
-            Parameters = new Dictionary<string, string>();
-            Headers = new Dictionary<string, string>();
         }
 
         /// <summary>
         /// Gets or sets the request ID.
         /// </summary>
         [JsonPropertyName("id")]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets or sets the path template to build the URL from.
@@ -53,12 +48,12 @@ namespace Brighid.Discord.Models
         /// Gets or sets the request parameters to be used in the endpoint's path template.
         /// </summary>
         [JsonPropertyName("p")]
-        public Dictionary<string, string> Parameters { get; set; }
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
         /// Gets or sets the headers to be sent along with the request.
         /// </summary>
         [JsonPropertyName("h")]
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
     }
 }

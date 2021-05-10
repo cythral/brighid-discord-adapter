@@ -4,6 +4,8 @@ using Brighid.Discord.RestQueue.Requests;
 
 using Microsoft.Extensions.Configuration;
 
+using HttpClient = Brighid.Discord.RestQueue.Requests.HttpClient;
+
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>

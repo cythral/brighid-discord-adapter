@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -113,6 +114,20 @@ namespace Brighid.Discord.RestQueue.Requests
             GC.SuppressFinalize(this);
         }
 
+        private static void NotifyFailedTasks<TException>(Dictionary<string, RequestMessage> messages, List<BatchResultErrorEntry> failed)
+            where TException : Exception, IRequestMessageException, new()
+        {
+            var failedMessageIds = from failedMessage in failed select failedMessage.Id.ToString();
+
+            foreach (var failedMessageId in failedMessageIds)
+            {
+                if (messages.Remove(failedMessageId, out var failedMessage))
+                {
+                    failedMessage.Promise.SetException(new TException { RequestMessage = failedMessage });
+                }
+            }
+        }
+
         private static ValueTask<bool> FilterCanceledMessages(RequestMessage message)
         {
             if (message.CancellationToken.IsCancellationRequested)
@@ -130,7 +145,10 @@ namespace Brighid.Discord.RestQueue.Requests
             try
             {
                 var request = await serializer.Deserialize<Request>(message.Body, cancellationToken);
-                return new RequestMessage { RequestDetails = request, ReceiptHandle = message.ReceiptHandle };
+
+                return request == null
+                    ? throw new SerializationException("Request unexpectedly deserialized to null.")
+                    : new RequestMessage { RequestDetails = request, ReceiptHandle = message.ReceiptHandle };
             }
             catch (Exception exception)
             {
@@ -181,15 +199,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 logger.LogInformation("Received sqs:DeleteMessageBatch response: {@response}", response);
 
                 var messageDict = messagesToDelete.ToDictionary(message => message.RequestDetails.Id.ToString(), message => message);
-                var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
-
-                foreach (var failedMessageId in failedMessageIds)
-                {
-                    if (messageDict.Remove(failedMessageId, out var failedMessage))
-                    {
-                        failedMessage.Promise.SetException(new RequestMessageNotDeletedException(failedMessage));
-                    }
-                }
+                NotifyFailedTasks<RequestMessageNotDeletedException>(messageDict, response.Failed);
 
                 var finalizerTasks = from message in messageDict select FinalizeMessage(message.Value);
                 await Task.WhenAll(finalizerTasks);
@@ -198,7 +208,7 @@ namespace Brighid.Discord.RestQueue.Requests
             {
                 foreach (var message in messagesToDelete)
                 {
-                    message.Promise.SetException(exception);
+                    message.Promise.TrySetException(exception);
                 }
             }
         }
@@ -228,15 +238,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 logger.LogInformation("Received sqs:ChangeMessageVisibilityBatch response: {@response}", response);
 
                 var messageDict = messagesToChange.ToDictionary(message => message.RequestDetails.Id.ToString(), message => message);
-                var failedMessageIds = from failedMessage in response.Failed select failedMessage.Id.ToString();
-
-                foreach (var failedMessageId in failedMessageIds)
-                {
-                    if (messageDict.Remove(failedMessageId, out var failedMessage))
-                    {
-                        failedMessage.Promise.SetException(new VisibilityTimeoutNotUpdatedException(failedMessage));
-                    }
-                }
+                NotifyFailedTasks<VisibilityTimeoutNotUpdatedException>(messageDict, response.Failed);
 
                 foreach (var (_, message) in messageDict)
                 {
@@ -247,7 +249,7 @@ namespace Brighid.Discord.RestQueue.Requests
             {
                 foreach (var message in messagesToChange)
                 {
-                    message.Promise.SetException(exception);
+                    message.Promise.TrySetException(exception);
                 }
             }
         }

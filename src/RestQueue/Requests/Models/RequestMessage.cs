@@ -14,7 +14,7 @@ namespace Brighid.Discord.RestQueue.Requests
         /// <summary>
         /// Gets or sets the request details.
         /// </summary>
-        public Request RequestDetails { get; set; }
+        public Request RequestDetails { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the message receipt handle.

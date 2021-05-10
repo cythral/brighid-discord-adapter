@@ -13,6 +13,16 @@ namespace Brighid.Discord.RestQueue.Requests
         public Uri QueueUrl { get; set; } = new Uri("http://localhost");
 
         /// <summary>
+        /// Gets or sets the authentication scheme used when sending requests.
+        /// </summary>
+        public string AuthScheme { get; set; } = "Bot";
+
+        /// <summary>
+        /// Gets or sets the token used to authenticate requests with.
+        /// </summary>
+        public string Token { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the number of seconds to buffer delete message requests for.
         /// </summary>
         public double MessageBufferPeriod { get; set; } = 30;

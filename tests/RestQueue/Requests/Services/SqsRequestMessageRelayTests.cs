@@ -204,7 +204,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 CancellationToken cancellationToken
             )
             {
-                message.RequestDetails = new Request { ResponseQueueURL = responseQueueUrl };
+                message.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { ResponseQueueURL = responseQueueUrl };
                 serializer.Serialize(Any<Response>(), Any<CancellationToken>()).Returns(payload);
                 await relay.Complete(message, statusCode, response, cancellationToken);
 
@@ -246,7 +246,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 CancellationToken cancellationToken
             )
             {
-                message.RequestDetails = new Request { ResponseQueueURL = null };
+                message.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { ResponseQueueURL = null };
 
                 await relay.Complete(message, statusCode, response, cancellationToken);
 
