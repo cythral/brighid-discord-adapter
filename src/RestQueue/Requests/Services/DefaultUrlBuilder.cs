@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 using Brighid.Discord.Models;
 
@@ -26,9 +25,7 @@ namespace Brighid.Discord.RestQueue.Requests
         /// <inheritdoc />
         public Uri BuildFromRequest(Request request)
         {
-            var memberInfo = typeof(Endpoint).GetMember(request.Endpoint.ToString()).FirstOrDefault();
-            var attributes = from attr in memberInfo?.GetCustomAttributes(true) ?? Array.Empty<object>() where attr.GetType() == typeof(ApiEndpointAttribute) select attr;
-            var endpointInfo = (ApiEndpointAttribute?)attributes.FirstOrDefault();
+            var endpointInfo = request.Endpoint.GetEndpointInfo();
             var result = string.Empty;
 
             if (endpointInfo?.Template == null)

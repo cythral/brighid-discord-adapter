@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,11 +33,12 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto]
             public async Task ShouldThrowIfCanceled(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Target] SqsRequestMessageRelay relay
             )
             {
                 var cancellationToken = new CancellationToken(true);
-                Func<Task> func = () => relay.Complete(message, null, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, null, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
             }
@@ -44,11 +46,12 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto]
             public async Task ShouldNotThrowIfNotCanceled(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
-                Func<Task> func = () => relay.Complete(message, null, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, null, cancellationToken);
 
                 await func.Should().NotThrowAsync<OperationCanceledException>();
             }
@@ -56,13 +59,14 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldDeleteMessageFromTheQueue(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
-                await relay.Complete(message, null, cancellationToken);
+                await relay.Complete(message, statusCode, null, cancellationToken);
 
                 await sqs.Received().DeleteMessageBatchAsync(
                     Is<DeleteMessageBatchRequest>(req =>
@@ -77,6 +81,7 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldPropagateDeleteMessageBatchExceptions(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 Exception exception,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
@@ -86,7 +91,7 @@ namespace Brighid.Discord.RestQueue.Requests
             {
                 sqs.DeleteMessageBatchAsync(Any<DeleteMessageBatchRequest>(), Any<CancellationToken>()).Throws(exception);
 
-                Func<Task> func = () => relay.Complete(message, null, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, null, cancellationToken);
 
                 (await func.Should().ThrowAsync<Exception>())
                 .And.Should().Be(exception);
@@ -95,13 +100,14 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldSetMessageStateToSucceeded(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
-                await relay.Complete(message, null, cancellationToken);
+                await relay.Complete(message, statusCode, null, cancellationToken);
 
                 message.State.Should().Be(RequestMessageState.Succeeded);
             }
@@ -110,14 +116,15 @@ namespace Brighid.Discord.RestQueue.Requests
             public async Task ShouldBatchMultipleCallsIntoASingleDelete(
                 RequestMessage message1,
                 RequestMessage message2,
+                HttpStatusCode statusCode,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
-                var task1 = relay.Complete(message1, null, cancellationToken);
-                var task2 = relay.Complete(message2, null, cancellationToken);
+                var task1 = relay.Complete(message1, statusCode, null, cancellationToken);
+                var task2 = relay.Complete(message2, statusCode, null, cancellationToken);
 
                 await Task.WhenAll(task1, task2);
 
@@ -133,11 +140,11 @@ namespace Brighid.Discord.RestQueue.Requests
 
                 batchRequest.QueueUrl.Should().Be(options.QueueUrl.ToString());
                 batchRequest.Entries.Should().Contain(entry =>
-                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.Id == message1.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle
                 );
                 batchRequest.Entries.Should().Contain(entry =>
-                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.Id == message2.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle
                 );
             }
@@ -146,17 +153,18 @@ namespace Brighid.Discord.RestQueue.Requests
             public async Task ShouldNotDeleteMessagesThatHaveBeenCanceled(
                 RequestMessage message1,
                 RequestMessage message2,
+                HttpStatusCode statusCode,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
-                var task1 = relay.Complete(message1, null, cancellationToken);
+                var task1 = relay.Complete(message1, statusCode, null, cancellationToken);
                 var task2CancellationTokenSource = new CancellationTokenSource();
-                var task2 = relay.Complete(message2, null, task2CancellationTokenSource.Token);
+                var task2 = relay.Complete(message2, statusCode, null, task2CancellationTokenSource.Token);
 
-                task2CancellationTokenSource.CancelAfter(2);
+                task2CancellationTokenSource.CancelAfter(1);
 
                 Func<Task> func = () => Task.WhenAll(task1, task2);
 
@@ -173,11 +181,11 @@ namespace Brighid.Discord.RestQueue.Requests
 
                 batchRequest.QueueUrl.Should().Be(options.QueueUrl.ToString());
                 batchRequest.Entries.Should().Contain(entry =>
-                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.Id == message1.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle
                 );
                 batchRequest.Entries.Should().NotContain(entry =>
-                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.Id == message2.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle
                 );
             }
@@ -188,6 +196,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 string payload,
                 Uri responseQueueUrl,
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Frozen] ISerializer serializer,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
@@ -195,21 +204,23 @@ namespace Brighid.Discord.RestQueue.Requests
                 CancellationToken cancellationToken
             )
             {
-                message.Request = new Request { ResponseQueueURL = responseQueueUrl };
+                message.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { ResponseQueueURL = responseQueueUrl };
                 serializer.Serialize(Any<Response>(), Any<CancellationToken>()).Returns(payload);
-                await relay.Complete(message, response, cancellationToken);
+                await relay.Complete(message, statusCode, response, cancellationToken);
 
                 await sqs.Received().SendMessageAsync(Is(responseQueueUrl.ToString()), Is(payload), Any<CancellationToken>());
                 await serializer.Received().Serialize(Any<Response>(), Any<CancellationToken>());
 
                 var responseGivenToSerializer = (from call in serializer.ReceivedCalls() select (Response)call.GetArguments()[0]).First();
-                responseGivenToSerializer.RequestId.Should().Be(message.Request.Id);
-                responseGivenToSerializer.Message.Should().Be(message.Response);
+                responseGivenToSerializer.RequestId.Should().Be(message.RequestDetails.Id);
+                responseGivenToSerializer.StatusCode.Should().Be(statusCode);
+                responseGivenToSerializer.Body.Should().Be(message.Response);
             }
 
             [Test, Auto, Timeout(2000)]
             public async Task ShouldNotSendResponseIfResponseIsNull(
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Frozen] ISerializer serializer,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
@@ -217,16 +228,17 @@ namespace Brighid.Discord.RestQueue.Requests
                 CancellationToken cancellationToken
             )
             {
-                await relay.Complete(message, null, cancellationToken);
+                await relay.Complete(message, statusCode, null, cancellationToken);
 
                 await serializer.DidNotReceive().Serialize(Any<string>(), Any<CancellationToken>());
-                await sqs.DidNotReceive().SendMessageAsync(Is(message.Request.ResponseQueueURL!.ToString()), Any<string>(), Any<CancellationToken>());
+                await sqs.DidNotReceive().SendMessageAsync(Is(message.RequestDetails.ResponseQueueURL!.ToString()), Any<string>(), Any<CancellationToken>());
             }
 
             [Test, Auto, Timeout(2000)]
             public async Task ShouldNotSendResponseIfResponseQueueUrlIsNull(
                 string response,
                 RequestMessage message,
+                HttpStatusCode statusCode,
                 [Frozen] ISerializer serializer,
                 [Frozen] RequestOptions options,
                 [Frozen, Substitute] IAmazonSQS sqs,
@@ -234,9 +246,9 @@ namespace Brighid.Discord.RestQueue.Requests
                 CancellationToken cancellationToken
             )
             {
-                message.Request = new Request { ResponseQueueURL = null };
+                message.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { ResponseQueueURL = null };
 
-                await relay.Complete(message, response, cancellationToken);
+                await relay.Complete(message, statusCode, response, cancellationToken);
 
                 await serializer.DidNotReceive().Serialize(Is(response), Any<CancellationToken>());
                 await sqs.DidNotReceive().SendMessageAsync(Any<string>(), Any<string>(), Any<CancellationToken>());
@@ -245,6 +257,7 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldPropagateSendMessageExceptions(
                 string response,
+                HttpStatusCode statusCode,
                 RequestMessage message,
                 Exception exception,
                 [Frozen] RequestOptions options,
@@ -254,7 +267,7 @@ namespace Brighid.Discord.RestQueue.Requests
             )
             {
                 sqs.SendMessageAsync(Any<string>(), Any<string>(), Any<CancellationToken>()).Throws(exception);
-                Func<Task> func = () => relay.Complete(message, response, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, response, cancellationToken);
 
                 (await func.Should().ThrowAsync<Exception>())
                 .And.Message.Should().Be(exception.Message);
@@ -263,6 +276,7 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldPropagateSerializeExceptions(
                 string response,
+                HttpStatusCode statusCode,
                 RequestMessage message,
                 Exception exception,
                 [Frozen] ISerializer serializer,
@@ -273,7 +287,7 @@ namespace Brighid.Discord.RestQueue.Requests
             )
             {
                 serializer.Serialize(Any<Response>(), Any<CancellationToken>()).Throws(exception);
-                Func<Task> func = () => relay.Complete(message, response, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, response, cancellationToken);
 
                 (await func.Should().ThrowAsync<Exception>())
                 .And.Message.Should().Be(exception.Message);
@@ -282,6 +296,7 @@ namespace Brighid.Discord.RestQueue.Requests
             [Test, Auto, Timeout(2000)]
             public async Task ShouldThrowIfMessageFailedToDelete(
                 string response,
+                HttpStatusCode statusCode,
                 RequestMessage message,
                 Exception exception,
                 [Frozen] ISerializer serializer,
@@ -295,11 +310,11 @@ namespace Brighid.Discord.RestQueue.Requests
                 {
                     Failed = new List<BatchResultErrorEntry>
                     {
-                        new() { Id = message.Request.Id.ToString() },
+                        new() { Id = message.RequestDetails.Id.ToString() },
                     },
                 });
 
-                Func<Task> func = () => relay.Complete(message, response, cancellationToken);
+                Func<Task> func = () => relay.Complete(message, statusCode, response, cancellationToken);
 
                 (await func.Should().ThrowAsync<RequestMessageNotDeletedException>())
                 .And.RequestMessage.Should().Be(message);
@@ -382,7 +397,7 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id == message.Request.Id.ToString() &&
+                    entry.Id == message.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message.ReceiptHandle &&
                     entry.VisibilityTimeout == visibilityTimeout
                 );
@@ -414,13 +429,13 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.Id == message1.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle &&
                     entry.VisibilityTimeout == message1VisibilityTimeout
                 );
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.Id == message2.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle &&
                     entry.VisibilityTimeout == message2VisibilityTimeout
                 );
@@ -441,7 +456,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var message2CancellationSource = new CancellationTokenSource();
                 var task1 = relay.Fail(message1, message1VisibilityTimeout, message1CancellationToken);
                 var task2 = relay.Fail(message2, message2VisibilityTimeout, message2CancellationSource.Token);
-                message2CancellationSource.CancelAfter(2);
+                message2CancellationSource.CancelAfter(1);
 
                 try
                 {
@@ -460,13 +475,13 @@ namespace Brighid.Discord.RestQueue.Requests
                                                select entries).First();
 
                 changeVisibilityEntries.Should().Contain(entry =>
-                    entry.Id == message1.Request.Id.ToString() &&
+                    entry.Id == message1.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message1.ReceiptHandle &&
                     entry.VisibilityTimeout == message1VisibilityTimeout
                 );
 
                 changeVisibilityEntries.Should().NotContain(entry =>
-                    entry.Id == message2.Request.Id.ToString() &&
+                    entry.Id == message2.RequestDetails.Id.ToString() &&
                     entry.ReceiptHandle == message2.ReceiptHandle &&
                     entry.VisibilityTimeout == message2VisibilityTimeout
                 );
@@ -508,7 +523,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 {
                     Failed = new List<BatchResultErrorEntry>
                     {
-                        new() { Id = message.Request.Id.ToString() },
+                        new() { Id = message.RequestDetails.Id.ToString() },
                     },
                 });
 
@@ -580,7 +595,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 var result = await relay.Receive(cancellationToken);
                 var resultMessage = result.ElementAt(0);
 
-                resultMessage.Request.Should().Be(request);
+                resultMessage.RequestDetails.Should().Be(request);
                 resultMessage.State.Should().Be(RequestMessageState.InFlight);
                 resultMessage.ReceiptHandle.Should().Be(sqsMessage.ReceiptHandle);
                 await serializer.Received().Deserialize<Request>(Is(sqsMessage.Body), Is(cancellationToken));

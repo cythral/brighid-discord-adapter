@@ -1,6 +1,10 @@
+using System.Net.Http;
+
 using Brighid.Discord.RestQueue.Requests;
 
 using Microsoft.Extensions.Configuration;
+
+using HttpClient = Brighid.Discord.RestQueue.Requests.HttpClient;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,6 +23,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<RequestOptions>(configuration.GetSection("Requests"));
             services.AddSingleton<IUrlBuilder, DefaultUrlBuilder>();
             services.AddSingleton<IRequestMessageRelay, SqsRequestMessageRelay>();
+            services.AddSingleton<IRequestInvoker, DefaultRequestInvoker>();
+            services.AddSingleton<HttpMessageInvoker, HttpClient>();
         }
     }
 }

@@ -42,11 +42,12 @@ namespace Brighid.Discord.RestQueue
             logger.LogInformation("Started.");
 
             var relay = Services.GetRequiredService<IRequestMessageRelay>();
+            var invoker = Services.GetRequiredService<IRequestInvoker>();
 
             while (true)
             {
                 var messages = await relay.Receive(cancellationToken);
-                var tasks = from message in messages select relay.Complete(message, null, cancellationToken);
+                var tasks = from message in messages select invoker.Invoke(message, cancellationToken);
 
                 try
                 {

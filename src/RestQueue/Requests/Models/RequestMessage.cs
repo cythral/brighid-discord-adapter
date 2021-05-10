@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace Brighid.Discord.RestQueue.Requests
         /// <summary>
         /// Gets or sets the request details.
         /// </summary>
-        public Request Request { get; set; }
+        public Request RequestDetails { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the message receipt handle.
@@ -29,6 +30,11 @@ namespace Brighid.Discord.RestQueue.Requests
         /// Gets or sets the promise task that will complete when this task has finished processing.
         /// </summary>
         public TaskCompletionSource Promise { get; set; } = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        /// <summary>
+        /// Gets or sets the Request Message's response code.
+        /// </summary>
+        public HttpStatusCode ResponseCode { get; set; }
 
         /// <summary>
         /// Gets or sets the Request Message's response to send back to the requester when complete.
