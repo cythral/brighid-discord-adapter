@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v5.0": {
+      "AWSSDK.SQS": {
+        "type": "Direct",
+        "requested": "[3.7.0.17, )",
+        "resolved": "3.7.0.17",
+        "contentHash": "VO8G1XdzjJ7eZ+c54kn5VMCeXDKVvdj0XpnHX5BhfqGABYbU42Gg/T8HbNw0/zCuMByBYFstY5QZQmQ2FB5KKw==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.0.17, 4.0.0)"
+        }
+      },
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
         "type": "Direct",
         "requested": "[3.9.0, )",
@@ -72,6 +81,11 @@
         "dependencies": {
           "StyleCop.Analyzers.Unstable": "1.2.0.333"
         }
+      },
+      "AWSSDK.Core": {
+        "type": "Transitive",
+        "resolved": "3.7.0.17",
+        "contentHash": "HyyugATncZMqUy0DkjQ3nupTCtQEC71Jv4AUshwoINJCJ3WdysvWPV7tCYiIsBhG7XNaFT1N4wcb0kztg1Tj3A=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -617,6 +631,11 @@
           "System.Runtime.Extensions": "4.1.0"
         }
       },
+      "System.Linq.Async": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "cPtIuuH8TIjVHSi2ewwReWGW1PfChPE0LxPIDlfwVcLuTM9GANFTXiMB7k3aC4sk3f0cQU25LNKzx+jZMxijqw=="
+      },
       "System.Linq.Expressions": {
         "type": "Transitive",
         "resolved": "4.1.0",
@@ -937,7 +956,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "5.0.1",
-          "Microsoft.Extensions.Logging": "5.0.0"
+          "Microsoft.Extensions.Logging": "5.0.0",
+          "System.Linq.Async": "5.0.0"
         }
       },
       "models": {

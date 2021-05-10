@@ -43,7 +43,7 @@ namespace Brighid.Discord.RestQueue.Requests
                 request.Parameters["channel.id"] = channelId;
 
                 var result = builder.BuildFromRequest(request);
-                result.Should().Be($"{options.BaseUrl}/channels/{channelId}/messages");
+                result.Should().Be($"{options.InvokeBaseUrl}/channels/{channelId}/messages");
             }
 
             [Test, Auto]

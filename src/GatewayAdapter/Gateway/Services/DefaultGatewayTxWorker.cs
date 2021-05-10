@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.GatewayAdapter.Messages;
 using Brighid.Discord.Serialization;
+using Brighid.Discord.Threading;
 
 using Microsoft.Extensions.Logging;
 

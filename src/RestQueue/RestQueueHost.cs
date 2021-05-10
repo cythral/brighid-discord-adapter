@@ -1,9 +1,9 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.RestQueue.Requests;
-using Brighid.Discord.Serialization;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,10 +38,27 @@ namespace Brighid.Discord.RestQueue
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Starting.");
-            Services.GetRequiredService<IUrlBuilder>();
-            Services.GetRequiredService<ISerializer>();
             await Task.CompletedTask;
             logger.LogInformation("Started.");
+
+            var relay = Services.GetRequiredService<IRequestMessageRelay>();
+
+            while (true)
+            {
+                var messages = await relay.Receive(cancellationToken);
+                var tasks = from message in messages select relay.Complete(message, null, cancellationToken);
+
+                try
+                {
+                    await Task.WhenAll(tasks);
+                }
+                catch (Exception exception)
+                {
+                    logger.LogError("Received exception: {@exception}", exception);
+                }
+
+                await Task.Delay(30000, cancellationToken);
+            }
         }
 
         /// <inheritdoc />

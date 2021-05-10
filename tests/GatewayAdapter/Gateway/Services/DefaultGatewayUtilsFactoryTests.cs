@@ -68,6 +68,7 @@ namespace Brighid.Discord.GatewayAdapter.Gateway
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
             workerThread.Start(cancellationTokenSource);
+            await Task.Delay(10);
             workerThread.Stop();
 
             await runAsync.Received()();

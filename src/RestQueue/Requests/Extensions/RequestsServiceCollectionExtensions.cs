@@ -18,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.Configure<RequestOptions>(configuration.GetSection("Requests"));
             services.AddSingleton<IUrlBuilder, DefaultUrlBuilder>();
+            services.AddSingleton<IRequestMessageRelay, SqsRequestMessageRelay>();
         }
     }
 }
