@@ -54,7 +54,7 @@ namespace Brighid.Discord.Adapter.Events
             cancellationToken.ThrowIfCancellationRequested();
 
             _ = reporter.Report(default(HelloEventMetric), cancellationToken);
-            gateway.StartHeartbeat(@event.HeartbeatInterval);
+            await gateway.StartHeartbeat(@event.HeartbeatInterval);
 
             var message = gateway.SessionId == null || gateway.SequenceNumber == null ? CreateIdentifyMessage() : CreateResumeMessage();
             await gateway.Send(message, cancellationToken);

@@ -160,11 +160,11 @@ namespace Brighid.Discord.Adapter.Requests
                 CancellationToken cancellationToken
             )
             {
-                var task1 = relay.Complete(message1, statusCode, null, cancellationToken);
                 var task2CancellationTokenSource = new CancellationTokenSource();
-                var task2 = relay.Complete(message2, statusCode, null, task2CancellationTokenSource.Token);
-
                 task2CancellationTokenSource.CancelAfter(1);
+
+                var task1 = relay.Complete(message1, statusCode, null, cancellationToken);
+                var task2 = relay.Complete(message2, statusCode, null, task2CancellationTokenSource.Token);
 
                 Func<Task> func = () => Task.WhenAll(task1, task2);
 
@@ -441,7 +441,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
             }
 
-            [Test, Auto, Timeout(2000), Retry(3)]
+            [Test, Auto, Timeout(2000), Retry(5)]
             public async Task ShouldNotChangeVisibilityForCancelledMessages(
                 RequestMessage message1,
                 uint message1VisibilityTimeout,

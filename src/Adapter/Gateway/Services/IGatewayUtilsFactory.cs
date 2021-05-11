@@ -13,6 +13,12 @@ namespace Brighid.Discord.Adapter.Gateway
     public interface IGatewayUtilsFactory
     {
         /// <summary>
+        /// Create a new cancellation token source.
+        /// </summary>
+        /// <returns>The resulting cancellation token source.</returns>
+        CancellationTokenSource CreateCancellationTokenSource();
+
+        /// <summary>
         /// Create a new websocket client.
         /// </summary>
         /// <returns>The resulting websocket client.</returns>
