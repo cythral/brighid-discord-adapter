@@ -143,6 +143,19 @@ Resources:
               StringEquals:
                 cloudwatch:namespace: !Ref MetricsNamespace
 
+          - Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:DeleteMessageBatch
+              - sqs:ChangeMessageVisibility
+              - sqs:ChangeMessageVisibilityBatch
+            Resource: !GetAtt RestQueue.Arn
+
+          - Effect: Allow
+            Action: sqs:SendMessage
+            Resource: "*"
+
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
