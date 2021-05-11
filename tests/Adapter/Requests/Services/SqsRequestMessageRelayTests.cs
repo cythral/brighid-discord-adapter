@@ -149,7 +149,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
             }
 
-            [Test, Auto, Timeout(2000)]
+            [Test, Auto, Timeout(2000), Retry(3)]
             public async Task ShouldNotDeleteMessagesThatHaveBeenCanceled(
                 RequestMessage message1,
                 RequestMessage message2,
