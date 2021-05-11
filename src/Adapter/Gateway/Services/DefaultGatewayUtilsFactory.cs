@@ -35,6 +35,12 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <inheritdoc />
+        public CancellationTokenSource CreateCancellationTokenSource()
+        {
+            return new CancellationTokenSource();
+        }
+
+        /// <inheritdoc />
         public IClientWebSocket CreateWebSocketClient()
         {
             return new ClientWebSocket();

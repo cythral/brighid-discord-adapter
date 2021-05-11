@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Messages;
 
+using Microsoft.Extensions.Hosting;
+
 namespace Brighid.Discord.Adapter.Gateway
 {
     /// <summary>
     /// Service to interface with the discord gateway.
     /// </summary>
-    public interface IGatewayService
+    public interface IGatewayService : IHostedService
     {
         /// <summary>
         /// Gets or sets the last sequence number received.
@@ -26,16 +28,9 @@ namespace Brighid.Discord.Adapter.Gateway
         bool IsReady { get; set; }
 
         /// <summary>
-        /// Start the gateway service.
+        /// Gets a value indicating whether the service is running.
         /// </summary>
-        /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
-        void Start(CancellationTokenSource cancellationTokenSource);
-
-        /// <summary>
-        /// Stop the gateway service.
-        /// </summary>
-        /// <returns>The resulting task.</returns>
-        Task Stop();
+        bool IsRunning { get; }
 
         /// <summary>
         /// Restarts the gateway service.

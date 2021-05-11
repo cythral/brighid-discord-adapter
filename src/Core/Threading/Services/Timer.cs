@@ -13,6 +13,10 @@ namespace Brighid.Discord.Threading
     /// <returns>The resulting task.</returns>
     public delegate Task AsyncTimerCallback(CancellationToken cancellationToken = default);
 
+    /// <summary>Function that occurs when a task stops.</summary>
+    /// <returns>The resulting task.</returns>
+    public delegate Task OnUnexpectedTimerStop();
+
     /// <inheritdoc />
     public class Timer : ITimer
     {
@@ -47,6 +51,12 @@ namespace Brighid.Discord.Threading
         }
 
         /// <inheritdoc />
+        public bool StopOnException { get; set; }
+
+        /// <inheritdoc />
+        public OnUnexpectedTimerStop? OnUnexpectedStop { get; set; }
+
+        /// <inheritdoc />
         public async Task Start()
         {
             logger.LogInformation("Starting Timer.");
@@ -76,7 +86,11 @@ namespace Brighid.Discord.Threading
             {
                 try
                 {
-                    await Task.Delay(period);
+                    if (period > 0)
+                    {
+                        await Task.Delay(period, cancellationToken);
+                    }
+
                     await callback(cancellationToken);
                 }
                 catch (OperationCanceledException)
@@ -86,6 +100,17 @@ namespace Brighid.Discord.Threading
                 catch (Exception exception)
                 {
                     logger.LogError("Received exception: {@exception}", exception);
+
+                    if (StopOnException)
+                    {
+                        if (OnUnexpectedStop != null)
+                        {
+                            stopPromise?.TrySetResult();
+                            await OnUnexpectedStop();
+                        }
+
+                        break;
+                    }
                 }
             }
 

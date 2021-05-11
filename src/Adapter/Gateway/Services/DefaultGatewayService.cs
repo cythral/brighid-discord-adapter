@@ -1,4 +1,5 @@
 using System;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ using Brighid.Discord.Threading;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+#pragma warning disable IDE0044
 
 namespace Brighid.Discord.Adapter.Gateway
 {
@@ -26,9 +29,8 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly byte[] buffer;
         private readonly Memory<byte> memoryBuffer;
         private IClientWebSocket? webSocket;
-        private CancellationToken cancellationToken = new(true);
         private ITimer? heartbeat;
-        private IWorkerThread? workerThread;
+        private ITimer? worker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayService" /> class.
@@ -71,29 +73,36 @@ namespace Brighid.Discord.Adapter.Gateway
         public bool IsReady { get; set; }
 
         /// <inheritdoc />
-        public void Start(CancellationTokenSource cancellationTokenSource)
+        public bool IsRunning { get; private set; }
+
+        /// <inheritdoc />
+        public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken = cancellationTokenSource.Token;
-            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
+            IsRunning = true;
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
 
+            var cancellationTokenSource = new CancellationTokenSource();
             rxWorker.Start(this, cancellationTokenSource);
             txWorker.Start(this, webSocket, cancellationTokenSource);
 
-            workerThread.OnUnexpectedStop = () => Restart();
-            workerThread.Start(cancellationTokenSource);
+            worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
+            worker.StopOnException = true;
+            worker.OnUnexpectedStop = () => Restart();
+            await worker.Start();
         }
 
         /// <inheritdoc />
-        public async Task Stop()
+        public async Task StopAsync(CancellationToken cancellationToken = default)
         {
+            IsRunning = false;
             await StopHeartbeat();
-            workerThread?.Stop();
+            await worker!.Stop();
+
             rxWorker.Stop();
             txWorker.Stop();
             webSocket?.Abort();
             webSocket = null;
-            workerThread = null;
+            worker = null;
             IsReady = false;
         }
 
@@ -106,16 +115,16 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public async Task Send(GatewayMessage message, CancellationToken cancellationToken)
         {
-            this.cancellationToken.ThrowIfCancellationRequested();
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfNotRunning();
             await txWorker.Emit(message, cancellationToken);
         }
 
         /// <inheritdoc />
         public async Task StartHeartbeat(uint heartbeatInterval)
         {
+            ThrowIfNotRunning();
             logger.LogInformation("Starting Heartbeat. Interval: {@heartbeatInterval}", heartbeatInterval);
-            cancellationToken.ThrowIfCancellationRequested();
             heartbeat = timerFactory.CreateTimer(Heartbeat, (int)heartbeatInterval, "Heartbeat");
             await heartbeat.Start();
         }
@@ -135,18 +144,20 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <summary>
         /// Runs the gateway service.
         /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        public async Task Run()
+        public async Task Run(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await webSocket!.Connect(options.Uri, cancellationToken);
-
-            while (!cancellationToken.IsCancellationRequested)
+            ThrowIfNotRunning();
+            if (webSocket!.State != WebSocketState.Open)
             {
-                var result = await webSocket!.Receive(memoryBuffer, cancellationToken);
-                var chunk = new GatewayMessageChunk(memoryBuffer, result.Count, result.EndOfMessage);
-                await rxWorker.Emit(chunk, cancellationToken);
+                await webSocket!.Connect(options.Uri, cancellationToken);
             }
+
+            var result = await webSocket!.Receive(memoryBuffer, cancellationToken);
+            var chunk = new GatewayMessageChunk(memoryBuffer, result.Count, result.EndOfMessage);
+            await rxWorker.Emit(chunk, cancellationToken);
         }
 
         /// <summary>
@@ -156,10 +167,17 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <returns>The resulting task.</returns>
         public async Task Heartbeat(CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
             cancellationToken.ThrowIfCancellationRequested();
             var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };
             await txWorker.Emit(message, cancellationToken);
+        }
+
+        private void ThrowIfNotRunning()
+        {
+            if (!IsRunning)
+            {
+                throw new OperationCanceledException();
+            }
         }
     }
 }

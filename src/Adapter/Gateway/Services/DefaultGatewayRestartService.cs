@@ -37,13 +37,12 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             cancellationToken.ThrowIfCancellationRequested();
             logger.LogInformation("Restarting the Gateway Service.");
-            var cancellationTokenSource = new CancellationTokenSource();
 
             _ = reporter.Report(default(GatewayRestartMetric), cancellationToken);
             gateway.SessionId = resume ? gateway.SessionId : null;
-            await gateway.Stop();
+            await gateway.StopAsync(cancellationToken);
             await utilsFactory.CreateRandomDelay(1000, 5000, cancellationToken);
-            gateway.Start(cancellationTokenSource);
+            await gateway.StartAsync(cancellationToken);
         }
     }
 }
