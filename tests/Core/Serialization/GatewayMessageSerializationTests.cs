@@ -3,8 +3,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Brighid.Discord.GatewayAdapter.Events;
-using Brighid.Discord.GatewayAdapter.Messages;
+using Brighid.Discord.Adapter.Events;
+using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
