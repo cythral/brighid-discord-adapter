@@ -9,7 +9,7 @@ decrypt() {
     rm $tempfile;
 }
 
-export Gateway__Token=$(decrypt ${Encrypted__Gateway__Token})
+export Adapter__Token=$(decrypt ${Encrypted__Adapter__Token})
 export Identity__ClientSecret=$(decrypt ${Encrypted__Identity__ClientSecret})
 
 runuser --user brighid dotnet $DLL_PATH
