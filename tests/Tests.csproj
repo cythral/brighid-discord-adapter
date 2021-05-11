@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../src/GatewayAdapter/GatewayAdapter.csproj" />
-        <ProjectReference Include="../src/RestQueue/RestQueue.csproj" />
+        <ProjectReference Include="../src/Adapter/Adapter.csproj" />
     </ItemGroup>
 </Project>

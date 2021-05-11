@@ -9,9 +9,9 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.GatewayAdapter.Messages;
+using Brighid.Discord.Adapter.Messages;
+using Brighid.Discord.Adapter.Requests;
 using Brighid.Discord.Mocks;
-using Brighid.Discord.RestQueue.Requests;
 using Brighid.Discord.Threading;
 
 internal class AutoAttribute : AutoDataAttribute
@@ -25,7 +25,7 @@ internal class AutoAttribute : AutoDataAttribute
     {
         var fixture = new Fixture();
         fixture.Inject(new CancellationToken(false));
-        fixture.Inject(new RequestOptions { MessageBufferPeriod = 0.01 });
+        fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.01 });
         fixture.Inject<JsonConverter<GatewayMessage>>(new MockGatewayMessageConverter());
         fixture.Register<IChannel<RequestMessage>>(() => new Channel<RequestMessage>());
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
