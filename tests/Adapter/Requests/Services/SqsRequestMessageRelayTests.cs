@@ -149,7 +149,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
             }
 
-            [Test, Auto, Timeout(2000)]
+            [Test, Auto, Timeout(2000), Retry(3)]
             public async Task ShouldNotDeleteMessagesThatHaveBeenCanceled(
                 RequestMessage message1,
                 RequestMessage message2,
@@ -454,9 +454,9 @@ namespace Brighid.Discord.Adapter.Requests
             )
             {
                 var message2CancellationSource = new CancellationTokenSource();
+                message2CancellationSource.CancelAfter(1);
                 var task1 = relay.Fail(message1, message1VisibilityTimeout, message1CancellationToken);
                 var task2 = relay.Fail(message2, message2VisibilityTimeout, message2CancellationSource.Token);
-                message2CancellationSource.CancelAfter(1);
 
                 try
                 {
