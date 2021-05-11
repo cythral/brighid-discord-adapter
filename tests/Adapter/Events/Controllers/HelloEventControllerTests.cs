@@ -41,7 +41,7 @@ namespace Brighid.Discord.Adapter.Events
                 Func<Task> func = () => controller.Handle(@event, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
-                gateway.DidNotReceive().StartHeartbeat(Any<uint>());
+                await gateway.DidNotReceive().StartHeartbeat(Any<uint>());
             }
 
             [Test, Auto]
@@ -56,7 +56,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                gateway.Received().StartHeartbeat(interval);
+                await gateway.Received().StartHeartbeat(interval);
             }
 
             [Test, Auto]

@@ -441,7 +441,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
             }
 
-            [Test, Auto, Timeout(2000), Retry(3)]
+            [Test, Auto, Timeout(2000), Retry(5)]
             public async Task ShouldNotChangeVisibilityForCancelledMessages(
                 RequestMessage message1,
                 uint message1VisibilityTimeout,

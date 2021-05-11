@@ -41,7 +41,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
             _ = reporter.Report(default(GatewayRestartMetric), cancellationToken);
             gateway.SessionId = resume ? gateway.SessionId : null;
-            gateway.Stop();
+            await gateway.Stop();
             await utilsFactory.CreateRandomDelay(1000, 5000, cancellationToken);
             gateway.Start(cancellationTokenSource);
         }

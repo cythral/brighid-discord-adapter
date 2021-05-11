@@ -38,7 +38,7 @@ namespace Brighid.Discord.Events
                 Func<Task> func = () => service.Restart(gateway, resume, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
-                gateway.DidNotReceive().Stop();
+                await gateway.DidNotReceive().Stop();
                 gateway.DidNotReceive().Start(Any<CancellationTokenSource>());
             }
 
@@ -54,7 +54,7 @@ namespace Brighid.Discord.Events
 
                 await service.Restart(gateway, resume, cancellationToken);
 
-                gateway.Received().Stop();
+                await gateway.Received().Stop();
             }
 
             [Test, Auto]

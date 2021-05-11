@@ -34,7 +34,8 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <summary>
         /// Stop the gateway service.
         /// </summary>
-        void Stop();
+        /// <returns>The resulting task.</returns>
+        Task Stop();
 
         /// <summary>
         /// Restarts the gateway service.
@@ -56,11 +57,13 @@ namespace Brighid.Discord.Adapter.Gateway
         /// Start sending a heartbeat every <paramref name="heartbeatInterval"/> milliseconds to the gateway.
         /// </summary>
         /// <param name="heartbeatInterval">The interval to heartbeat at.</param>
-        void StartHeartbeat(uint heartbeatInterval);
+        /// <returns>The resulting task.</returns>
+        Task StartHeartbeat(uint heartbeatInterval);
 
         /// <summary>
         /// Stop sending a heartbeat to the gateway.
         /// </summary>
-        void StopHeartbeat();
+        /// <returns>The resulting task.</returns>
+        Task StopHeartbeat();
     }
 }

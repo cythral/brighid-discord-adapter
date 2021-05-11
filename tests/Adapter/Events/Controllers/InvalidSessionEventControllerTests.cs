@@ -36,7 +36,7 @@ namespace Brighid.Discord.Adapter.Events
                 Func<Task> func = () => controller.Handle(@event, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
-                gateway.DidNotReceive().Stop();
+                await gateway.DidNotReceive().Stop();
                 gateway.DidNotReceive().Start(Any<CancellationTokenSource>());
             }
 

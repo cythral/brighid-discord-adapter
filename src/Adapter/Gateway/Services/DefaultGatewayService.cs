@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Events;
 using Brighid.Discord.Adapter.Messages;
+using Brighid.Discord.Threading;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly GatewayOptions options;
         private readonly IGatewayRxWorker rxWorker;
         private readonly IGatewayTxWorker txWorker;
+        private readonly ITimerFactory timerFactory;
         private readonly IGatewayRestartService restartService;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
         private readonly ILogger<DefaultGatewayService> logger;
@@ -25,7 +27,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly Memory<byte> memoryBuffer;
         private IClientWebSocket? webSocket;
         private CancellationToken cancellationToken = new(true);
-        private CancellationTokenSource? heartbeatCancellationTokenSource;
+        private ITimer? heartbeat;
         private IWorkerThread? workerThread;
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// </summary>
         /// <param name="rxWorker">The worker to use for receiving message chunks and parsing messages.</param>
         /// <param name="txWorker">The worker to use for sending messages to the gateway.</param>
+        /// <param name="timerFactory">Factory to create timers with.</param>
         /// <param name="restartService">Service used to restart the gateway.</param>
         /// <param name="gatewayUtilsFactory">Factory to create various utils with.</param>
         /// <param name="options">Options to use for interacting with the gateway.</param>
@@ -40,6 +43,7 @@ namespace Brighid.Discord.Adapter.Gateway
         public DefaultGatewayService(
             IGatewayRxWorker rxWorker,
             IGatewayTxWorker txWorker,
+            ITimerFactory timerFactory,
             IGatewayRestartService restartService,
             IGatewayUtilsFactory gatewayUtilsFactory,
             IOptions<GatewayOptions> options,
@@ -48,6 +52,7 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             this.rxWorker = rxWorker;
             this.txWorker = txWorker;
+            this.timerFactory = timerFactory;
             this.restartService = restartService;
             this.gatewayUtilsFactory = gatewayUtilsFactory;
             this.options = options.Value;
@@ -80,9 +85,9 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <inheritdoc />
-        public void Stop()
+        public async Task Stop()
         {
-            StopHeartbeat();
+            await StopHeartbeat();
             workerThread?.Stop();
             rxWorker.Stop();
             txWorker.Stop();
@@ -107,19 +112,24 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <inheritdoc />
-        public void StartHeartbeat(uint heartbeatInterval)
+        public async Task StartHeartbeat(uint heartbeatInterval)
         {
             logger.LogInformation("Starting Heartbeat. Interval: {@heartbeatInterval}", heartbeatInterval);
             cancellationToken.ThrowIfCancellationRequested();
-            heartbeatCancellationTokenSource = new CancellationTokenSource();
-            _ = Heartbeat(heartbeatInterval, heartbeatCancellationTokenSource.Token);
+            heartbeat = timerFactory.CreateTimer(Heartbeat, (int)heartbeatInterval, "Heartbeat");
+            await heartbeat.Start();
         }
 
         /// <inheritdoc />
-        public void StopHeartbeat()
+        public async Task StopHeartbeat()
         {
+            if (heartbeat == null)
+            {
+                return;
+            }
+
             logger.LogInformation("Stopping Heartbeat. Last Sequence: {@sequenceNumber}", SequenceNumber);
-            heartbeatCancellationTokenSource?.Cancel();
+            await heartbeat.Stop();
         }
 
         /// <summary>
@@ -139,16 +149,17 @@ namespace Brighid.Discord.Adapter.Gateway
             }
         }
 
-        private async Task Heartbeat(uint heartbeatInterval, CancellationToken cancellationToken)
+        /// <summary>
+        /// Sends a Heartbeat through the gateway.
+        /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        public async Task Heartbeat(CancellationToken cancellationToken)
         {
-            while (!this.cancellationToken.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
-            {
-                await gatewayUtilsFactory.CreateDelay(heartbeatInterval, cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };
-                await txWorker.Emit(message, cancellationToken);
-            }
+            await Task.CompletedTask;
+            cancellationToken.ThrowIfCancellationRequested();
+            var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };
+            await txWorker.Emit(message, cancellationToken);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace Brighid.Discord.Adapter
             var tasks = from service in hostedServices select service.StopAsync(cancellationToken);
             await Task.WhenAll(tasks);
 
-            gateway.Stop();
+            await gateway.Stop();
             logger.LogInformation("Stopped.");
         }
 
