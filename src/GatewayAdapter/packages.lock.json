@@ -4,11 +4,11 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.1.14, )",
-        "resolved": "3.7.1.14",
-        "contentHash": "lE1CcXT2DI5l7rncR11T+6xGX2rA41c9LAdGNf5gMr//kUMcJEHTLw86ONb109UxS/KKLOsVUS4Aq+jtfmJ6nQ==",
+        "requested": "[3.7.1.16, )",
+        "resolved": "3.7.1.16",
+        "contentHash": "M9OrMjwAcb+vGPfSCSJKJSGhMhQ/nq7Iis57bepKaiHx/fW8J6YrXxWEsuv5AicARqlRJA3YRkjXPJvyBFVQuw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.18, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.20, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
@@ -115,8 +115,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.18",
-        "contentHash": "5nzrJ9UvHCMEIFxsbwjW7tJklm1wNVgGXoo1wVYD+54ikY+tDK5hputUkS2kmgrwkqJbtWJEsyo+B6jE+O7IEg=="
+        "resolved": "3.7.0.20",
+        "contentHash": "/XLFqX6JiE/9L24bDjmbnjm8fVHx4VRuxogA/1z+pXMAy+UU+aamVlWAIS2W68Lo+qAiM5IR2xNNTFQnJN/CyA=="
       },
       "Humanizer.Core": {
         "type": "Transitive",
