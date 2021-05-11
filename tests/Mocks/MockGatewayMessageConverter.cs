@@ -2,7 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.GatewayAdapter.Messages;
+using Brighid.Discord.Adapter.Messages;
 
 namespace Brighid.Discord.Mocks
 {

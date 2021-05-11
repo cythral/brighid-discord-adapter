@@ -1,6 +1,6 @@
 {
     "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
-    "GatewayToken": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQH7c6I9/U8oOsaZnOZxwZXhAAAAnTCBmgYJKoZIhvcNAQcGoIGMMIGJAgEAMIGDBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKlVr9CIwyw+o0IQqgIBEIBWuCPGRVDCqewO1wSgOYqBRzWi/DsN+BICBxwshfADcw/KvrIlfQizoG3LSDLQ5/lmP/69EkTViLgjLUujdGyKJRgfSAEbw7W9+wQi7Iu3xWXC0G4gTBM=",
+    "AdapterToken": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQH7c6I9/U8oOsaZnOZxwZXhAAAAnTCBmgYJKoZIhvcNAQcGoIGMMIGJAgEAMIGDBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKlVr9CIwyw+o0IQqgIBEIBWuCPGRVDCqewO1wSgOYqBRzWi/DsN+BICBxwshfADcw/KvrIlfQizoG3LSDLQ5/lmP/69EkTViLgjLUujdGyKJRgfSAEbw7W9+wQi7Iu3xWXC0G4gTBM=",
     "MetricsNamespace": "BrighidDiscordAdapter",
     "EnableServiceStopping": "false",
     "IdentityServerUri": "http://identity.brigh.id"
