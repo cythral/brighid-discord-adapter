@@ -112,7 +112,7 @@ namespace Brighid.Discord.Adapter.Requests
                 message.State.Should().Be(RequestMessageState.Succeeded);
             }
 
-            [Test, Auto, Timeout(2000)]
+            [Test, Auto, Timeout(2000), Retry(3)]
             public async Task ShouldBatchMultipleCallsIntoASingleDelete(
                 RequestMessage message1,
                 RequestMessage message2,
@@ -441,7 +441,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
             }
 
-            [Test, Auto, Timeout(2000)]
+            [Test, Auto, Timeout(2000), Retry(3)]
             public async Task ShouldNotChangeVisibilityForCancelledMessages(
                 RequestMessage message1,
                 uint message1VisibilityTimeout,
