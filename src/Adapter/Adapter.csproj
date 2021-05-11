@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <NoWarn>SA1633</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GATEWAY_ADAPTER_IMAGE_TAG Condition="$(GATEWAY_ADAPTER_IMAGE_TAG) == ''">brighid/discord-gateway-adapter</GATEWAY_ADAPTER_IMAGE_TAG>
+    <DockerImageTag>$(GATEWAY_ADAPTER_IMAGE_TAG)</DockerImageTag>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Brighid.Identity.Client" Version="0.2.0-beta8" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.0.17" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.1.14" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.1.5" />
+    <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Generators\Generators.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+  </ItemGroup>
+
+</Project>

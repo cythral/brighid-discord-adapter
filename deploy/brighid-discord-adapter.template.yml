@@ -8,9 +8,9 @@ Parameters:
     Type: String
     Description: URI of the Discord WebSocket Gateway.
 
-  GatewayToken:
+  AdapterToken:
     Type: String
-    Description: Token to use for authenticating against the Discord gateway.
+    Description: Token to use for authenticating against the Discord gateway and API.
 
   MetricsNamespace:
     Type: String
@@ -39,6 +39,9 @@ Resources:
       Name: brighid-discord-adapter
       Roles:
         - Basic
+
+  RestQueue:
+    Type: AWS::SQS::Queue
 
   Cluster:
     Type: AWS::ECS::Cluster
@@ -89,8 +92,10 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
-            - Name: Encrypted__Gateway__Token
-              Value: !Ref GatewayToken
+            - Name: Encrypted__Adapter__Token
+              Value: !Ref AdapterToken
+            - Name: Requests__QueueUrl
+              Value: !Ref RestQueue
             - Name: Gateway__Uri
               Value: !Ref GatewayUri
             - Name: Metrics__Namespace
@@ -137,6 +142,19 @@ Resources:
             Condition:
               StringEquals:
                 cloudwatch:namespace: !Ref MetricsNamespace
+
+          - Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:DeleteMessageBatch
+              - sqs:ChangeMessageVisibility
+              - sqs:ChangeMessageVisibilityBatch
+            Resource: !GetAtt RestQueue.Arn
+
+          - Effect: Allow
+            Action: sqs:SendMessage
+            Resource: "*"
 
   LogGroup:
     Type: AWS::Logs::LogGroup

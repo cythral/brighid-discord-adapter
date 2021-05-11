@@ -1397,29 +1397,11 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
-      "Brighid.Discord.Core": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "5.0.1",
-          "Microsoft.Extensions.Logging": "5.0.0",
-          "System.Linq.Async": "5.0.0"
-        }
-      },
-      "Brighid.Discord.RestQueue": {
-        "type": "Project",
-        "dependencies": {
-          "AWSSDK.SQS": "3.7.0.17",
-          "Brighid.Discord.Core": "1.0.0",
-          "Microsoft.Extensions.Hosting": "5.0.0",
-          "Microsoft.Extensions.Options": "5.0.0",
-          "Models": "1.0.0",
-          "Serilog.AspNetCore": "4.1.0"
-        }
-      },
-      "gatewayadapter": {
+      "adapter": {
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.1.14",
+          "AWSSDK.SQS": "3.7.0.17",
           "AWSSDK.SimpleNotificationService": "3.7.1.5",
           "Brighid.Discord.Core": "1.0.0",
           "Brighid.Identity.Client": "0.2.0-beta8",
@@ -1428,6 +1410,14 @@
           "Microsoft.Extensions.Options": "5.0.0",
           "Models": "1.0.0",
           "Serilog.AspNetCore": "4.1.0"
+        }
+      },
+      "Brighid.Discord.Core": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Extensions.Logging": "5.0.0",
+          "System.Linq.Async": "5.0.0"
         }
       },
       "models": {

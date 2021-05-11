@@ -23,8 +23,8 @@ namespace Brighid.Discord.Generators
             "System.Text.Json.Serialization",
             "System.Threading",
             "System.Threading.Tasks",
-            "Brighid.Discord.GatewayAdapter.Events",
-            "Brighid.Discord.GatewayAdapter.Messages",
+            "Brighid.Discord.Adapter.Events",
+            "Brighid.Discord.Adapter.Messages",
         };
 
         private readonly string[] ignoredCodes = new string[]
@@ -61,7 +61,7 @@ namespace Brighid.Discord.Generators
                 .WithModifiers(TokenList(Token(PublicKeyword), Token(PartialKeyword)))
                 .WithMembers(List(members));
 
-            var namespaceDeclaration = NamespaceDeclaration(ParseName("Brighid.Discord.GatewayAdapter.Messages"))
+            var namespaceDeclaration = NamespaceDeclaration(ParseName("Brighid.Discord.Adapter.Messages"))
                 .WithMembers(List(new MemberDeclarationSyntax[] { classDeclaration }));
 
             var codes = ignoredCodes.Select(code => ParseExpression(code));
