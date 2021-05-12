@@ -59,7 +59,7 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 await gateway.StartAsync();
 
-                rxWorker.Received().Start(Is(gateway), Any<CancellationTokenSource>());
+                await rxWorker.Received().Start(Is(gateway));
             }
 
             [Test, Auto]
@@ -142,7 +142,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 await gateway.StartAsync();
                 await gateway.StopAsync();
 
-                rxWorker.Received().Stop();
+                await rxWorker.Received().Stop();
             }
 
             [Test, Auto]

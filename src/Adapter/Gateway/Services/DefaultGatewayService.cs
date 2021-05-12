@@ -82,7 +82,7 @@ namespace Brighid.Discord.Adapter.Gateway
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
 
             var cancellationTokenSource = new CancellationTokenSource();
-            rxWorker.Start(this, cancellationTokenSource);
+            await rxWorker.Start(this);
             txWorker.Start(this, webSocket, cancellationTokenSource);
 
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
@@ -98,7 +98,7 @@ namespace Brighid.Discord.Adapter.Gateway
             await StopHeartbeat();
             await worker!.Stop();
 
-            rxWorker.Stop();
+            await rxWorker.Stop();
             txWorker.Stop();
             webSocket?.Abort();
             webSocket = null;

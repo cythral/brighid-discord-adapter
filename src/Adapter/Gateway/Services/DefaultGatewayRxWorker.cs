@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,25 +21,29 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
         private readonly IEventRouter eventRouter;
         private readonly ILogger<DefaultGatewayRxWorker> logger;
-        private CancellationToken cancellationToken;
-        private IWorkerThread? workerThread;
+        private readonly ITimerFactory timerFactory;
+        private ITimer? worker;
         private IGatewayService? gateway;
+        private Stream? stream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayRxWorker" /> class.
         /// </summary>
         /// <param name="serializer">Serializer to use for serializing messages.</param>
+        /// <param name="timerFactory">Factory used to create timers.</param>
         /// <param name="gatewayUtilsFactory">Factory to create various utils with.</param>
         /// <param name="eventRouter">Router to route events to controllers.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public DefaultGatewayRxWorker(
             ISerializer serializer,
+            ITimerFactory timerFactory,
             IGatewayUtilsFactory gatewayUtilsFactory,
             IEventRouter eventRouter,
             ILogger<DefaultGatewayRxWorker> logger
         )
         {
             this.serializer = serializer;
+            this.timerFactory = timerFactory;
             this.gatewayUtilsFactory = gatewayUtilsFactory;
             this.eventRouter = eventRouter;
             this.logger = logger;
@@ -46,68 +51,83 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <inheritdoc />
-        public void Start(IGatewayService gateway, CancellationTokenSource cancellationTokenSource)
+        public bool IsRunning { get; private set; }
+
+        /// <inheritdoc />
+        public async Task Start(IGatewayService gateway)
         {
-            cancellationToken = cancellationTokenSource.Token;
             this.gateway = gateway;
-            workerThread = gatewayUtilsFactory.CreateWorkerThread(Run, WorkerThreadName);
-            workerThread.OnUnexpectedStop = () => gateway.Restart();
-            workerThread.Start(cancellationTokenSource);
+            IsRunning = true;
+
+            stream = gatewayUtilsFactory.CreateStream();
+            worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
+            worker.StopOnException = true;
+            worker.OnUnexpectedStop = () => gateway.Restart();
+            await worker.Start();
         }
 
         /// <inheritdoc />
-        public void Stop()
+        public async Task Stop()
         {
-            workerThread?.Stop();
-            workerThread = null;
+            IsRunning = false;
+            await worker!.Stop();
+            await stream!.DisposeAsync();
+            stream = null;
+            worker = null;
         }
 
         /// <inheritdoc />
         public async Task Emit(GatewayMessageChunk chunk, CancellationToken cancellationToken)
         {
-            this.cancellationToken.ThrowIfCancellationRequested();
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfNotRunning();
             await channel.Write(chunk, cancellationToken);
         }
 
         /// <summary>
         /// Runs the Rx Worker.
         /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        public async Task Run()
+        public async Task Run(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using var stream = gatewayUtilsFactory.CreateStream();
+            ThrowIfNotRunning();
 
-            while (!cancellationToken.IsCancellationRequested)
+            if (!await channel.WaitToRead(cancellationToken))
             {
-                if (!await channel.WaitToRead(cancellationToken))
+                return;
+            }
+
+            var chunk = await channel.Read(cancellationToken);
+            await stream!.WriteAsync(chunk.Bytes, cancellationToken);
+
+            if (chunk.EndOfMessage)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                stream.Position = 0;
+                var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
+
+                if (message.SequenceNumber != null)
                 {
-                    continue;
+                    gateway!.SequenceNumber = message.SequenceNumber;
                 }
 
-                var chunk = await channel.Read(cancellationToken);
-                await stream.WriteAsync(chunk.Bytes, cancellationToken);
-
-                if (chunk.EndOfMessage)
+                if (message.Data != null)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    stream.Position = 0;
-                    var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
-
-                    if (message.SequenceNumber != null)
-                    {
-                        gateway!.SequenceNumber = message.SequenceNumber;
-                    }
-
-                    if (message.Data != null)
-                    {
-                        _ = eventRouter.Route(message.Data, cancellationToken);
-                    }
-
-                    logger.LogInformation("Received message: {@message}", message);
-                    stream.SetLength(0);
+                    _ = eventRouter.Route(message.Data, cancellationToken);
                 }
+
+                logger.LogInformation("Received message: {@message}", message);
+                stream.SetLength(0);
+            }
+        }
+
+        private void ThrowIfNotRunning()
+        {
+            if (!IsRunning)
+            {
+                throw new System.OperationCanceledException();
             }
         }
     }
