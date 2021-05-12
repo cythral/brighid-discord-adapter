@@ -116,7 +116,7 @@ namespace Brighid.Discord.Adapter.Requests
                 CancellationToken cancellationToken
             )
             {
-                request.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { RequestBody = null };
+                request.RequestDetails = new Request(ChannelEndpoint.CreateMessage) { RequestBody = null };
                 await invoker.Invoke(request, cancellationToken);
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
@@ -138,7 +138,7 @@ namespace Brighid.Discord.Adapter.Requests
             )
             {
                 httpResponse.Content = new StringContent(response);
-                request.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { RequestBody = null };
+                request.RequestDetails = new Request(ChannelEndpoint.CreateMessage) { RequestBody = null };
                 await invoker.Invoke(request, cancellationToken);
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
@@ -158,7 +158,7 @@ namespace Brighid.Discord.Adapter.Requests
             )
             {
                 client.SendAsync(Any<HttpRequestMessage>(), Any<CancellationToken>()).Throws<Exception>();
-                request.RequestDetails = new Request(Endpoint.ChannelCreateMessage) { RequestBody = null };
+                request.RequestDetails = new Request(ChannelEndpoint.CreateMessage) { RequestBody = null };
 
                 await invoker.Invoke(request, cancellationToken);
 

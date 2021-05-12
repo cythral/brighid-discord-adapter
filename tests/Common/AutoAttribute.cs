@@ -12,6 +12,7 @@ using AutoFixture.NUnit3;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Requests;
 using Brighid.Discord.Mocks;
+using Brighid.Discord.Models;
 using Brighid.Discord.Threading;
 
 internal class AutoAttribute : AutoDataAttribute
@@ -25,6 +26,7 @@ internal class AutoAttribute : AutoDataAttribute
     {
         var fixture = new Fixture();
         fixture.Inject(new CancellationToken(false));
+        fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
         fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.01 });
         fixture.Inject<JsonConverter<GatewayMessage>>(new MockGatewayMessageConverter());
         fixture.Register<IChannel<RequestMessage>>(() => new Channel<RequestMessage>());

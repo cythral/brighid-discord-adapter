@@ -1,0 +1,86 @@
+using System;
+
+using Brighid.Discord.Models;
+
+namespace Brighid.Discord.Adapter.Requests
+{
+    /// <summary>
+    /// Represents a Rate Limit Bucket.
+    /// </summary>
+    public class Bucket
+    {
+        /// <summary>
+        /// Gets or sets the API category associated with the endpoints in this bucket.
+        /// </summary>
+        public char ApiCategory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the endpoints associated with this bucket as a bitfield.
+        /// </summary>
+        public ulong Endpoints { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the ID of this bucket that was returned from the Discord API.
+        /// </summary>
+        public string RemoteId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the major parameters associated with this bucket, separated by '/'.
+        /// </summary>
+        public MajorParameters MajorParameters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of hits remaining in this bucket.
+        /// </summary>
+        public int HitsRemaining { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date/time that the bucket hits will reset.
+        /// </summary>
+        public DateTimeOffset ResetAfter { get; set; }
+
+        /// <summary>
+        /// Add an endpoint to the Bucket.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to add to the bucket.</param>
+        public void AddEndpoint(Endpoint endpoint)
+        {
+            ValidateEndpoint(endpoint);
+            Endpoints |= Convert.ToUInt64(endpoint.Value);
+        }
+
+        /// <summary>
+        /// Add an endpoint to the Bucket.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to add to the bucket.</param>
+        public void RemoveEndpoint(Endpoint endpoint)
+        {
+            ValidateEndpoint(endpoint);
+            Endpoints ^= Convert.ToUInt64(endpoint.Value);
+        }
+
+        /// <summary>
+        /// Determine if the bucket has an endpoint.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to check for in the bucket.</param>
+        /// <returns>True if the bucket contains the endpoint, or false if not.</returns>
+        public bool HasEndpoint(Endpoint endpoint)
+        {
+            var int64Type = Convert.ToUInt64(endpoint.Value);
+            return ApiCategory == endpoint.Category && (Endpoints & int64Type) == int64Type;
+        }
+
+        private void ValidateEndpoint(Endpoint endpoint)
+        {
+            if (ApiCategory == default(char))
+            {
+                ApiCategory = endpoint.Category;
+            }
+
+            if (ApiCategory != endpoint.Category)
+            {
+                throw new ArgumentException($"Endpoint must have category: {ApiCategory}");
+            }
+        }
+    }
+}

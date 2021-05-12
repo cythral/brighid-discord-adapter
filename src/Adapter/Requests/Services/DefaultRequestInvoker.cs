@@ -4,8 +4,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Brighid.Discord.Models;
-
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Adapter.Requests

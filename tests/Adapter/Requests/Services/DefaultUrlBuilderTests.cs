@@ -21,13 +21,13 @@ namespace Brighid.Discord.Adapter.Requests
                 [Target] DefaultUrlBuilder builder
             )
             {
-                var endpoint = (Endpoint)(-1);
+                var endpoint = (ChannelEndpoint)9999999;
                 request.Endpoint = endpoint;
 
                 Action func = () => builder.BuildFromRequest(request);
 
                 func.Should().Throw<UnhandledEndpointException>()
-                .And.Endpoint.Should().Be(endpoint);
+                .And.Endpoint.Should().Be((Endpoint)endpoint);
             }
 
             [Test, Auto]
@@ -39,7 +39,7 @@ namespace Brighid.Discord.Adapter.Requests
                 [Target] DefaultUrlBuilder builder
             )
             {
-                request.Endpoint = Endpoint.ChannelCreateMessage;
+                request.Endpoint = ChannelEndpoint.CreateMessage;
                 request.Parameters["channel.id"] = channelId;
 
                 var result = builder.BuildFromRequest(request);
@@ -52,7 +52,7 @@ namespace Brighid.Discord.Adapter.Requests
                 [Target] DefaultUrlBuilder builder
             )
             {
-                request.Endpoint = Endpoint.ChannelCreateMessage;
+                request.Endpoint = ChannelEndpoint.CreateMessage;
 
                 Action func = () => builder.BuildFromRequest(request);
 
