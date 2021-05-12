@@ -105,6 +105,7 @@ namespace Brighid.Discord.Threading
                     {
                         if (OnUnexpectedStop != null)
                         {
+                            scope.Dispose();
                             stopPromise?.TrySetResult();
                             await OnUnexpectedStop();
                         }
