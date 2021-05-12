@@ -159,6 +159,8 @@ namespace Brighid.Discord.Adapter.Gateway
 
             [Test, Auto, Timeout(1000)]
             public async Task StopShouldStopTheHeartbeat(
+                ITimer heartbeat,
+                [Frozen, Substitute] ITimerFactory timerFactory,
                 [Frozen, Substitute] IGatewayTxWorker txWorker,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Target] DefaultGatewayService gateway
@@ -166,19 +168,13 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 var cancellationToken = new CancellationToken(false);
 
-                factory.CreateDelay(Any<uint>(), Any<CancellationToken>()).Returns(x =>
-                {
-                    return Task.Delay(10);
-                });
+                timerFactory.CreateTimer(Any<AsyncTimerCallback>(), Any<int>(), Is("Heartbeat")).Returns(heartbeat);
 
                 await gateway.StartAsync();
                 await gateway.StartHeartbeat(10);
-                await Task.Delay(10);
                 await gateway.StopAsync();
-                await Task.Delay(20);
-                txWorker.ClearReceivedCalls();
-                await Task.Delay(20);
-                await txWorker.DidNotReceiveWithAnyArgs().Emit(Any<GatewayMessage>(), Any<CancellationToken>());
+
+                await heartbeat.Received().Stop();
             }
 
             [Test, Auto, Timeout(1000)]
