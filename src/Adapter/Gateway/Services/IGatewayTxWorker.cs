@@ -11,17 +11,23 @@ namespace Brighid.Discord.Adapter.Gateway
     public interface IGatewayTxWorker
     {
         /// <summary>
+        /// Gets a value indicating whether the service is running.
+        /// </summary>
+        bool IsRunning { get; }
+
+        /// <summary>
         /// Start the worker.
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
         /// <param name="webSocket">The webSocket to send messages to.</param>
-        /// <param name="cancellationTokenSource">Source token used to cancel the worker's thread.</param>
-        void Start(IGatewayService gateway, IClientWebSocket webSocket, CancellationTokenSource cancellationTokenSource);
+        /// <returns>The resulting task.</returns>
+        Task Start(IGatewayService gateway, IClientWebSocket webSocket);
 
         /// <summary>
         /// Stop the gateway worker.
         /// </summary>
-        void Stop();
+        /// <returns>The resulting task.</returns>
+        Task Stop();
 
         /// <summary>
         /// Emit bytes to the worker for processing.
