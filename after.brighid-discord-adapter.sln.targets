@@ -3,6 +3,23 @@
         <Exec Command="dotnet tool restore" ConsoleToMsBuild="true" />
     </Target>
 
+    <Target Name="GenerateEnvFile" AfterTargets="Restore" Condition="!Exists('$(MSBuildThisFileDirectory).env')">
+        <ItemGroup>
+            <EnvFileLines Include="DB_USER=adapter-user" />
+            <EnvFileLines Include="DB_PASSWORD=$([System.Guid]::NewGuid())" />
+            <EnvFileLines Include="DB_NAME=adapter" />
+            <EnvFileLines Include="ADAPTER_PROJECT_DIRECTORY=./src/Adapter" />
+            <EnvFileLines Include="ADAPTER_OUTPUT_DIRECTORY=./bin/Adapter/Debug/net5.0" />
+            <EnvFileLines Include="ADAPTER_ASSEMBLY_NAME=Adapter" />
+            <EnvFileLines Include="ASPNET_VERSION=5.0.6" />
+            <EnvFileLines Include="REQUESTS_QUEUE_URL=$(Requests__QueueUrl)" />
+            <EnvFileLines Include="ADAPTER_TOKEN=$(Adapter__Token)" />
+            <EnvFileLines Include="GATEWAY_URI=$(Gateway__Uri)" />
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(MSBuildThisFileDirectory).env" Lines="@(EnvFileLines)" />
+    </Target>
+
     <Target Name="Format" DependsOnTargets="Restore;RestoreTools">
         <Exec Command="dotnet format $(MSBuildThisFileDirectory)brighid-discord-adapter.sln --fix-style info" />
     </Target>

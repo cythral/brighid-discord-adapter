@@ -4,8 +4,11 @@ using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 
+using Brighid.Discord.Adapter.Requests;
+
 using Destructurama;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,6 +21,7 @@ namespace Brighid.Discord.Adapter
     public class Startup : IStartup
     {
         private readonly IConfiguration configuration;
+        private readonly DatabaseOptions databaseOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup" /> class.
@@ -26,6 +30,8 @@ namespace Brighid.Discord.Adapter
         public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
+            databaseOptions = configuration.GetSection("Database").Get<DatabaseOptions>();
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
@@ -40,9 +46,11 @@ namespace Brighid.Discord.Adapter
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
 
+            services.AddDbContextPool<DatabaseContext>(ConfigureDatabaseOptions);
             services.ConfigureBrighidIdentity("Identity");
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
+            services.ConfigureDependencyInjectionServices();
             services.ConfigureEventsServices();
             services.ConfigureUsersServices();
             services.ConfigureRequestsServices(configuration);
@@ -63,6 +71,21 @@ namespace Brighid.Discord.Adapter
             services.Configure<AdapterOptions>(configuration.GetSection("Adapter"));
             services.AddSingleton<Random>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+        }
+
+        private void ConfigureDatabaseOptions(DbContextOptionsBuilder options)
+        {
+            var conn = $"Server={databaseOptions.Host};";
+            conn += $"Database={databaseOptions.Name};";
+            conn += $"User={databaseOptions.User};";
+            conn += $"Password=\"{databaseOptions.Password}\";";
+            conn += "GuidFormat=Binary16";
+
+            options
+            .UseMySql(
+                conn,
+                new MySqlServerVersion(new Version(5, 7, 0))
+            );
         }
     }
 }

@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Threading
@@ -20,6 +23,13 @@ namespace Brighid.Discord.Threading
         public ITimer CreateTimer(AsyncTimerCallback callback, int period, string timerName)
         {
             return new Timer(callback, period, timerName, loggerFactory);
+        }
+
+        /// <inheritdoc />
+        public Task CreateDelay(int millisecondsToDelay, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.Delay(millisecondsToDelay, cancellationToken);
         }
     }
 }

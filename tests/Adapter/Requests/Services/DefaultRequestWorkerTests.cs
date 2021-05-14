@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.DependencyInjection;
 using Brighid.Discord.Threading;
 
 using FluentAssertions;
@@ -141,16 +142,29 @@ namespace Brighid.Discord.Adapter.Requests
             public async Task ShouldInvokeAllReceivedMessages(
                 RequestMessage message1,
                 RequestMessage message2,
+                IScope scope1,
+                IScope scope2,
+                IRequestInvoker invoker1,
+                IRequestInvoker invoker2,
                 [Frozen] IRequestMessageRelay relay,
-                [Frozen] IRequestInvoker invoker,
+                [Frozen] IScopeFactory scopeFactory,
                 [Target] DefaultRequestWorker worker,
                 CancellationToken cancellationToken
             )
             {
+                scope1.GetService<IRequestInvoker>().Returns(invoker1);
+                scope2.GetService<IRequestInvoker>().Returns(invoker2);
+                scopeFactory.CreateScope().Returns(scope1, scope2);
+
                 relay.Receive(Any<CancellationToken>()).Returns(new[] { message1, message2 });
                 await worker.Run(cancellationToken);
 
-                await invoker.Received().Invoke(Is(message1), Is(cancellationToken));
+                scopeFactory.Received(2).CreateScope();
+                scope1.Received().GetService<IRequestInvoker>();
+                scope2.Received().GetService<IRequestInvoker>();
+
+                await invoker1.Received().Invoke(Is(message1), Is(cancellationToken));
+                await invoker2.Received().Invoke(Is(message2), Is(cancellationToken));
             }
         }
     }
