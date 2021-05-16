@@ -71,7 +71,7 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 await gateway.StartAsync();
 
-                txWorker.Received().Start(Is(gateway), Is(clientWebSocket), Any<CancellationTokenSource>());
+                await txWorker.Received().Start(Is(gateway), Is(clientWebSocket));
             }
 
             [Test, Auto]
@@ -154,7 +154,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 await gateway.StartAsync();
                 await gateway.StopAsync();
 
-                txWorker.Received().Stop();
+                await txWorker.Received().Stop();
             }
 
             [Test, Auto, Timeout(1000)]
