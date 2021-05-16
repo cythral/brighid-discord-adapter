@@ -1,4 +1,8 @@
+using System;
+
 using Brighid.Discord.Threading;
+
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -13,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">The service collection to configure.</param>
         public static void ConfigureThreadingServices(this IServiceCollection services)
         {
+            services.TryAddSingleton<Random>();
             services.AddSingleton<ITimerFactory, DefaultTimerFactory>();
             services.AddSingleton(typeof(IChannel<>), typeof(Channel<>));
         }

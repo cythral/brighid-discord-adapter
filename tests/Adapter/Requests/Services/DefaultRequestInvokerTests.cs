@@ -51,6 +51,19 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
+            public async Task ShouldGetBucketAndWaitForAvailability(
+                RequestMessage request,
+                [Frozen] IBucketService service,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                await invoker.Invoke(request, cancellationToken);
+
+                await service.Received().GetBucketAndWaitForAvailability(Is(request.RequestDetails), Is(cancellationToken));
+            }
+
+            [Test, Auto]
             public async Task ShouldSendRequestWithCorrectMethod(
                 RequestMessage request,
                 [Frozen, Substitute] HttpMessageInvoker client,

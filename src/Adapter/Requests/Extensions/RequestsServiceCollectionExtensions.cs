@@ -23,7 +23,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<RequestOptions>(configuration.GetSection("Requests"));
             services.AddSingleton<IUrlBuilder, DefaultUrlBuilder>();
             services.AddSingleton<IRequestMessageRelay, SqsRequestMessageRelay>();
-            services.AddSingleton<IRequestInvoker, DefaultRequestInvoker>();
+            services.AddScoped<IRequestInvoker, DefaultRequestInvoker>();
+            services.AddScoped<IBucketService, DefaultBucketService>();
+            services.AddScoped<IBucketRepository, DefaultBucketRepository>();
             services.AddSingleton<HttpMessageInvoker, HttpClient>();
             services.AddHostedService<DefaultRequestWorker>();
         }

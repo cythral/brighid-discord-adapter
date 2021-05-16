@@ -31,6 +31,18 @@ Parameters:
     Type: String
     Description: URI of the identity server.
 
+  DatabaseName:
+    Type: String
+    Description: The name of the database to use
+
+  DatabaseUser:
+    Type: String
+    Description: The name of the database user to use
+
+  DatabasePassword:
+    Type: String
+    Description: The encrypted database password
+
 Resources:
   IdentityApplication:
     Type: Custom::IdentityApplication
@@ -108,6 +120,14 @@ Resources:
               Value: !GetAtt IdentityApplication.Id
             - Name: Encrypted__Identity__ClientSecret
               Value: !GetAtt IdentityApplication.EncryptedSecret
+            - Name: Database__Host
+              Value: !ImportValue mutedac:ClusterAddress
+            - Name: Database__Name
+              Value: !Ref DatabaseName
+            - Name: Database__User
+              Value: !Ref DatabaseUser
+            - Name: Encrypted__Database__Password
+              Value: !Ref DatabasePassword
 
   TaskRole:
     Type: AWS::IAM::Role

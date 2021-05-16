@@ -14,6 +14,15 @@ namespace Brighid.Discord.Adapter.Requests
         /// <summary>
         /// Initializes a new instance of the <see cref="MajorParameters" /> struct.
         /// </summary>
+        /// <param name="value">The string value of the major parameters.</param>
+        public MajorParameters(string value)
+        {
+            Value = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MajorParameters" /> struct.
+        /// </summary>
         /// <param name="parameters">The parameters to look through for major parameters.</param>
         public MajorParameters(Dictionary<string, string> parameters)
         {
@@ -40,6 +49,15 @@ namespace Brighid.Discord.Adapter.Requests
         public static implicit operator string(MajorParameters parameters)
         {
             return parameters.Value;
+        }
+
+        /// <summary>
+        /// Casts a dictionary of parameters to MajorParameters.
+        /// </summary>
+        /// <param name="parameters">The parameters to cast.</param>
+        public static implicit operator MajorParameters(Dictionary<string, string> parameters)
+        {
+            return new MajorParameters(parameters);
         }
 
         /// <summary>

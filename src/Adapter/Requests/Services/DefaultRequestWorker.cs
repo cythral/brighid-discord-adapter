@@ -1,7 +1,8 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Database;
+using Brighid.Discord.DependencyInjection;
 using Brighid.Discord.Threading;
 
 using Microsoft.Extensions.Logging;
@@ -15,8 +16,9 @@ namespace Brighid.Discord.Adapter.Requests
     {
         private readonly RequestOptions options;
         private readonly IRequestMessageRelay relay;
-        private readonly IRequestInvoker invoker;
         private readonly ITimerFactory timerFactory;
+        private readonly IScopeFactory scopeFactory;
+        private readonly ITransactionFactory transactionFactory;
         private readonly ILogger<DefaultRequestWorker> logger;
         private ITimer? timer;
 
@@ -24,22 +26,25 @@ namespace Brighid.Discord.Adapter.Requests
         /// Initializes a new instance of the <see cref="DefaultRequestWorker" /> class.
         /// </summary>
         /// <param name="timerFactory">Factory to create timers with.</param>
+        /// <param name="transactionFactory">Factory to create transactions with.</param>
         /// <param name="relay">Relay service to send/receive messages through the queue.</param>
-        /// <param name="invoker">Service used to invoke requests.</param>
         /// <param name="options">Options to use for handling requests.</param>
+        /// <param name="scopeFactory">Service to create scopes with.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public DefaultRequestWorker(
             ITimerFactory timerFactory,
+            ITransactionFactory transactionFactory,
             IRequestMessageRelay relay,
-            IRequestInvoker invoker,
             IOptions<RequestOptions> options,
+            IScopeFactory scopeFactory,
             ILogger<DefaultRequestWorker> logger
         )
         {
             this.timerFactory = timerFactory;
+            this.transactionFactory = transactionFactory;
             this.relay = relay;
-            this.invoker = invoker;
             this.options = options.Value;
+            this.scopeFactory = scopeFactory;
             this.logger = logger;
         }
 
@@ -69,8 +74,21 @@ namespace Brighid.Discord.Adapter.Requests
             cancellationToken.ThrowIfCancellationRequested();
             logger.LogInformation("Running REST API Queue Worker");
             var messages = await relay.Receive(cancellationToken);
-            var tasks = from message in messages select invoker.Invoke(message, cancellationToken);
-            await Task.WhenAll(tasks);
+
+            foreach (var message in messages)
+            {
+                _ = Invoke(message, cancellationToken);
+            }
+        }
+
+        private async Task Invoke(RequestMessage message, CancellationToken cancellationToken)
+        {
+            using var transaction = transactionFactory.CreateTransaction();
+            using var logScope = logger.BeginScope("{@requestId}", message.RequestDetails.Id);
+            using var serviceScope = scopeFactory.CreateScope();
+            var invoker = serviceScope.GetService<IRequestInvoker>();
+            await invoker.Invoke(message, cancellationToken);
+            transaction.Complete();
         }
     }
 }
