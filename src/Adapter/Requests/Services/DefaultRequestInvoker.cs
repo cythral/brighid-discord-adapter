@@ -57,10 +57,11 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task Invoke(RequestMessage request, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            Bucket? bucket = null;
 
             try
             {
-                var bucket = await bucketService.GetBucketAndWaitForAvailability(request.RequestDetails, cancellationToken);
+                bucket = await bucketService.GetBucketAndWaitForAvailability(request.RequestDetails, cancellationToken);
                 var httpRequest = new HttpRequestMessage
                 {
                     RequestUri = urlBuilder.BuildFromRequest(request.RequestDetails),
@@ -71,6 +72,7 @@ namespace Brighid.Discord.Adapter.Requests
                 logger.LogInformation("Sending request uri:{@uri} method:{@method} body:{@body}", httpRequest.RequestUri, httpRequest.Method, httpRequest.Content);
                 var httpResponse = await client.SendAsync(httpRequest, cancellationToken);
                 var responseString = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+                _ = relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
                 logger.LogInformation("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
 
                 httpResponse.Headers.TryGetValues("x-ratelimit-remaining", out var hitsRemainingValues);
@@ -83,19 +85,18 @@ namespace Brighid.Discord.Adapter.Requests
 
                 if (httpResponse.StatusCode == HttpStatusCode.TooManyRequests)
                 {
+                    // throw exception here
                     _ = reporter.Report(default(RestApiRateLimitedMetric), cancellationToken);
                 }
-
-                using var transaction = await bucketRepository.BeginTransaction(cancellationToken);
-                await bucketRepository.Save(bucket, cancellationToken);
-                await transaction.Commit(cancellationToken);
-                await relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
             }
             catch (Exception exception)
             {
                 logger.LogError("Error occurred while attempting to invoke request: {@exception}", exception);
-                await relay.Fail(request, 0, cancellationToken);
+                _ = relay.Fail(request, 0, cancellationToken);
+                _ = reporter.Report(default(RestApiFailedMessageMetric), cancellationToken);
             }
+
+            await TrySaveBucket(bucket, cancellationToken);
         }
 
         private static HttpContent? CreateContent(RequestMessage request)
@@ -108,6 +109,21 @@ namespace Brighid.Discord.Adapter.Requests
             var content = new StringContent(request.RequestDetails.RequestBody);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return content;
+        }
+
+        private async Task TrySaveBucket(Bucket? bucket, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (bucket != null)
+                {
+                    await bucketRepository.Save(bucket, cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.LogError("An error occurred while attempting to save the bucket: {@bucket} {@exception}", bucket, exception);
+            }
         }
     }
 }

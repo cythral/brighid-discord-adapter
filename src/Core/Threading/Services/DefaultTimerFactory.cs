@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,14 +9,20 @@ namespace Brighid.Discord.Threading
     /// <inheritdoc />
     public class DefaultTimerFactory : ITimerFactory
     {
+        private readonly Random random;
         private readonly ILoggerFactory loggerFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultTimerFactory" /> class.
         /// </summary>
+        /// <param name="random">Service used to create random delays.</param>
         /// <param name="loggerFactory">Factory used to create loggers with.</param>
-        public DefaultTimerFactory(ILoggerFactory loggerFactory)
+        public DefaultTimerFactory(
+            Random random,
+            ILoggerFactory loggerFactory
+        )
         {
+            this.random = random;
             this.loggerFactory = loggerFactory;
         }
 
@@ -30,6 +37,14 @@ namespace Brighid.Discord.Threading
         {
             cancellationToken.ThrowIfCancellationRequested();
             return Task.Delay(millisecondsToDelay, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public Task CreateJitter(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var millisecondsToDelay = random.Next(100, 501);
+            return CreateDelay(millisecondsToDelay, cancellationToken);
         }
     }
 }

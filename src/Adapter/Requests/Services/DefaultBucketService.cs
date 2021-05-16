@@ -32,15 +32,12 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task<Bucket> GetBucketAndWaitForAvailability(Request request, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var transaction = await repository.BeginTransaction(cancellationToken);
+            await timerFactory.CreateJitter(cancellationToken);
+
             var bucket = await repository.FindByEndpointAndMajorParameters(request.Endpoint, request.Parameters, cancellationToken);
             bucket ??= await CreateBucket(request, cancellationToken);
-            await transaction.LockBucket(bucket, cancellationToken);
 
-            var jitter = new Random().Next(50, 401);
-            await Task.Delay(jitter);
-
-            if (bucket.HitsRemaining <= 2)
+            if (bucket.HitsRemaining <= 1)
             {
                 var delay = (int)Math.Ceiling((bucket.ResetAfter - DateTimeOffset.Now).TotalMilliseconds);
                 delay = Math.Max(delay, 100);
@@ -50,7 +47,6 @@ namespace Brighid.Discord.Adapter.Requests
 
             bucket.HitsRemaining--;
             await repository.Save(bucket, cancellationToken);
-            await transaction.Commit(cancellationToken);
             return bucket;
         }
 

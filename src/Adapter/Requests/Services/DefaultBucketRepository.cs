@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Database;
 using Brighid.Discord.Models;
 
 using Microsoft.EntityFrameworkCore;
@@ -35,14 +36,6 @@ namespace Brighid.Discord.Adapter.Requests
         }
 
         /// <inheritdoc />
-        public async Task<IBucketTransaction> BeginTransaction(CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var contextTransaction = await databaseContext.Database.BeginTransactionAsync(cancellationToken);
-            return new MysqlBucketTransaction(contextTransaction, databaseContext);
-        }
-
-        /// <inheritdoc />
         public async Task Save(Bucket bucket, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -65,12 +58,16 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task<Bucket?> FindByEndpointAndMajorParameters(Endpoint endpoint, MajorParameters parameters, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var query = from bucket in databaseContext.Buckets.AsQueryable()
-                        let endpointValue = Convert.ToUInt64(endpoint.Value)
-                        where bucket.ApiCategory == endpoint.Category
-                            && (bucket.Endpoints & endpointValue) == endpointValue
-                            && bucket.MajorParameters == parameters
-                        select bucket;
+            var endpointValue = Convert.ToUInt64(endpoint.Value);
+            var query = databaseContext.Buckets.FromSqlInterpolated(
+                $@"select * from Buckets 
+                    where ApiCategory={endpoint.Category}
+                    and (Endpoints & {endpointValue}) = {endpointValue}
+                    and MajorParameters = {parameters.Value}
+                    limit 1
+                    for update
+                "
+            );
 
             return await query.FirstOrDefaultAsync(cancellationToken);
         }

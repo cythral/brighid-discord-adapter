@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Database;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -44,9 +46,6 @@ namespace Brighid.Discord.Adapter
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
             logger.LogInformation("Starting.");
-
-            using var databaseContext = Services.GetRequiredService<DatabaseContext>();
-            await databaseContext.Database.EnsureCreatedAsync(cancellationToken);
 
             var tasks = from service in hostedServices select service.StartAsync(cancellationToken);
             await Task.WhenAll(tasks);

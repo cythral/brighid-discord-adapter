@@ -9,7 +9,7 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using Brighid.Discord.Adapter;
+using Brighid.Discord.Adapter.Database;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Requests;
 using Brighid.Discord.Mocks;

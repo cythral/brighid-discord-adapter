@@ -6,7 +6,7 @@ using Brighid.Discord.Adapter.Requests;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Brighid.Discord.Adapter
+namespace Brighid.Discord.Adapter.Database
 {
     /// <summary>
     /// Context to use for database interactions.

@@ -49,6 +49,19 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
+            public async Task ShouldJitter(
+                Request request,
+                [Frozen, Substitute] ITimerFactory timerFactory,
+                [Target] DefaultBucketService service,
+                CancellationToken cancellationToken
+            )
+            {
+                await service.GetBucketAndWaitForAvailability(request, cancellationToken);
+
+                await timerFactory.Received().CreateJitter(Is(cancellationToken));
+            }
+
+            [Test, Auto]
             public async Task ShouldFetchBucketFromTheRepository(
                 Request request,
                 [Frozen, Substitute] IBucketRepository repository,
@@ -105,54 +118,6 @@ namespace Brighid.Discord.Adapter.Requests
                     ),
                     Is(cancellationToken)
                 );
-            }
-
-            [Test, Auto]
-            public async Task ShouldCreateATransaction(
-                Request request,
-                [Frozen] Bucket bucket,
-                [Frozen, Substitute] IBucketRepository repository,
-                [Target] DefaultBucketService service,
-                CancellationToken cancellationToken
-            )
-            {
-                await service.GetBucketAndWaitForAvailability(request, cancellationToken);
-
-                await repository.Received().BeginTransaction(Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldLockTheBucket(
-                Request request,
-                [Frozen] Bucket bucket,
-                [Frozen, Substitute] IBucketTransaction transaction,
-                [Frozen, Substitute] IBucketRepository repository,
-                [Target] DefaultBucketService service,
-                CancellationToken cancellationToken
-            )
-            {
-                await service.GetBucketAndWaitForAvailability(request, cancellationToken);
-
-                await transaction.Received().LockBucket(Is(bucket), Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldCommitTheTransactionAfterSavingTheBucket(
-                Request request,
-                [Frozen] Bucket bucket,
-                [Frozen, Substitute] IBucketTransaction transaction,
-                [Frozen, Substitute] IBucketRepository repository,
-                [Target] DefaultBucketService service,
-                CancellationToken cancellationToken
-            )
-            {
-                await service.GetBucketAndWaitForAvailability(request, cancellationToken);
-
-                Received.InOrder(async () =>
-                {
-                    await repository.Received().Save(Is(bucket), Is(cancellationToken));
-                    await transaction.Received().Commit(Is(cancellationToken));
-                });
             }
 
             [Test, Auto]

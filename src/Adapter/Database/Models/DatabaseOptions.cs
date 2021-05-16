@@ -1,4 +1,4 @@
-namespace Brighid.Discord.Adapter.Requests
+namespace Brighid.Discord.Adapter.Database
 {
     /// <summary>
     /// Options to use when interacting with the database.

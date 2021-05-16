@@ -24,5 +24,12 @@ namespace Brighid.Discord.Threading
         /// <param name="cancellationToken">Token used to cancel the operation with.</param>
         /// <returns>The resulting task.</returns>
         Task CreateDelay(int millisecondsToDelay, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Create a task that completes after a random delay between a preconfigured amount of time.
+        /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation with.</param>
+        /// <returns>The resulting task.</returns>
+        Task CreateJitter(CancellationToken cancellationToken);
     }
 }

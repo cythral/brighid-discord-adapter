@@ -19,13 +19,6 @@ namespace Brighid.Discord.Adapter.Requests
         Task<Bucket> Add(Bucket bucket, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Begins a transaction in the bucket repository.
-        /// </summary>
-        /// <param name="cancellationToken">Token used to cancel the operation.</param>
-        /// <returns>The resulting transaction.</returns>
-        Task<IBucketTransaction> BeginTransaction(CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Save a bucket in the repository.
         /// </summary>
         /// <param name="bucket">Bucket to save.</param>
