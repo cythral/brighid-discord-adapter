@@ -1,0 +1,36 @@
+version: "3.4"
+services:
+  adapter:
+    image: mcr.microsoft.com/dotnet/sdk:5.0.203
+    entrypoint: dotnet watch --project src/Adapter run
+    working_dir: /app
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+      - ~/.aws:/root/.aws
+    environment:
+      
+      CONFIGURATION: Debug
+      Database__Host: db
+      Database__Name: ${DB_NAME}
+      Database__User: ${DB_USER}
+      Database__Password: ${DB_PASSWORD}
+      Requests__QueueUrl: ${REQUESTS_QUEUE_URL}
+      Gateway__Uri: ${GATEWAY_URI}
+      Adapter__Token: ${ADAPTER_TOKEN}
+      Metrics__Namespace: ${METRICS_NAMESPACE}
+      AWS_REGION: us-east-1
+
+  db:
+    image: mariadb/server:10.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+    volumes:
+      - my-db:/var/lib/mysql
+
+volumes:
+  my-db:

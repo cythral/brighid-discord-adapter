@@ -8,6 +8,7 @@ using Destructurama;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 using Serilog;
@@ -26,6 +27,7 @@ namespace Brighid.Discord.Adapter
         public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
@@ -43,8 +45,10 @@ namespace Brighid.Discord.Adapter
             services.ConfigureBrighidIdentity("Identity");
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
+            services.ConfigureDependencyInjectionServices();
             services.ConfigureEventsServices();
             services.ConfigureUsersServices();
+            services.ConfigureDatabaseServices(configuration);
             services.ConfigureRequestsServices(configuration);
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
@@ -61,7 +65,7 @@ namespace Brighid.Discord.Adapter
         private void ConfigureMiscServices(IServiceCollection services)
         {
             services.Configure<AdapterOptions>(configuration.GetSection("Adapter"));
-            services.AddSingleton<Random>();
+            services.TryAddSingleton<Random>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
         }
     }
