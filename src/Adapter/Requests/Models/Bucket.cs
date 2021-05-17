@@ -1,6 +1,11 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 using Brighid.Discord.Models;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Brighid.Discord.Adapter.Requests
 {
@@ -22,7 +27,8 @@ namespace Brighid.Discord.Adapter.Requests
         /// <summary>
         /// Gets or sets the ID of this bucket that was returned from the Discord API.
         /// </summary>
-        public string RemoteId { get; set; } = string.Empty;
+        [Key]
+        public string RemoteId { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Gets or sets the major parameters associated with this bucket, separated by '/'.
@@ -80,6 +86,21 @@ namespace Brighid.Discord.Adapter.Requests
             if (ApiCategory != endpoint.Category)
             {
                 throw new ArgumentException($"Endpoint must have category: {ApiCategory}");
+            }
+        }
+
+        /// <inheritdoc />
+        public class EntityConfig : IEntityTypeConfiguration<Bucket>
+        {
+            /// <inheritdoc />
+            public void Configure(EntityTypeBuilder<Bucket> builder)
+            {
+                builder
+                .Property(bucket => bucket.MajorParameters)
+                .HasConversion(new ValueConverter<MajorParameters, string>(
+                    value => value.Value,
+                    value => new MajorParameters(value)
+                ));
             }
         }
     }

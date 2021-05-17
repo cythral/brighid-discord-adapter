@@ -2,8 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Adapter.Database;
+using Brighid.Discord.DependencyInjection;
 using Brighid.Discord.Threading;
 
 using FluentAssertions;
@@ -126,6 +129,18 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
+            public async Task ShouldCreateANewTransaction(
+                [Frozen, Substitute] ITransactionFactory transactionFactory,
+                [Target] DefaultRequestWorker worker,
+                CancellationToken cancellationToken
+            )
+            {
+                await worker.Run(cancellationToken);
+
+                transactionFactory.Received().CreateTransaction();
+            }
+
+            [Test, Auto]
             public async Task ShouldReceiveMessages(
                 [Frozen] IRequestMessageRelay relay,
                 [Target] DefaultRequestWorker worker,
@@ -138,19 +153,44 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
-            public async Task ShouldInvokeAllReceivedMessages(
+            public async Task ShouldInvokeAllReceivedMessagesThenCompleteTransactions(
                 RequestMessage message1,
                 RequestMessage message2,
+                IScope scope1,
+                IScope scope2,
+                IRequestInvoker invoker1,
+                IRequestInvoker invoker2,
+                ITransaction transaction1,
+                ITransaction transaction2,
+                [Frozen] ITransactionFactory transactionFactory,
                 [Frozen] IRequestMessageRelay relay,
-                [Frozen] IRequestInvoker invoker,
+                [Frozen] IScopeFactory scopeFactory,
                 [Target] DefaultRequestWorker worker,
                 CancellationToken cancellationToken
             )
             {
+                transactionFactory.CreateTransaction().Returns(transaction1, transaction2);
+                scope1.GetService<IRequestInvoker>().Returns(invoker1);
+                scope2.GetService<IRequestInvoker>().Returns(invoker2);
+                scopeFactory.CreateScope().Returns(scope1, scope2);
+
                 relay.Receive(Any<CancellationToken>()).Returns(new[] { message1, message2 });
                 await worker.Run(cancellationToken);
 
-                await invoker.Received().Invoke(Is(message1), Is(cancellationToken));
+                Received.InOrder(async () =>
+                {
+                    transactionFactory.Received().CreateTransaction();
+                    scopeFactory.Received().CreateScope();
+                    scope1.Received().GetService<IRequestInvoker>();
+                    await invoker1.Received().Invoke(Is(message1), Is(cancellationToken));
+                    transaction1.Received().Complete();
+
+                    transactionFactory.Received().CreateTransaction();
+                    scopeFactory.Received().CreateScope();
+                    scope2.Received().GetService<IRequestInvoker>();
+                    await invoker2.Received().Invoke(Is(message2), Is(cancellationToken));
+                    transaction2.Received().Complete();
+                });
             }
         }
     }

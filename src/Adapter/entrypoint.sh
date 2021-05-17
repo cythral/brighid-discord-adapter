@@ -11,5 +11,6 @@ decrypt() {
 
 export Adapter__Token=$(decrypt ${Encrypted__Adapter__Token})
 export Identity__ClientSecret=$(decrypt ${Encrypted__Identity__ClientSecret})
+export Database__Password=$(decrypt ${Encrypted__Database__Password})
 
 runuser --user brighid dotnet $DLL_PATH
