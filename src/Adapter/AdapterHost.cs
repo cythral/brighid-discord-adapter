@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Database;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +21,7 @@ namespace Brighid.Discord.Adapter
     {
         private const string LogCategoryName = "Adapter Host";
         private readonly IEnumerable<IHostedService> hostedServices;
+        private readonly IHostEnvironment environment;
         private readonly ILogger<AdapterHost> logger;
 
         /// <summary>
@@ -24,15 +29,18 @@ namespace Brighid.Discord.Adapter
         /// </summary>
         /// <param name="hostedServices">List of hosted services to start.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
+        /// <param name="environment">Service used to get info about the environment.</param>
         /// <param name="services">The service provider to use for accessing host services.</param>
         public AdapterHost(
             IEnumerable<IHostedService> hostedServices,
             ILogger<AdapterHost> logger,
+            IHostEnvironment environment,
             IServiceProvider services
         )
         {
             Services = services;
             this.hostedServices = hostedServices;
+            this.environment = environment;
             this.logger = logger;
         }
 
@@ -42,7 +50,13 @@ namespace Brighid.Discord.Adapter
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            logger.LogInformation("Starting.");
+            logger.LogInformation("Starting. Environment: {@environment}", environment.EnvironmentName);
+
+            if (environment.IsEnvironment("local"))
+            {
+                using var databaseContext = Services.GetRequiredService<DatabaseContext>();
+                await databaseContext.Database.MigrateAsync(cancellationToken);
+            }
 
             var tasks = from service in hostedServices select service.StartAsync(cancellationToken);
             await Task.WhenAll(tasks);

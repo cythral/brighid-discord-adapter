@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -75,13 +74,9 @@ namespace Brighid.Discord.Adapter.Requests
                 _ = relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
                 logger.LogInformation("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
 
-                httpResponse.Headers.TryGetValues("x-ratelimit-remaining", out var hitsRemainingValues);
-                var hitsRemaining = Convert.ToInt32(hitsRemainingValues!.First());
-                bucket.HitsRemaining = hitsRemaining;
-
-                httpResponse.Headers.TryGetValues("x-ratelimit-reset", out var resetAfterValues);
-                var resetAfter = Convert.ToInt64(resetAfterValues!.First());
-                bucket.ResetAfter = DateTimeOffset.FromUnixTimeSeconds(resetAfter);
+                bucket = await bucketService.MergeBucketIds(bucket, httpResponse, cancellationToken);
+                bucketService.UpdateBucketHitsRemaining(bucket, httpResponse);
+                bucketService.UpdateBucketResetAfter(bucket, httpResponse);
 
                 if (httpResponse.StatusCode == HttpStatusCode.TooManyRequests)
                 {
@@ -96,7 +91,10 @@ namespace Brighid.Discord.Adapter.Requests
                 _ = reporter.Report(default(RestApiFailedMessageMetric), cancellationToken);
             }
 
-            await TrySaveBucket(bucket, cancellationToken);
+            if (bucket != null)
+            {
+                await bucketRepository.Save(bucket, cancellationToken);
+            }
         }
 
         private static HttpContent? CreateContent(RequestMessage request)
@@ -109,21 +107,6 @@ namespace Brighid.Discord.Adapter.Requests
             var content = new StringContent(request.RequestDetails.RequestBody);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return content;
-        }
-
-        private async Task TrySaveBucket(Bucket? bucket, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (bucket != null)
-                {
-                    await bucketRepository.Save(bucket, cancellationToken);
-                }
-            }
-            catch (Exception exception)
-            {
-                logger.LogError("An error occurred while attempting to save the bucket: {@bucket} {@exception}", bucket, exception);
-            }
         }
     }
 }
