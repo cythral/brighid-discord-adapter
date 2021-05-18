@@ -83,7 +83,7 @@ namespace Brighid.Discord.Adapter.Requests
                 CancellationToken cancellationToken
             )
             {
-                var resetAfter = DateTimeOffset.Now + TimeSpan.FromMinutes(0.1);
+                var resetAfter = DateTimeOffset.Now;
                 repository.FindByEndpointAndMajorParameters(Any<Endpoint>(), Any<MajorParameters>(), Any<CancellationToken>()).Returns((Bucket?)null);
                 await service.GetBucketAndWaitForAvailability(request, cancellationToken);
 

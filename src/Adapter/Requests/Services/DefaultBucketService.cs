@@ -130,7 +130,7 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 MajorParameters = request.Parameters,
                 HitsRemaining = 1,
-                ResetAfter = DateTimeOffset.Now + TimeSpan.FromMinutes(0.1),
+                ResetAfter = DateTimeOffset.Now,
             };
 
             bucket.AddEndpoint(request.Endpoint);
