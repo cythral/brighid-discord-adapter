@@ -91,7 +91,10 @@ namespace Brighid.Discord.Adapter.Requests
                 _ = reporter.Report(default(RestApiFailedMessageMetric), cancellationToken);
             }
 
-            await SaveBucket(bucket, cancellationToken);
+            if (bucket != null)
+            {
+                await bucketRepository.Save(bucket, cancellationToken);
+            }
         }
 
         private static HttpContent? CreateContent(RequestMessage request)
@@ -104,20 +107,6 @@ namespace Brighid.Discord.Adapter.Requests
             var content = new StringContent(request.RequestDetails.RequestBody);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return content;
-        }
-
-        private async Task SaveBucket(Bucket? bucket, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (bucket != null)
-                {
-                    await bucketRepository.Save(bucket, cancellationToken);
-                }
-            }
-            catch (Exception)
-            {
-            }
         }
     }
 }
