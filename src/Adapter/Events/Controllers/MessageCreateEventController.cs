@@ -50,7 +50,7 @@ namespace Brighid.Discord.Adapter.Events
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
                 logger.LogInformation("Message author is registered, emitting message.");
-                await emitter.Emit(@event.Message, cancellationToken);
+                await emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
             }
         }
     }
