@@ -26,6 +26,10 @@ namespace Brighid.Discord.Adapter
         {
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog(dispose: true)
+                .ConfigureHostConfiguration(config =>
+                {
+                    config.AddEnvironmentVariables();
+                })
                 .ConfigureServices((context, services) =>
                 {
                     CreateStartup(context.Configuration).ConfigureServices(services);

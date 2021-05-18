@@ -9,7 +9,7 @@ services:
       - ./:/app
       - ~/.aws:/root/.aws
     environment:
-      
+      Environment: local
       CONFIGURATION: Debug
       Database__Host: db
       Database__Name: ${DB_NAME}
