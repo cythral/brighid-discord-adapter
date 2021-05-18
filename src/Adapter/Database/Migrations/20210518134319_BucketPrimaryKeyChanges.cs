@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Brighid.Discord.Adapter.Database
 {
+    /// <summary>
+    /// Since we could have multiple rows with the same RemoteId but different
+    /// major parameters, the RemoteId cannot be the primary key.  Instead we are defining
+    /// a separate primary key with a Guid that has no relevance to the bucket ID returned by Discord.
+    /// </summary>
     public partial class BucketPrimaryKeyChanges : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

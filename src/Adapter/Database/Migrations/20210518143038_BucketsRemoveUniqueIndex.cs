@@ -2,6 +2,9 @@
 
 namespace Brighid.Discord.Adapter.Database
 {
+    /// <summary>
+    /// This removes the unique index on the RemoteId column of the Buckets table.
+    /// </summary>
     public partial class BucketsRemoveUniqueIndex : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
