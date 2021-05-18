@@ -66,6 +66,7 @@ namespace Brighid.Discord.Adapter.Requests
 
                 result.Should().Be(resultingBucket);
                 await databaseContext.Received().AddAsync(Is(bucket), Is(cancellationToken));
+                await databaseContext.Received().SaveChangesAsync(Is(cancellationToken));
             }
         }
 
@@ -73,16 +74,42 @@ namespace Brighid.Discord.Adapter.Requests
         public class RemoveTests
         {
             [Test, Auto]
-            public void ShouldRemoveTheBucketFromTheDatabase(
+            public async Task ShouldThrowIfCancelled(
+                Bucket bucket,
+                [Target] DefaultBucketRepository repository
+            )
+            {
+                var cancellationToken = new CancellationToken(true);
+
+                Func<Task> func = () => repository.Remove(bucket, cancellationToken);
+
+                await func.Should().ThrowAsync<OperationCanceledException>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotThrowIfNotCancelled(
+                Bucket bucket,
+                [Target] DefaultBucketRepository repository,
+                CancellationToken cancellationToken
+            )
+            {
+                Func<Task> func = () => repository.Remove(bucket, cancellationToken);
+
+                await func.Should().NotThrowAsync<OperationCanceledException>();
+            }
+
+            [Test, Auto]
+            public async Task ShouldRemoveTheBucketFromTheDatabase(
                 Bucket bucket,
                 [Frozen] DatabaseContext databaseContext,
                 [Target] DefaultBucketRepository repository,
                 CancellationToken cancellationToken
             )
             {
-                repository.Remove(bucket);
+                await repository.Remove(bucket, cancellationToken);
 
                 databaseContext.Received().Remove(Is(bucket));
+                await databaseContext.Received().SaveChangesAsync(Is(cancellationToken));
             }
         }
 

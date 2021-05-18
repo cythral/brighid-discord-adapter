@@ -286,12 +286,12 @@ namespace Brighid.Discord.Adapter.Requests
                 var httpResponse = new HttpResponseMessage();
                 httpResponse.Headers.Add("x-ratelimit-bucket", new[] { remoteId });
 
-                repository.FindByRemoteId(Any<string>(), Any<CancellationToken>()).Returns(existingBucket);
+                repository.FindByRemoteIdAndMajorParameters(Any<string>(), Any<MajorParameters>(), Any<CancellationToken>()).Returns(existingBucket);
                 var result = await service.MergeBucketIds(bucket, httpResponse, cancellationToken);
 
                 result.Should().Be(existingBucket);
                 existingBucket.HasEndpoint(ChannelEndpoint.CreateMessage).Should().BeTrue();
-                await repository.Received().FindByRemoteId(Is(remoteId), Is(cancellationToken));
+                await repository.Received().FindByRemoteIdAndMajorParameters(Is(remoteId), Is(bucket.MajorParameters), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -313,10 +313,10 @@ namespace Brighid.Discord.Adapter.Requests
                 var httpResponse = new HttpResponseMessage();
                 httpResponse.Headers.Add("x-ratelimit-bucket", new[] { remoteId });
 
-                repository.FindByRemoteId(Any<string>(), Any<CancellationToken>()).Returns(existingBucket);
+                repository.FindByRemoteIdAndMajorParameters(Any<string>(), Any<MajorParameters>(), Any<CancellationToken>()).Returns(existingBucket);
                 await service.MergeBucketIds(bucket, httpResponse, cancellationToken);
 
-                repository.Received().Remove(Is(bucket));
+                await repository.Received().Remove(Is(bucket), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -338,12 +338,12 @@ namespace Brighid.Discord.Adapter.Requests
                 var httpResponse = new HttpResponseMessage();
                 httpResponse.Headers.Add("x-ratelimit-bucket", new[] { remoteId });
 
-                repository.FindByRemoteId(Any<string>(), Any<CancellationToken>()).Returns((Bucket)null!);
+                repository.FindByRemoteIdAndMajorParameters(Any<string>(), Any<MajorParameters>(), Any<CancellationToken>()).Returns((Bucket)null!);
                 var result = await service.MergeBucketIds(bucket, httpResponse, cancellationToken);
 
                 result.Should().Be(bucket);
                 result.RemoteId.Should().Be(remoteId);
-                await repository.Received().FindByRemoteId(Is(remoteId), Is(cancellationToken));
+                await repository.Received().FindByRemoteIdAndMajorParameters(Is(remoteId), Is(bucket.MajorParameters), Is(cancellationToken));
             }
         }
 

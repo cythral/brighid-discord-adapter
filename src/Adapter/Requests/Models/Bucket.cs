@@ -100,9 +100,7 @@ namespace Brighid.Discord.Adapter.Requests
             /// <inheritdoc />
             public void Configure(EntityTypeBuilder<Bucket> builder)
             {
-                builder
-                .HasIndex(bucket => bucket.RemoteId)
-                .IsUnique();
+                builder.HasIndex(bucket => bucket.RemoteId);
 
                 builder
                 .Property(bucket => bucket.MajorParameters)

@@ -22,7 +22,9 @@ namespace Brighid.Discord.Adapter.Requests
         /// Deletes an existing bucket.
         /// </summary>
         /// <param name="bucket">Bucket to delete.</param>
-        void Remove(Bucket bucket);
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        Task Remove(Bucket bucket, CancellationToken cancellationToken);
 
         /// <summary>
         /// Save a bucket in the repository.
@@ -36,9 +38,10 @@ namespace Brighid.Discord.Adapter.Requests
         /// Find a bucket by it's remote ID.
         /// </summary>
         /// <param name="remoteId">The remote ID to look for.</param>
+        /// <param name="parameters">The major parameters to look for.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting bucket, or null if not found.</returns>
-        Task<Bucket?> FindByRemoteId(string remoteId, CancellationToken cancellationToken = default);
+        Task<Bucket?> FindByRemoteIdAndMajorParameters(string remoteId, MajorParameters parameters, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Find a bucket by it's endpoint and major parameters.

@@ -76,14 +76,14 @@ namespace Brighid.Discord.Adapter.Requests
                 return bucket;
             }
 
-            var existingBucket = await repository.FindByRemoteId(remoteId, cancellationToken);
+            var existingBucket = await repository.FindByRemoteIdAndMajorParameters(remoteId, bucket.MajorParameters, cancellationToken);
             if (existingBucket == null)
             {
                 bucket.RemoteId = remoteId;
                 return bucket;
             }
 
-            repository.Remove(bucket);
+            await repository.Remove(bucket, cancellationToken);
             existingBucket.Endpoints |= bucket.Endpoints;
             return existingBucket;
         }
