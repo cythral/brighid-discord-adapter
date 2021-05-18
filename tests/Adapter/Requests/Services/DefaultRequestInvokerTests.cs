@@ -121,6 +121,57 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
+            public async Task ShouldMergeBucketIds(
+                RequestMessage request,
+                [Frozen] Bucket bucket,
+                [Frozen] HttpResponseMessage responseMessage,
+                [Frozen, Substitute] IBucketService bucketService,
+                [Frozen, Substitute] HttpMessageInvoker client,
+                [Frozen, Substitute] IUrlBuilder urlBuilder,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                await invoker.Invoke(request, cancellationToken);
+
+                await bucketService.Received().MergeBucketIds(Is(bucket), Is(responseMessage), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldUpdateBucketHitsRemaining(
+                RequestMessage request,
+                [Frozen] Bucket bucket,
+                [Frozen] HttpResponseMessage responseMessage,
+                [Frozen, Substitute] IBucketService bucketService,
+                [Frozen, Substitute] HttpMessageInvoker client,
+                [Frozen, Substitute] IUrlBuilder urlBuilder,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                await invoker.Invoke(request, cancellationToken);
+
+                bucketService.Received().UpdateBucketHitsRemaining(Is(bucket), Is(responseMessage));
+            }
+
+            [Test, Auto]
+            public async Task ShouldUpdateBucketResetAfter(
+                RequestMessage request,
+                [Frozen] Bucket bucket,
+                [Frozen] HttpResponseMessage responseMessage,
+                [Frozen, Substitute] IBucketService bucketService,
+                [Frozen, Substitute] HttpMessageInvoker client,
+                [Frozen, Substitute] IUrlBuilder urlBuilder,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                await invoker.Invoke(request, cancellationToken);
+
+                bucketService.Received().UpdateBucketResetAfter(Is(bucket), Is(responseMessage));
+            }
+
+            [Test, Auto]
             public async Task ShouldSendRequestWithNoBody(
                 RequestMessage request,
                 [Frozen, Substitute] HttpMessageInvoker client,
@@ -156,6 +207,26 @@ namespace Brighid.Discord.Adapter.Requests
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
                 await relay.Received().Complete(Is(request), Is(statusCode), Is(response), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldSaveChangesToTheBucket(
+                string response,
+                RequestMessage request,
+                [Frozen] HttpStatusCode statusCode,
+                [Frozen] Bucket bucket,
+                [Frozen] HttpResponseMessage httpResponse,
+                [Frozen, Substitute] HttpMessageInvoker client,
+                [Frozen, Substitute] IBucketRepository repository,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                httpResponse.Content = new StringContent(response);
+                request.RequestDetails = new Request(ChannelEndpoint.CreateMessage) { RequestBody = null };
+                await invoker.Invoke(request, cancellationToken);
+
+                await repository.Received().Save(Is(bucket), Is(cancellationToken));
             }
 
             [Test, Auto]

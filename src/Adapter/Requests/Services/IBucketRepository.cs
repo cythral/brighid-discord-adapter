@@ -19,6 +19,12 @@ namespace Brighid.Discord.Adapter.Requests
         Task<Bucket> Add(Bucket bucket, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Deletes an existing bucket.
+        /// </summary>
+        /// <param name="bucket">Bucket to delete.</param>
+        void Remove(Bucket bucket);
+
+        /// <summary>
         /// Save a bucket in the repository.
         /// </summary>
         /// <param name="bucket">Bucket to save.</param>

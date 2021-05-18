@@ -15,6 +15,12 @@ namespace Brighid.Discord.Adapter.Requests
     public class Bucket
     {
         /// <summary>
+        /// Gets or sets the primary key of the rate limit bucket.
+        /// </summary>
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
         /// Gets or sets the API category associated with the endpoints in this bucket.
         /// </summary>
         public char ApiCategory { get; set; }
@@ -27,8 +33,7 @@ namespace Brighid.Discord.Adapter.Requests
         /// <summary>
         /// Gets or sets the ID of this bucket that was returned from the Discord API.
         /// </summary>
-        [Key]
-        public string RemoteId { get; set; } = Guid.NewGuid().ToString();
+        public string? RemoteId { get; set; }
 
         /// <summary>
         /// Gets or sets the major parameters associated with this bucket, separated by '/'.
@@ -95,6 +100,10 @@ namespace Brighid.Discord.Adapter.Requests
             /// <inheritdoc />
             public void Configure(EntityTypeBuilder<Bucket> builder)
             {
+                builder
+                .HasIndex(bucket => bucket.RemoteId)
+                .IsUnique();
+
                 builder
                 .Property(bucket => bucket.MajorParameters)
                 .HasConversion(new ValueConverter<MajorParameters, string>(

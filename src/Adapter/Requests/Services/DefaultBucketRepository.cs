@@ -31,15 +31,19 @@ namespace Brighid.Discord.Adapter.Requests
         {
             cancellationToken.ThrowIfCancellationRequested();
             var entry = await databaseContext.AddAsync(bucket, cancellationToken);
-            await databaseContext.SaveChangesAsync(cancellationToken);
             return entry.Entity;
+        }
+
+        /// <inheritdoc />
+        public void Remove(Bucket bucket)
+        {
+            databaseContext.Remove(bucket);
         }
 
         /// <inheritdoc />
         public async Task Save(Bucket bucket, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            databaseContext.Attach(bucket);
             await databaseContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -47,9 +51,12 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task<Bucket?> FindByRemoteId(string remoteId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var query = from bucket in databaseContext.Buckets.AsQueryable()
-                        where bucket.RemoteId == remoteId
-                        select bucket;
+            var query = databaseContext.Buckets.FromSqlInterpolated(
+                $@"select * from Buckets 
+                    where RemoteId={remoteId}
+                    for update
+                "
+            );
 
             return await query.FirstOrDefaultAsync(cancellationToken);
         }
