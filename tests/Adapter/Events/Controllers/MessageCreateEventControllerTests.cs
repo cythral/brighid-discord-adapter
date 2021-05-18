@@ -39,13 +39,14 @@ namespace Brighid.Discord.Adapter.Events
                 Func<Task> func = () => controller.Handle(@event, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
-                await emitter.DidNotReceive().Emit(Any<Message>(), Any<CancellationToken>());
+                await emitter.DidNotReceive().Emit(Any<Message>(), Any<Snowflake>(), Any<CancellationToken>());
             }
 
             [Test, Auto]
             public async Task ShouldEmitMessageIfUserIsRegistered(
                 string content,
                 Snowflake userId,
+                Snowflake channelId,
                 [Frozen, Substitute] IMessageEmitter emitter,
                 [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
@@ -53,14 +54,14 @@ namespace Brighid.Discord.Adapter.Events
             {
                 var cancellationToken = new CancellationToken(false);
                 var author = new User { Id = userId };
-                var message = new Message { Content = content, Author = author };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
 
                 await controller.Handle(@event, cancellationToken);
 
-                await emitter.Received().Emit(Is(message), Is(cancellationToken));
+                await emitter.Received().Emit(Is(message), Is(channelId), Is(cancellationToken));
                 await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
             }
 
@@ -68,6 +69,7 @@ namespace Brighid.Discord.Adapter.Events
             public async Task ShouldNotEmitMessageIfUserIsNotRegistered(
                 string content,
                 Snowflake userId,
+                Snowflake channelId,
                 [Frozen, Substitute] IMessageEmitter emitter,
                 [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
@@ -75,14 +77,14 @@ namespace Brighid.Discord.Adapter.Events
             {
                 var cancellationToken = new CancellationToken(false);
                 var author = new User { Id = userId };
-                var message = new Message { Content = content, Author = author };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(false);
 
                 await controller.Handle(@event, cancellationToken);
 
-                await emitter.DidNotReceive().Emit(Is(message), Is(cancellationToken));
+                await emitter.DidNotReceive().Emit(Is(message), Is(channelId), Is(cancellationToken));
                 await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
             }
 
