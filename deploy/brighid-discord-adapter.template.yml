@@ -209,3 +209,11 @@ Resources:
       TopicArn: !ImportValue brighid-infrastructure:ResponseTopicArn
       FilterPolicy:
         Brighid.SourceSystem: [discord]
+
+  ResponseHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt ResponseHandler.Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !ImportValue brighid-infrastructure:ResponseTopicArn
