@@ -1,3 +1,4 @@
+Transform: AWS::Serverless-2016-10-31
 Description: Brighid Discord to SNS Adapter
 Parameters:
   Image:
@@ -42,6 +43,14 @@ Parameters:
   DatabasePassword:
     Type: String
     Description: The encrypted database password
+
+  LambdajectionLayerVersion:
+    Type: String
+    Description: ARN of the Lambda Layer containing Lambdajection + its dependencies
+
+  DotnetLayerVersion:
+    Type: String
+    Description: ARN of the Lambda Layer containing .NET
 
 Resources:
   IdentityApplication:
@@ -180,3 +189,45 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
+
+  ResponseTopic:
+    Type: AWS::SNS::Topic
+
+  ResponseHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: ResponseHandler::Brighid.Discord.Adapter.ResponseHandler.Handler::Run
+      Runtime: provided.al2
+      Timeout: 30
+      CodeUri: ../../bin/ResponseHandler/Release/net5.0/linux-x64/publish/
+      MemorySize: 512
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:dotnet:${DotnetLayerVersion}
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:lambdajection:${LambdajectionLayerVersion}
+      Policies:
+        - AWSLambdaExecute
+        - !Ref ResponseHandlerPolicy
+      Environment:
+        Variables:
+          ResponseHandler__QueueUrl: !Ref RestQueue
+
+  ResponseHandlerPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sqs:SendMessage
+              - sqs:SendMessageBatch
+            Resource: !GetAtt RestQueue.Arn
+
+  ResponseHandlerSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: lambda
+      Endpoint: !GetAtt ResponseHandler.Arn
+      TopicArn: !Ref ResponseTopic
+      FilterPolicy:
+        Brighid.SourceSystem: [discord]
