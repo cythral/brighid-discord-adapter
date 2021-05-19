@@ -222,3 +222,12 @@ Resources:
               - sqs:SendMessage
               - sqs:SendMessageBatch
             Resource: !GetAtt RestQueue.Arn
+
+  ResponseHandlerSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: lambda
+      Endpoint: !GetAtt ResponseHandler.Arn
+      TopicArn: !Ref ResponseTopic
+      FilterPolicy:
+        Brighid.SourceSystem: [discord]
