@@ -75,9 +75,6 @@
           "RoleArn": "${DevRoleArn}",
           "Token.$": "$$.Task.Token",
           "EnvironmentName": "dev",
-          "ParameterOverrides": {
-            "MessageTopicArn": "${DevMessageTopicArn}"
-          },
           "CommitInfo": {
             "GithubOwner": "${GithubOwner}",
             "GithubRepository": "${GithubRepo}",
@@ -136,9 +133,6 @@
             "CAPABILITY_AUTO_EXPAND"
           ],
           "EnvironmentName": "prod",
-          "ParameterOverrides": {
-            "MessageTopicArn": "${ProdMessageTopicArn}"
-          },
           "CommitInfo": {
             "GithubOwner": "${GithubOwner}",
             "GithubRepository": "${GithubRepo}",
