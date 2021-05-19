@@ -51,7 +51,7 @@ namespace Brighid.Discord.Models
 
         public override void Write(Utf8JsonWriter writer, Endpoint value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue($"{value.Category}{value.Value}");
+            writer.WriteStringValue($"{value.Category}{Convert.ToUInt64(value.Value)}");
         }
     }
 }
