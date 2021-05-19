@@ -69,7 +69,8 @@
           "TemplateFileName": "${GithubRepo}.template.yml",
           "TemplateConfigurationFileName": "${GithubRepo}.dev.config.json",
           "Capabilities": [
-            "CAPABILITY_IAM"
+            "CAPABILITY_IAM",
+            "CAPABILITY_AUTO_EXPAND"
           ],
           "RoleArn": "${DevRoleArn}",
           "Token.$": "$$.Task.Token",
@@ -131,7 +132,8 @@
           "RoleArn": "${ProdRoleArn}",
           "Token.$": "$$.Task.Token",
           "Capabilities": [
-            "CAPABILITY_IAM"
+            "CAPABILITY_IAM",
+            "CAPABILITY_AUTO_EXPAND"
           ],
           "EnvironmentName": "prod",
           "ParameterOverrides": {
