@@ -184,7 +184,7 @@ Resources:
         - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:lambdajection:${LambdajectionLayerVersion}
       Policies:
         - AWSLambdaExecute
-        - !ImportValue brighid-infrastructure:ResponseTopicArn
+        - !Ref ResponseHandlerPolicy
       Environment:
         Variables:
           ResponseHandler__QueueUrl: !Ref RestQueue
