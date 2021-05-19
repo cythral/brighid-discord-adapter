@@ -17,17 +17,6 @@ Parameters:
     Type: String
     Description: Namespace to publish metrics under.
 
-  MessageTopicArn:
-    Type: String
-    Description: ARN of the SNS Topic to publish messages to.
-
-  EnableServiceStopping:
-    Type: String
-    AllowedValues:
-      - "true"
-      - "false"
-    Description: Whether or not to enable service stopping on the cluster
-
   IdentityServerUri:
     Type: String
     Description: URI of the identity server.
@@ -64,18 +53,10 @@ Resources:
   RestQueue:
     Type: AWS::SQS::Queue
 
-  Cluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Ref AWS::StackName
-      Tags:
-        - Key: ENABLE_SERVICE_STOPPING
-          Value: !Ref EnableServiceStopping
-
   Service:
     Type: AWS::ECS::Service
     Properties:
-      Cluster: !Ref Cluster
+      Cluster: !ImportValue brighid-infrastructure:ClusterName
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
@@ -122,7 +103,7 @@ Resources:
             - Name: Metrics__Namespace
               Value: !Ref MetricsNamespace
             - Name: Sns__TopicArn
-              Value: !Ref MessageTopicArn
+              Value: !ImportValue brighid-infrastructure:RequestTopicArn
             - Name: Identity__IdentityServerUri
               Value: !Ref IdentityServerUri
             - Name: Identity__ClientId
@@ -163,7 +144,7 @@ Resources:
         Statement:
           - Effect: Allow
             Action: sns:Publish
-            Resource: !Ref MessageTopicArn
+            Resource: !ImportValue brighid-infrastructure:RequestTopicArn
 
           - Effect: Allow
             Action: cloudwatch:PutMetricData
@@ -190,9 +171,6 @@ Resources:
     Properties:
       RetentionInDays: 14
 
-  ResponseTopic:
-    Type: AWS::SNS::Topic
-
   ResponseHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -206,7 +184,7 @@ Resources:
         - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:lambdajection:${LambdajectionLayerVersion}
       Policies:
         - AWSLambdaExecute
-        - !Ref ResponseHandlerPolicy
+        - !ImportValue brighid-infrastructure:ResponseTopicArn
       Environment:
         Variables:
           ResponseHandler__QueueUrl: !Ref RestQueue
@@ -228,6 +206,6 @@ Resources:
     Properties:
       Protocol: lambda
       Endpoint: !GetAtt ResponseHandler.Arn
-      TopicArn: !Ref ResponseTopic
+      TopicArn: !ImportValue brighid-infrastructure:ResponseTopicArn
       FilterPolicy:
         Brighid.SourceSystem: [discord]
