@@ -13,11 +13,11 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
-        "requested": "[3.7.1.7, )",
-        "resolved": "3.7.1.7",
-        "contentHash": "EZF87K7pI764Jrs0mP66t/GvUpvPwcXa5/ZvSqTd8QAYOZplmpfrTxF6kpIodMxlzHKYqP1/QNjoGo/h9L0ouQ==",
+        "requested": "[3.7.1.8, )",
+        "resolved": "3.7.1.8",
+        "contentHash": "BUerEeT7qKsetI28CWKp6wTismj6UUCmhcARYHOgwRkFJDRenNu2PaVArVKtyF5ewk69WHq91N75FBglyJRhHg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.22, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.23, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
@@ -146,8 +146,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.22",
-        "contentHash": "oDF5+G81jJRUaV55KcSPPSGfHJv/KGu8lodCfxmHcoZcG3j7QbHkiEfd5NUWe9vcrH3ycZBXvaenenLN0VZhDQ=="
+        "resolved": "3.7.0.23",
+        "contentHash": "RFbszK1tb3JnfRWj2jYLA121NvOmeCjzVbWVLnvQDmI9JHA76lJai9Qv96WkZwtq7Cc9lIwsZ+R8ErbwyjkkXw=="
       },
       "Humanizer.Core": {
         "type": "Transitive",
