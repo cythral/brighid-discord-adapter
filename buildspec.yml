@@ -33,12 +33,13 @@ phases:
 
   post_build:
     commands:
+      - ./scripts/package-template.sh
       - ./scripts/push-docker-images.sh
 
 artifacts:
   discard-paths: yes
   files:
-    - "deploy/brighid-discord-adapter.template.yml"
+    - "bin/brighid-discord-adapter.template.yml"
     - "brighid-discord-adapter.*.config.json"
 
 reports:

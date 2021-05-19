@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -74,7 +73,7 @@ namespace Brighid.Discord.Adapter.Requests
                 await invoker.Invoke(request, cancellationToken);
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
-                var httpRequest = GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
+                var httpRequest = TestUtils.GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
 
                 httpRequest.Method.Should().Be(request.RequestDetails.Endpoint.GetMethod());
             }
@@ -94,7 +93,7 @@ namespace Brighid.Discord.Adapter.Requests
 
                 urlBuilder.Received().BuildFromRequest(Is(request.RequestDetails));
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
-                var httpRequest = GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
+                var httpRequest = TestUtils.GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
 
                 httpRequest.RequestUri.Should().Be(url);
             }
@@ -111,7 +110,7 @@ namespace Brighid.Discord.Adapter.Requests
                 await invoker.Invoke(request, cancellationToken);
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
-                var httpRequest = GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
+                var httpRequest = TestUtils.GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
 
                 var content = httpRequest.Content.Should().BeOfType<StringContent>().Which;
                 var contentString = await content.ReadAsStringAsync(cancellationToken);
@@ -184,7 +183,7 @@ namespace Brighid.Discord.Adapter.Requests
                 await invoker.Invoke(request, cancellationToken);
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
-                var httpRequest = GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
+                var httpRequest = TestUtils.GetArg<HttpRequestMessage>(client, nameof(HttpMessageInvoker.SendAsync), 0);
 
                 httpRequest.Content.Should().BeNull();
             }
@@ -248,14 +247,6 @@ namespace Brighid.Discord.Adapter.Requests
 
                 await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
                 await relay.Received().Fail(Is(request), Is(0U), Is(cancellationToken));
-            }
-
-            private static TArg GetArg<TArg>(object target, string methodName, int arg)
-            {
-                return (from call in target.ReceivedCalls()
-                        let methodInfo = call.GetMethodInfo()
-                        where methodInfo.Name == methodName
-                        select (TArg)call.GetArguments()[arg]).First();
             }
         }
     }

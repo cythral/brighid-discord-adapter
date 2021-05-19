@@ -19,6 +19,8 @@
 
     <ItemGroup>
         <ProjectReference Include="../src/Core/Core.csproj" />
+        <ProjectReference Include="../src/Models/Models.csproj" />
         <ProjectReference Include="../src/Adapter/Adapter.csproj" />
+        <ProjectReference Include="../src/ResponseHandler/ResponseHandler.csproj" />
     </ItemGroup>
 </Project>
