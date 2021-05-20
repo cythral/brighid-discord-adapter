@@ -4,11 +4,11 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.1.18, )",
-        "resolved": "3.7.1.18",
-        "contentHash": "T3+t2mUBrDY//HM8ANzlg0r1oemgkxwu54sQdWw0NarsJcFInIBK+dJTnvGrvq5BuxFgx+2kCTIEx8+sgb3t/Q==",
+        "requested": "[3.7.1.20, )",
+        "resolved": "3.7.1.20",
+        "contentHash": "vS8ot2XrHvXhqVx8YP9uzQsQsnTHZmAsA6x0UwLJ2YKBojTIcsjVgQh1sQGMIl0Pm/BMgqp6mkV++LrdyhGMOQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.22, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.24, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
@@ -22,11 +22,11 @@
       },
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.0.20, )",
-        "resolved": "3.7.0.20",
-        "contentHash": "rceTRwdvvtYXwsuqXGoAyduIoVOjPLW7ThmLQ9NJvcNL6HSzMiDCjawhjARtt0UX9zFx3cg0BxGzb7MbjBRaHw==",
+        "requested": "[3.7.0.24, )",
+        "resolved": "3.7.0.24",
+        "contentHash": "Xtd1NV9RQYEFBfxYSmW7F9XtLw2P4r+CKZvBZHDjOiY2na+/PAMcaPRY+gqgP8Ovn44ZBFbA1IRmXo3gYQZM8g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.20, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.24, 4.0.0)"
         }
       },
       "Brighid.Identity.Client": {
