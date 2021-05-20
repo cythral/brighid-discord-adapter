@@ -4,11 +4,11 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.1.18, )",
-        "resolved": "3.7.1.18",
-        "contentHash": "T3+t2mUBrDY//HM8ANzlg0r1oemgkxwu54sQdWw0NarsJcFInIBK+dJTnvGrvq5BuxFgx+2kCTIEx8+sgb3t/Q==",
+        "requested": "[3.7.1.20, )",
+        "resolved": "3.7.1.20",
+        "contentHash": "vS8ot2XrHvXhqVx8YP9uzQsQsnTHZmAsA6x0UwLJ2YKBojTIcsjVgQh1sQGMIl0Pm/BMgqp6mkV++LrdyhGMOQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.22, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.24, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
