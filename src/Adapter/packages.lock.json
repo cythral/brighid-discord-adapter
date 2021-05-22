@@ -22,11 +22,11 @@
       },
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.0.24, )",
-        "resolved": "3.7.0.24",
-        "contentHash": "Xtd1NV9RQYEFBfxYSmW7F9XtLw2P4r+CKZvBZHDjOiY2na+/PAMcaPRY+gqgP8Ovn44ZBFbA1IRmXo3gYQZM8g==",
+        "requested": "[3.7.0.26, )",
+        "resolved": "3.7.0.26",
+        "contentHash": "WVVWmUXq7xfGPqI4PQKZ13r4fK1CXDIMjwfzpp8gh8FzAMhGmMr/HwaXVu53v+nOK3wPlsfxK/fF09hYxN/QNg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.24, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.26, 4.0.0)"
         }
       },
       "Brighid.Identity.Client": {
@@ -146,8 +146,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.24",
-        "contentHash": "r4K1cZ7W5Ui6iHoUeGsMe5RV/UdM3Igc3h4jgg4ftRUwp3UxB5v5N7p/5NeCS7sqpm+DBFgooPgMaa9PD0sy1Q=="
+        "resolved": "3.7.0.26",
+        "contentHash": "Zr0Tf1wkzQqJH0sevplHW9fn8I+8aoVL/dbOlsZqtgTxw2SytSSkIZUP6gQYsNdyEr3VJPcQ9LT6umU3YI9uFA=="
       },
       "Humanizer.Core": {
         "type": "Transitive",
