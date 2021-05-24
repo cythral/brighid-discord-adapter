@@ -1,6 +1,7 @@
 using Brighid.Discord.RestClient.Responses;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -16,6 +17,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void ConfigureResponseServices(this IServiceCollection services)
         {
             services.TryAddSingleton<ITcpListener, DefaultTcpListener>();
+            services.TryAddSingleton<IResponseServer, DefaultResponseServer>();
+            services.TryAddSingleton<IHostedService>(sp => sp.GetRequiredService<IResponseServer>());
         }
     }
 }
