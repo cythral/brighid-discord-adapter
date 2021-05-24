@@ -22,5 +22,6 @@
         <ProjectReference Include="../src/Models/Models.csproj" />
         <ProjectReference Include="../src/Adapter/Adapter.csproj" />
         <ProjectReference Include="../src/ResponseHandler/ResponseHandler.csproj" />
+        <ProjectReference Include="../src/RestClient/RestClient.csproj" />
     </ItemGroup>
 </Project>

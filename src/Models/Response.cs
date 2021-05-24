@@ -10,6 +10,23 @@ namespace Brighid.Discord.Models
     public struct Response
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="Response" /> struct.
+        /// </summary>
+        /// <param name="requestId">ID of the request.</param>
+        /// <param name="statusCode">Status code of the response.</param>
+        /// <param name="body">The body of the response.</param>
+        public Response(
+            Guid requestId,
+            HttpStatusCode statusCode,
+            string body
+        )
+        {
+            RequestId = requestId;
+            StatusCode = statusCode;
+            Body = body;
+        }
+
+        /// <summary>
         /// Gets or sets the request ID.
         /// </summary>
         [JsonPropertyName("id")]

@@ -37,7 +37,7 @@ internal class AutoAttribute : AutoDataAttribute
         var fixture = new Fixture();
         fixture.Inject(new CancellationToken(false));
         fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
-        fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.01 });
+        fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.02 });
         fixture.Inject<JsonConverter<GatewayMessage>>(new MockGatewayMessageConverter());
         fixture.Inject<IEntityType>(new EntityType("test", new Model(), ConfigurationSource.Convention));
         fixture.Register<IChannel<RequestMessage>>(() => new Channel<RequestMessage>());
