@@ -67,8 +67,6 @@ namespace Brighid.Discord.RestClient.Responses
             timer = null;
         }
 
-#pragma warning disable IDE0060
-
         /// <summary>
         /// Handles an incoming TCP Client.
         /// </summary>
