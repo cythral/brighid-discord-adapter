@@ -1860,6 +1860,15 @@
           "Lambdajection.Runtime": "0.8.0-beta4",
           "Models": "1.0.0"
         }
+      },
+      "restclient": {
+        "type": "Project",
+        "dependencies": {
+          "Brighid.Discord.Core": "1.0.0",
+          "Microsoft.Extensions.Hosting": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "Models": "1.0.0"
+        }
       }
     }
   }
