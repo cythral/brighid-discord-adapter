@@ -1,6 +1,8 @@
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Networking;
+
 using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.RestClient.Responses
@@ -22,6 +24,9 @@ namespace Brighid.Discord.RestClient.Responses
             this.options = options.Value;
             listener = new TcpListener(this.options.IPAddress, (int)this.options.Port);
         }
+
+        /// <inheritdoc />
+        public int Port => (int)options.Port;
 
         /// <inheritdoc />
         public void Start()

@@ -199,6 +199,49 @@ namespace Brighid.Discord.RestClient.Responses
 
                 await serializer.Received().Deserialize<Response>(Is(stream), Is(cancellationToken));
             }
+
+            [Test, Auto, Timeout(2000)]
+            public async Task ShouldCompleteAnyPendingRequests(
+                Guid requestId,
+                TaskCompletionSource<Response> promise,
+                Response response,
+                [Frozen, Substitute] IRequestMap requestMap,
+                [Frozen, Substitute] ISerializer serializer,
+                [Target] DefaultResponseServer server,
+                CancellationToken cancellationToken
+            )
+            {
+                response.RequestId = requestId;
+                serializer.Deserialize<Response>(Any<Stream>(), Any<CancellationToken>()).Returns(response);
+                requestMap.TryGetValue(Any<Guid>(), out Any<TaskCompletionSource<Response>?>()).Returns(x =>
+                {
+                    x[1] = promise;
+                    return true;
+                });
+
+                await server.Run(cancellationToken);
+
+                var result = await promise.Task;
+                result.Should().Be(response);
+            }
+        }
+
+        [TestFixture]
+        public class ListenForResponseTests
+        {
+            [Test, Auto]
+            public void ShouldAddTheRequestIdAndPromiseToTheRequestMap(
+                Guid requestId,
+                TaskCompletionSource<Response> promise,
+                [Frozen, Substitute] IRequestMap map,
+                [Target] DefaultResponseServer server,
+                CancellationToken cancellationToken
+            )
+            {
+                server.ListenForResponse(requestId, promise);
+
+                map.Received().Add(Is(requestId), Is(promise));
+            }
         }
     }
 }

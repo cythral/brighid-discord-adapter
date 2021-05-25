@@ -10,6 +10,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 
 using Brighid.Discord.Models;
+using Brighid.Discord.Networking;
 using Brighid.Discord.Serialization;
 using Brighid.Discord.Threading;
 
@@ -29,6 +30,7 @@ namespace Brighid.Discord.Adapter.Requests
         private readonly CancellationToken workerCancellationToken;
         private readonly IChannel<RequestMessage> completeQueue;
         private readonly IChannel<RequestMessage> failQueue;
+        private readonly ITcpClientFactory tcpClientFactory;
         private CancellationTokenSource? source;
 
         /// <summary>
@@ -38,6 +40,7 @@ namespace Brighid.Discord.Adapter.Requests
         /// <param name="completeQueue">Queue to put completed messages in.</param>
         /// <param name="failQueue">Queue to put failed messages in.</param>
         /// <param name="serializer">Service for serialization/deserialization of messages.</param>
+        /// <param name="tcpClientFactory">Factory used to create TCP Clients.</param>
         /// <param name="options">Options to use for requests.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public SqsRequestMessageRelay(
@@ -45,6 +48,7 @@ namespace Brighid.Discord.Adapter.Requests
             IChannel<RequestMessage> completeQueue,
             IChannel<RequestMessage> failQueue,
             ISerializer serializer,
+            ITcpClientFactory tcpClientFactory,
             IOptions<RequestOptions> options,
             ILogger<SqsRequestMessageRelay> logger
         )
@@ -53,6 +57,7 @@ namespace Brighid.Discord.Adapter.Requests
             this.completeQueue = completeQueue;
             this.failQueue = failQueue;
             this.serializer = serializer;
+            this.tcpClientFactory = tcpClientFactory;
             this.options = options.Value;
             this.logger = logger;
 
@@ -105,6 +110,30 @@ namespace Brighid.Discord.Adapter.Requests
             var tasks = from message in response.Messages select ParseSqsMessage(message, cancellationToken);
             var messages = await Task.WhenAll(tasks);
             return from message in messages where message != null select message;
+        }
+
+        /// <inheritdoc />
+        public async Task Respond(RequestMessage message, HttpStatusCode statusCode, string? body, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (message.RequestDetails.ResponseURL == null)
+            {
+                return;
+            }
+
+            var host = message.RequestDetails.ResponseURL!.Host;
+            var port = message.RequestDetails.ResponseURL!.Port;
+            var response = new Response
+            {
+                RequestId = message.RequestDetails.Id,
+                StatusCode = statusCode,
+                Body = body,
+            };
+
+            using var client = await tcpClientFactory.CreateTcpClient(host, port, cancellationToken);
+            var payload = await serializer.Serialize(response, cancellationToken);
+            await client.Write(payload, cancellationToken);
+            client.Close();
         }
 
         /// <inheritdoc />
@@ -202,8 +231,10 @@ namespace Brighid.Discord.Adapter.Requests
                 var messageDict = messagesToDelete.ToDictionary(message => message.RequestDetails.Id.ToString(), message => message);
                 NotifyFailedTasks<RequestMessageNotDeletedException>(messageDict, response.Failed);
 
-                var finalizerTasks = from message in messageDict select FinalizeMessage(message.Value);
-                await Task.WhenAll(finalizerTasks);
+                foreach (var (_, message) in messageDict)
+                {
+                    message.Promise.SetResult();
+                }
             }
             catch (Exception exception)
             {
@@ -252,34 +283,6 @@ namespace Brighid.Discord.Adapter.Requests
                 {
                     message.Promise.TrySetException(exception);
                 }
-            }
-        }
-
-        private async Task FinalizeMessage(RequestMessage message)
-        {
-            workerCancellationToken.ThrowIfCancellationRequested();
-
-            if (message.Response == null || message.RequestDetails.ResponseQueueURL == null)
-            {
-                message.Promise.TrySetResult();
-                return;
-            }
-
-            try
-            {
-                var response = new Response { RequestId = message.RequestDetails.Id, StatusCode = message.ResponseCode, Body = message.Response };
-                var payload = await serializer.Serialize(response, workerCancellationToken);
-
-                logger.LogInformation("Sending sqs:SendMessage with message: {@message}", message);
-                var sendMessageResponse = await sqs.SendMessageAsync(message.RequestDetails.ResponseQueueURL.ToString(), payload, workerCancellationToken);
-                logger.LogInformation("Received sqs:SendMessage response: {@response}", sendMessageResponse);
-
-                message.Promise.TrySetResult();
-            }
-            catch (Exception exception)
-            {
-                message.Promise.TrySetException(exception);
-                return;
             }
         }
     }

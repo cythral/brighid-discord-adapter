@@ -14,11 +14,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Configures gateway services on the service collection.
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
-        public static void ConfigureResponseServices(this IServiceCollection services)
+        public static void ConfigureRestClientResponseServices(this IServiceCollection services)
         {
+            services.ConfigureNetworkingServices();
+            services.ConfigureThreadingServices();
             services.TryAddSingleton<ITcpListener, DefaultTcpListener>();
+            services.TryAddSingleton<IRequestMap, DefaultRequestMap>();
             services.TryAddSingleton<IResponseServer, DefaultResponseServer>();
-            services.TryAddSingleton<IHostedService>(sp => sp.GetRequiredService<IResponseServer>());
+            services.AddSingleton<IHostedService>(sp => sp.GetRequiredService<IResponseServer>());
         }
     }
 }
