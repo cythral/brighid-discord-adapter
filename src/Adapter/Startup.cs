@@ -54,7 +54,7 @@ namespace Brighid.Discord.Adapter
             services.ConfigureMessageServices(configuration);
             services.ConfigureMetricServices(configuration);
 
-            services.ConfigureRestClientResponseServices();
+            services.ConfigureRestClientResponseServices(configuration);
             services.ConfigureRestClientServices(configuration);
         }
 

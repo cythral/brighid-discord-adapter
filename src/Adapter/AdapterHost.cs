@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Database;
-using Brighid.Discord.RestClient.Client;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,10 +60,6 @@ namespace Brighid.Discord.Adapter
 
             var tasks = from service in hostedServices select service.StartAsync(cancellationToken);
             await Task.WhenAll(tasks);
-
-            var client = Services.GetRequiredService<IDiscordUserClient>();
-            var channel = await client.CreateDirectMessageChannel(292780421911937024, cancellationToken);
-            logger.LogCritical("Created channel: {@channel}", channel);
 
             logger.LogInformation("Started.");
         }
