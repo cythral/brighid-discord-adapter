@@ -41,6 +41,10 @@ Parameters:
     Type: String
     Description: ARN of the Lambda Layer containing .NET
 
+  RestResponseServerPort:
+    Type: Number
+    Description: Port to use for the Adapter Shell.
+
 Resources:
   IdentityApplication:
     Type: Custom::IdentityApplication
@@ -52,6 +56,17 @@ Resources:
 
   RestQueue:
     Type: AWS::SQS::Queue
+
+  RestResponseServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue cfn-utilities:VpcId
+      GroupDescription: Allows traffic to the Response Server port.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !Ref RestResponseServerPort
+          ToPort: !Ref RestResponseServerPort
+          CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
 
   Service:
     Type: AWS::ECS::Service
@@ -65,6 +80,7 @@ Resources:
             - !ImportValue cfn-utilities:SubnetIds
           SecurityGroups:
             - !ImportValue cfn-utilities:WebSecurityGroupId
+            - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
       DesiredCount: 1
@@ -98,6 +114,10 @@ Resources:
               Value: !Ref AdapterToken
             - Name: Requests__QueueUrl
               Value: !Ref RestQueue
+            - Name: RestClient__RequestQueueUrl
+              Value: !Ref RestQueue
+            - Name: ResponseServer__Port
+              Value: !Ref RestResponseServerPort
             - Name: Gateway__Uri
               Value: !Ref GatewayUri
             - Name: Metrics__Namespace

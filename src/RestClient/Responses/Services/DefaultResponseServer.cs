@@ -1,4 +1,8 @@
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +21,7 @@ namespace Brighid.Discord.RestClient.Responses
         private readonly ITcpListener listener;
         private readonly ISerializer serializer;
         private readonly ITimerFactory timerFactory;
+        private readonly IRequestMap requestMap;
         private readonly ILogger<DefaultResponseServer> logger;
         private ITimer? timer;
 
@@ -26,22 +31,49 @@ namespace Brighid.Discord.RestClient.Responses
         /// <param name="listener">Listener to accept TCP client connections from.</param>
         /// <param name="serializer">Serializer to serialize things between formats.</param>
         /// <param name="timerFactory">Factory used to create the timer.</param>
+        /// <param name="requestMap">Map of requests to listen for responses.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public DefaultResponseServer(
             ITcpListener listener,
             ISerializer serializer,
             ITimerFactory timerFactory,
+            IRequestMap requestMap,
             ILogger<DefaultResponseServer> logger
         )
         {
             this.listener = listener;
             this.serializer = serializer;
             this.timerFactory = timerFactory;
+            this.requestMap = requestMap;
             this.logger = logger;
         }
 
         /// <inheritdoc />
         public bool IsRunning { get; set; }
+
+        /// <inheritdoc />
+        public Uri Uri
+        {
+            get
+            {
+                foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    var ips =
+                        from address in nic.GetIPProperties().UnicastAddresses
+                        where address.Address.AddressFamily == AddressFamily.InterNetwork &&
+                            !IPAddress.IsLoopback(address.Address)
+                        select address.Address;
+
+                    if (ips.Any())
+                    {
+                        var ip = ips.First();
+                        return new Uri($"http://{ip}:{listener.Port}");
+                    }
+                }
+
+                throw new InvalidOperationException("Could not find an accessible IP Address.");
+            }
+        }
 
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -79,6 +111,19 @@ namespace Brighid.Discord.RestClient.Responses
             var stream = client.GetStream();
             var response = await serializer.Deserialize<Response>(stream, cancellationToken);
             logger.LogInformation("Received response: {@response}", response);
+
+            if (requestMap.TryGetValue(response.RequestId, out var promise))
+            {
+                promise.TrySetResult(response);
+                requestMap.Remove(response.RequestId);
+            }
+        }
+
+        /// <inheritdoc />
+        public Task<Response> ListenForResponse(Guid requestId, TaskCompletionSource<Response> promise)
+        {
+            requestMap.Add(requestId, promise);
+            return promise.Task;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

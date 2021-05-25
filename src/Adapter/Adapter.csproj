@@ -14,8 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Brighid.Identity.Client" Version="0.2.0-beta8" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.1.23" />
-    <PackageReference Include="AWSSDK.SQS" Version="3.7.0.24" />
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.1.23" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.0.27" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.1.9" />
     <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
@@ -30,6 +29,7 @@
     <ProjectReference Include="..\Generators\Generators.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\RestClient\RestClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

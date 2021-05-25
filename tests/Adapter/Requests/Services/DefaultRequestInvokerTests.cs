@@ -209,6 +209,26 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
+            public async Task ShouldRespondToTheRequest(
+                string response,
+                RequestMessage request,
+                [Frozen] HttpStatusCode statusCode,
+                [Frozen] HttpResponseMessage httpResponse,
+                [Frozen, Substitute] HttpMessageInvoker client,
+                [Frozen, Substitute] IRequestMessageRelay relay,
+                [Target] DefaultRequestInvoker invoker,
+                CancellationToken cancellationToken
+            )
+            {
+                httpResponse.Content = new StringContent(response);
+                request.RequestDetails = new Request(ChannelEndpoint.CreateMessage) { RequestBody = null };
+                await invoker.Invoke(request, cancellationToken);
+
+                await client.Received().SendAsync(Any<HttpRequestMessage>(), Is(cancellationToken));
+                await relay.Received().Respond(Is(request), Is(statusCode), Is(response), Is(cancellationToken));
+            }
+
+            [Test, Auto]
             public async Task ShouldSaveChangesToTheBucket(
                 string response,
                 RequestMessage request,
