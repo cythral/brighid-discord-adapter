@@ -10,10 +10,6 @@ ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWSCLI_VERSION}.zip .
 RUN unzip awscli.zip && \
     rm awscli.zip
 
-FROM public.ecr.aws/debian:buster
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libcap2-bin
-
 FROM mcr.microsoft.com/dotnet/aspnet:${ASPNET_VERSION}
 ARG PROJECT_DIRECTORY
 ARG OUTPUT_DIRECTORY
