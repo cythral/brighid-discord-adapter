@@ -1854,7 +1854,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.24",
+          "AWSSDK.SQS": "3.7.0.27",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.0-beta4",
           "Lambdajection.Layer": "0.8.0-beta4",
