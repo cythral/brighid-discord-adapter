@@ -26,7 +26,8 @@ namespace Brighid.Discord.Adapter.ResponseHandler
                 record.Sns.MessageAttributes["Brighid.SourceId"] = new SNSEvent.MessageAttribute { Type = "String", Value = channelId };
 
                 var result = mapper.MapToRequest(record);
-                result.Endpoint.Should().Be((Endpoint)ChannelEndpoint.CreateMessage);
+                result.Endpoint.Category.Should().Be('c');
+                result.Endpoint.Value.Should().Be(ChannelEndpoint.CreateMessage);
             }
 
             [Test, Auto]

@@ -16,6 +16,7 @@ services:
       Database__User: ${DB_USER}
       Database__Password: ${DB_PASSWORD}
       Requests__QueueUrl: ${REQUESTS_QUEUE_URL}
+      RestClient__RequestQueueUrl: ${REQUESTS_QUEUE_URL}
       Gateway__Uri: ${GATEWAY_URI}
       Adapter__Token: ${ADAPTER_TOKEN}
       Metrics__Namespace: ${METRICS_NAMESPACE}

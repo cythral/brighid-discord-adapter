@@ -15,6 +15,6 @@ namespace Brighid.Discord.RestClient.Responses
         /// <summary>
         /// Gets or sets the port to bind to.
         /// </summary>
-        public uint Port { get; set; } = 1300;
+        public uint Port { get; set; } = 19426;
     }
 }

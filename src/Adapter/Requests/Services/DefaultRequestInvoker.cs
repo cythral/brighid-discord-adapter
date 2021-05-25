@@ -71,6 +71,7 @@ namespace Brighid.Discord.Adapter.Requests
                 logger.LogInformation("Sending request uri:{@uri} method:{@method} body:{@body}", httpRequest.RequestUri, httpRequest.Method, httpRequest.Content);
                 var httpResponse = await client.SendAsync(httpRequest, cancellationToken);
                 var responseString = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+                _ = relay.Respond(request, httpResponse.StatusCode, responseString, cancellationToken);
                 _ = relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
                 logger.LogInformation("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
 

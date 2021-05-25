@@ -53,6 +53,9 @@ namespace Brighid.Discord.Adapter
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
             services.ConfigureMetricServices(configuration);
+
+            services.ConfigureRestClientResponseServices(configuration);
+            services.ConfigureRestClientServices(configuration);
         }
 
         private static void ConfigureAwsServices(IServiceCollection services)

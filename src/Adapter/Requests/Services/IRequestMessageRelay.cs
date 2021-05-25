@@ -35,5 +35,15 @@ namespace Brighid.Discord.Adapter.Requests
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
         Task Fail(RequestMessage message, uint visibilityTimeout = 0, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Respond to a message at its given ResponseURL (if present).
+        /// </summary>
+        /// <param name="message">The message to respond to.</param>
+        /// <param name="statusCode">The status code to respond with.</param>
+        /// <param name="body">The response body to send.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        Task Respond(RequestMessage message, HttpStatusCode statusCode, string? body, CancellationToken cancellationToken);
     }
 }

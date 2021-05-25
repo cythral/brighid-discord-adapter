@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v5.0": {
+      "AWSSDK.SQS": {
+        "type": "Direct",
+        "requested": "[3.7.0.27, )",
+        "resolved": "3.7.0.27",
+        "contentHash": "5GgL1CSnIlmLkbDz3fjq+lo8A/EKZ2u4yP2DpYaruH/f0rUdnK/wPCsJDT62VGM/s5nLnpzIfx5lS7sYv1XGuw==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.0.27, 4.0.0)"
+        }
+      },
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
         "type": "Direct",
         "requested": "[3.9.0, )",
@@ -55,6 +64,11 @@
         "dependencies": {
           "StyleCop.Analyzers.Unstable": "1.2.0.333"
         }
+      },
+      "AWSSDK.Core": {
+        "type": "Transitive",
+        "resolved": "3.7.0.27",
+        "contentHash": "IYfqUYQIjwWo9gTMXdhYWuUm3txd+O4xwX8z7utsVpwdQCzBm/dNK0uXJFJqlmj5vY14wXBCKWY2WFhol+LrUA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
