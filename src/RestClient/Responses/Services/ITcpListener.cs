@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+using Brighid.Discord.Networking;
+
 namespace Brighid.Discord.RestClient.Responses
 {
     /// <summary>
@@ -7,6 +9,11 @@ namespace Brighid.Discord.RestClient.Responses
     /// </summary>
     public interface ITcpListener
     {
+        /// <summary>
+        /// Gets the port the listener is configured to bind to.
+        /// </summary>
+        int Port { get; }
+
         /// <summary>
         /// Start accepting connections.
         /// </summary>

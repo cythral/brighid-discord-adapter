@@ -39,10 +39,10 @@ namespace Brighid.Discord.Models
         public string? RequestBody { get; set; }
 
         /// <summary>
-        /// Gets or sets the response queue URL.
+        /// Gets or sets the response URL.
         /// </summary>
         [JsonPropertyName("r")]
-        public Uri? ResponseQueueURL { get; set; }
+        public Uri? ResponseURL { get; set; }
 
         /// <summary>
         /// Gets or sets the request parameters to be used in the endpoint's path template.
