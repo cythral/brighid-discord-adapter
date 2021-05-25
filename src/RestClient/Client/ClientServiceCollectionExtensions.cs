@@ -23,6 +23,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IRequestQueuer, SqsRequestQueuer>();
             services.TryAddSingleton<IAmazonSQS, AmazonSQSClient>();
             services.TryAddSingleton<IDiscordUserClient, DefaultDiscordUserClient>();
+            services.TryAddSingleton<IDiscordChannelClient, DefaultDiscordChannelClient>();
+            services.TryAddSingleton<IDiscordRequestHandler, DefaultDiscordRequestHandler>();
         }
     }
 }

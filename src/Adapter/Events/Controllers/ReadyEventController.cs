@@ -38,6 +38,7 @@ namespace Brighid.Discord.Adapter.Events
             cancellationToken.ThrowIfCancellationRequested();
 
             gateway.SessionId = @event.SessionId;
+            gateway.BotId = @event.User.Id;
             gateway.IsReady = true;
         }
     }

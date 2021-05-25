@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models;
+using Brighid.Discord.RestClient.Client;
 
 using FluentAssertions;
 
@@ -77,7 +79,7 @@ namespace Brighid.Discord.Adapter.Events
             {
                 var cancellationToken = new CancellationToken(false);
                 var author = new User { Id = userId };
-                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId, Mentions = Array.Empty<UserMention>() };
                 var @event = new MessageCreateEvent { Message = message };
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(false);
@@ -86,6 +88,65 @@ namespace Brighid.Discord.Adapter.Events
 
                 await emitter.DidNotReceive().Emit(Is(message), Is(channelId), Is(cancellationToken));
                 await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldSendGreetingToUserViaDmsIfNotRegisteredAndWasMentioned(
+                string content,
+                Snowflake userId,
+                Snowflake botId,
+                Snowflake channelId,
+                [Frozen] Channel channel,
+                [Frozen, Substitute] IDiscordUserClient userClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var mention = new UserMention { Id = botId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId, Mentions = new[] { mention } };
+                var @event = new MessageCreateEvent { Message = message };
+
+                gateway.BotId = botId;
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(false);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await userClient.Received().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
+                await channelClient.Received().CreateMessage(Is(channel.Id), Is("Hello! Register at https://identity.brigh.id"), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotSendGreetingToUserViaDmsIfNotRegisteredAndWasNotMentioned(
+                string content,
+                Snowflake userId,
+                Snowflake botId,
+                Snowflake channelId,
+                [Frozen] Channel channel,
+                [Frozen, Substitute] IDiscordUserClient userClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId, Mentions = Array.Empty<UserMention>() };
+                var @event = new MessageCreateEvent { Message = message };
+
+                gateway.BotId = botId;
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(false);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await userClient.DidNotReceive().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
+                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is("Hello! Register at https://identity.brigh.id"), Is(cancellationToken));
             }
 
             [Test, Auto]

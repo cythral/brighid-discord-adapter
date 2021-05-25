@@ -11,6 +11,7 @@ services:
     environment:
       Environment: local
       CONFIGURATION: Debug
+      Identity__IdentityServerUri: ${IDENTITY_SERVER_URI}
       Database__Host: db
       Database__Name: ${DB_NAME}
       Database__User: ${DB_USER}

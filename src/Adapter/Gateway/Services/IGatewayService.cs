@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Messages;
+using Brighid.Discord.Models;
 
 using Microsoft.Extensions.Hosting;
 
@@ -21,6 +22,11 @@ namespace Brighid.Discord.Adapter.Gateway
         /// Gets or sets the session id.
         /// </summary>
         string? SessionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ID of the Bot user.
+        /// </summary>
+        Snowflake? BotId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the initial handshake with discord is complete.
