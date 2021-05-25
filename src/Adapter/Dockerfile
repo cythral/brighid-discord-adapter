@@ -10,6 +10,10 @@ ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWSCLI_VERSION}.zip .
 RUN unzip awscli.zip && \
     rm awscli.zip
 
+FROM public.ecr.aws/debian:buster
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libcap2-bin
+
 FROM mcr.microsoft.com/dotnet/aspnet:${ASPNET_VERSION}
 ARG PROJECT_DIRECTORY
 ARG OUTPUT_DIRECTORY
@@ -27,6 +31,9 @@ COPY --from=awscli /aws /usr/local/share/aws
 
 RUN \
     /usr/local/share/aws/aws/install && \
+    apt-get update && apt-get install -y libcap2-bin && \
+    rm -rf /var/lib/apt/lists/* && \
+    setcap 'cap_net_bind_service=+ep' /usr/share/dotnet/dotnet && \
     useradd --no-create-home brighid && \
     usermod --shell /bin/false brighid && \
     usermod --lock brighid && \
