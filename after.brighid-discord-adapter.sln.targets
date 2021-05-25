@@ -15,6 +15,7 @@
             <EnvFileLines Include="REQUESTS_QUEUE_URL=$(Requests__QueueUrl)" />
             <EnvFileLines Include="ADAPTER_TOKEN=$(Adapter__Token)" />
             <EnvFileLines Include="GATEWAY_URI=$(Gateway__Uri)" />
+            <EnvFileLines Include="IDENTITY_SERVER_URI=http://identity.dev.brigh.id" />
         </ItemGroup>
 
         <WriteLinesToFile File="$(MSBuildThisFileDirectory).env" Lines="@(EnvFileLines)" />

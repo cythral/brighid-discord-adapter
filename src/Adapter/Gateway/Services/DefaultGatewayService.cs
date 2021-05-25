@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Events;
 using Brighid.Discord.Adapter.Messages;
+using Brighid.Discord.Models;
 using Brighid.Discord.Threading;
 
 using Microsoft.Extensions.Logging;
@@ -68,6 +69,9 @@ namespace Brighid.Discord.Adapter.Gateway
 
         /// <inheritdoc />
         public string? SessionId { get; set; }
+
+        /// <inheritdoc />
+        public Snowflake? BotId { get; set; }
 
         /// <inheritdoc />
         public bool IsReady { get; set; }

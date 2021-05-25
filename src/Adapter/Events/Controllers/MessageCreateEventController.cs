@@ -1,9 +1,12 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
+using Brighid.Discord.RestClient.Client;
 
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +20,9 @@ namespace Brighid.Discord.Adapter.Events
     {
         private readonly IUserService userService;
         private readonly IMessageEmitter emitter;
+        private readonly IDiscordUserClient discordUserClient;
+        private readonly IDiscordChannelClient discordChannelClient;
+        private readonly IGatewayService gateway;
         private readonly IMetricReporter reporter;
         private readonly ILogger<MessageCreateEventController> logger;
 
@@ -25,17 +31,26 @@ namespace Brighid.Discord.Adapter.Events
         /// </summary>
         /// <param name="userService">Service to manage users with.</param>
         /// <param name="emitter">Emitter to emit messages to.</param>
+        /// <param name="discordUserClient">Client used to send User API requests to Discord.</param>
+        /// <param name="discordChannelClient">Client used to send Channel API requests to Discord.</param>
+        /// <param name="gateway">Gateway that discord sends events through.</param>
         /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public MessageCreateEventController(
             IUserService userService,
             IMessageEmitter emitter,
+            IDiscordUserClient discordUserClient,
+            IDiscordChannelClient discordChannelClient,
+            IGatewayService gateway,
             IMetricReporter reporter,
             ILogger<MessageCreateEventController> logger
         )
         {
             this.userService = userService;
             this.emitter = emitter;
+            this.discordUserClient = discordUserClient;
+            this.discordChannelClient = discordChannelClient;
+            this.gateway = gateway;
             this.reporter = reporter;
             this.logger = logger;
         }
@@ -51,6 +66,13 @@ namespace Brighid.Discord.Adapter.Events
             {
                 logger.LogInformation("Message author is registered, emitting message.");
                 await emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+                return;
+            }
+
+            if (@event.Message.Mentions.Any(mention => mention.Id == gateway.BotId))
+            {
+                var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
+                await discordChannelClient.CreateMessage(dmChannel.Id, "Hello! Register at https://identity.brigh.id", cancellationToken);
             }
         }
     }

@@ -6,6 +6,7 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
+using Brighid.Discord.Models;
 
 using FluentAssertions;
 
@@ -49,6 +50,21 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 gateway.Received().SessionId = sessionId;
+            }
+
+            [Test, Auto]
+            public async Task ShouldSetTheGatewayServiceBotId(
+                Snowflake botId,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] ReadyEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var @event = new ReadyEvent { User = new User { Id = botId } };
+
+                await controller.Handle(@event, cancellationToken);
+
+                gateway.Received().BotId = botId;
             }
 
             [Test, Auto]
