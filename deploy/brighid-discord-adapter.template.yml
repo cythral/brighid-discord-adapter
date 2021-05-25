@@ -1,6 +1,10 @@
 Transform: AWS::Serverless-2016-10-31
 Description: Brighid Discord to SNS Adapter
 Parameters:
+  DomainName:
+    Type: String
+    Description: Domain name to use for the Brighid Discord Adapter.
+
   Image:
     Type: String
     Description: URI of the Docker Image to pull.
@@ -67,6 +71,32 @@ Resources:
           FromPort: !Ref RestResponseServerPort
           ToPort: !Ref RestResponseServerPort
           CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
+
+  ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !ImportValue cfn-utilities:HttpListenerArn
+      Priority: 6
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: host-header
+          HostHeaderConfig:
+            Values:
+              - !Ref DomainName
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetType: ip
+      VpcId: !ImportValue cfn-utilities:VpcId
+      Protocol: HTTP
+      Port: 80
+      HealthCheckPath: /healthcheck
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: "30"
 
   Service:
     Type: AWS::ECS::Service

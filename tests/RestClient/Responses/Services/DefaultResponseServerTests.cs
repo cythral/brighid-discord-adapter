@@ -136,8 +136,9 @@ namespace Brighid.Discord.RestClient.Responses
             }
 
             [Test, Auto]
-            public async Task ShouldStopTheListener(
+            public async Task ShouldStopTheListenerBeforeStoppingTheTimer(
                 [Frozen, Substitute] ITcpListener listener,
+                [Frozen, Substitute] ITimer timer,
                 [Target] DefaultResponseServer server,
                 CancellationToken cancellationToken
             )
@@ -145,7 +146,11 @@ namespace Brighid.Discord.RestClient.Responses
                 await server.StartAsync(cancellationToken);
                 await server.StopAsync(cancellationToken);
 
-                listener.Received().Stop();
+                Received.InOrder(async () =>
+                {
+                    listener.Received().Stop();
+                    await timer.Received().Stop();
+                });
             }
         }
 
