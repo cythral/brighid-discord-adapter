@@ -8,7 +8,9 @@ using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.RestClient.Client;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.Adapter.Events
 {
@@ -22,6 +24,8 @@ namespace Brighid.Discord.Adapter.Events
         private readonly IMessageEmitter emitter;
         private readonly IDiscordUserClient discordUserClient;
         private readonly IDiscordChannelClient discordChannelClient;
+        private readonly IStringLocalizer<Strings> strings;
+        private readonly IdentityOptions identityOptions;
         private readonly IGatewayService gateway;
         private readonly IMetricReporter reporter;
         private readonly ILogger<MessageCreateEventController> logger;
@@ -33,6 +37,8 @@ namespace Brighid.Discord.Adapter.Events
         /// <param name="emitter">Emitter to emit messages to.</param>
         /// <param name="discordUserClient">Client used to send User API requests to Discord.</param>
         /// <param name="discordChannelClient">Client used to send Channel API requests to Discord.</param>
+        /// <param name="strings">Localizer service for retrieving strings.</param>
+        /// <param name="identityOptions">Options to use for the identity service.</param>
         /// <param name="gateway">Gateway that discord sends events through.</param>
         /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
@@ -41,6 +47,8 @@ namespace Brighid.Discord.Adapter.Events
             IMessageEmitter emitter,
             IDiscordUserClient discordUserClient,
             IDiscordChannelClient discordChannelClient,
+            IStringLocalizer<Strings> strings,
+            IOptions<IdentityOptions> identityOptions,
             IGatewayService gateway,
             IMetricReporter reporter,
             ILogger<MessageCreateEventController> logger
@@ -50,6 +58,8 @@ namespace Brighid.Discord.Adapter.Events
             this.emitter = emitter;
             this.discordUserClient = discordUserClient;
             this.discordChannelClient = discordChannelClient;
+            this.strings = strings;
+            this.identityOptions = identityOptions.Value;
             this.gateway = gateway;
             this.reporter = reporter;
             this.logger = logger;
@@ -72,7 +82,8 @@ namespace Brighid.Discord.Adapter.Events
             if (@event.Message.Mentions.Any(mention => mention.Id == gateway.BotId))
             {
                 var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
-                await discordChannelClient.CreateMessage(dmChannel.Id, "Hello! Register at https://identity.brigh.id", cancellationToken);
+                var message = (string)strings["RegistrationGreeting", identityOptions.IdentityServerUri]!;
+                await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
             }
         }
     }

@@ -67,6 +67,7 @@ namespace Brighid.Discord.Adapter
 
         private void ConfigureMiscServices(IServiceCollection services)
         {
+            services.AddLocalization(options => options.ResourcesPath = string.Empty);
             services.Configure<AdapterOptions>(configuration.GetSection("Adapter"));
             services.TryAddSingleton<Random>();
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));

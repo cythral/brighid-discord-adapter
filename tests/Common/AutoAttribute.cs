@@ -9,6 +9,7 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Adapter;
 using Brighid.Discord.Adapter.Database;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Requests;
@@ -20,6 +21,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -34,8 +37,14 @@ internal class AutoAttribute : AutoDataAttribute
 
     public static IFixture Create()
     {
+        var provider = new ServiceCollection()
+        .AddLocalization()
+        .AddLogging()
+        .BuildServiceProvider();
+
         var fixture = new Fixture();
         fixture.Inject(new CancellationToken(false));
+        fixture.Inject(provider.GetRequiredService<IStringLocalizer<Strings>>());
         fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
         fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.02 });
         fixture.Inject<JsonConverter<GatewayMessage>>(new MockGatewayMessageConverter());
