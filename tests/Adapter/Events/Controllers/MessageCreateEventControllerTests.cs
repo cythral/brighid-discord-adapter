@@ -14,6 +14,8 @@ using Brighid.Discord.RestClient.Client;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.Localization;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -97,6 +99,8 @@ namespace Brighid.Discord.Adapter.Events
                 Snowflake botId,
                 Snowflake channelId,
                 [Frozen] Channel channel,
+                [Frozen] IdentityOptions options,
+                [Frozen] IStringLocalizer<Strings> strings,
                 [Frozen, Substitute] IDiscordUserClient userClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
                 [Frozen, Substitute] IGatewayService gateway,
@@ -117,7 +121,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.Received().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.Received().CreateMessage(Is(channel.Id), Is("Hello! Register at https://identity.brigh.id"), Is(cancellationToken));
+                await channelClient.Received().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.IdentityServerUri]!), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -127,6 +131,8 @@ namespace Brighid.Discord.Adapter.Events
                 Snowflake botId,
                 Snowflake channelId,
                 [Frozen] Channel channel,
+                [Frozen] IdentityOptions options,
+                [Frozen] IStringLocalizer<Strings> strings,
                 [Frozen, Substitute] IDiscordUserClient userClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
                 [Frozen, Substitute] IGatewayService gateway,
@@ -146,7 +152,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.DidNotReceive().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is("Hello! Register at https://identity.brigh.id"), Is(cancellationToken));
+                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.IdentityServerUri]!), Is(cancellationToken));
             }
 
             [Test, Auto]
