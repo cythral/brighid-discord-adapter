@@ -113,6 +113,10 @@ Resources:
             - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
+      LoadBalancers:
+        - ContainerName: discord-adapter
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup
       DesiredCount: 1
       DeploymentConfiguration:
         MinimumHealthyPercent: 1
@@ -133,6 +137,8 @@ Resources:
         - Name: discord-adapter
           Essential: true
           Image: !Ref Image
+          PortMappings:
+            - ContainerPort: 80
           LogConfiguration:
             LogDriver: awslogs
             Options:
