@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -14,12 +14,8 @@ namespace Brighid.Discord.Adapter
     {
         public static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).Build().RunAsync();
-        }
-
-        public static IStartup CreateStartup(IConfiguration configuration)
-        {
-            return new Startup(configuration);
+            using var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -30,10 +26,10 @@ namespace Brighid.Discord.Adapter
                 {
                     config.AddEnvironmentVariables();
                 })
-                .ConfigureServices((context, services) =>
+                .ConfigureWebHostDefaults(builder =>
                 {
-                    CreateStartup(context.Configuration).ConfigureServices(services);
-                    services.AddSingleton<IHost, AdapterHost>();
+                    builder.UseStartup<Startup>();
+                    builder.UseUrls("http://0.0.0.0:80");
                 });
         }
     }

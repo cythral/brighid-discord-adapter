@@ -93,8 +93,8 @@ namespace Brighid.Discord.RestClient.Responses
             ThrowIfNotRunning(nameof(StopAsync));
 
             IsRunning = false;
-            await timer!.Stop();
             listener.Stop();
+            await timer!.Stop();
 
             timer = null;
         }
