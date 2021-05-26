@@ -53,6 +53,10 @@ Parameters:
     Type: String
     Description: Client ID of the Discord Application.
 
+  ClientSecret:
+    Type: String
+    Description: Encrypted Client Secret of the Discord Application.
+
 Resources:
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
@@ -198,6 +202,10 @@ Resources:
               Value: !Ref DatabaseUser
             - Name: Encrypted__Database__Password
               Value: !Ref DatabasePassword
+            - Name: Adapter__ClientId
+              Value: !Ref ClientId
+            - Name: Encrypted__Adapter__ClientSecret
+              Value: !Ref ClientSecret
 
   TaskRole:
     Type: AWS::IAM::Role

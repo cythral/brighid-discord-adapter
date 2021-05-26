@@ -1,14 +1,15 @@
 {
-    "DomainName": "discord.brigh.id",
-    "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
-    "AdapterToken": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQH7c6I9/U8oOsaZnOZxwZXhAAAAnTCBmgYJKoZIhvcNAQcGoIGMMIGJAgEAMIGDBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKlVr9CIwyw+o0IQqgIBEIBWuCPGRVDCqewO1wSgOYqBRzWi/DsN+BICBxwshfADcw/KvrIlfQizoG3LSDLQ5/lmP/69EkTViLgjLUujdGyKJRgfSAEbw7W9+wQi7Iu3xWXC0G4gTBM=",
-    "MetricsNamespace": "BrighidDiscordAdapter",
-    "IdentityServerUri": "http://identity.brigh.id",
-    "DatabaseUser": "brighid-discord",
-    "DatabaseName": "brighid-discord",
-    "DatabasePassword": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQGYDlyJcWxnm2HX1OEFg3qrAAAAbzBtBgkqhkiG9w0BBwagYDBeAgEAMFkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMFN8ERCNLIML21BezAgEQgCwiVhQ6CvdQJnvtv3MX0cBRvooKZLZs2T4za+67ujRvJdXEjXr8z2Jb4CV6Ag==",
-    "DotnetLayerVersion": "1",
-    "LambdajectionLayerVersion": "1",
-    "RestResponseServerPort": "19426",
-    "ClientId": "671109403189182502"
+  "DomainName": "discord.brigh.id",
+  "GatewayUri": "wss://gateway.discord.gg/?v=8&encoding=json",
+  "AdapterToken": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQH7c6I9/U8oOsaZnOZxwZXhAAAAnTCBmgYJKoZIhvcNAQcGoIGMMIGJAgEAMIGDBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKlVr9CIwyw+o0IQqgIBEIBWuCPGRVDCqewO1wSgOYqBRzWi/DsN+BICBxwshfADcw/KvrIlfQizoG3LSDLQ5/lmP/69EkTViLgjLUujdGyKJRgfSAEbw7W9+wQi7Iu3xWXC0G4gTBM=",
+  "MetricsNamespace": "BrighidDiscordAdapter",
+  "IdentityServerUri": "http://identity.brigh.id",
+  "DatabaseUser": "brighid-discord",
+  "DatabaseName": "brighid-discord",
+  "DatabasePassword": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQGYDlyJcWxnm2HX1OEFg3qrAAAAbzBtBgkqhkiG9w0BBwagYDBeAgEAMFkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMFN8ERCNLIML21BezAgEQgCwiVhQ6CvdQJnvtv3MX0cBRvooKZLZs2T4za+67ujRvJdXEjXr8z2Jb4CV6Ag==",
+  "DotnetLayerVersion": "1",
+  "LambdajectionLayerVersion": "1",
+  "RestResponseServerPort": "19426",
+  "ClientId": "671109403189182502",
+  "ClientSecret": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQFmlOkXvZ9HttJWb/gOompYAAAAfzB9BgkqhkiG9w0BBwagcDBuAgEAMGkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMVjJBeVtX6XQnCZQiAgEQgDxaWuYXuC0m3cf/+yahEDvuw7jobdPyW//bPqhaKYrjmX8EXxCnKtl9KymF8ljWBuGNhcEy3u5gkYuzsfg="
 }
