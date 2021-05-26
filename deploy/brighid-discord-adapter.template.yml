@@ -293,3 +293,10 @@ Resources:
       FunctionName: !GetAtt ResponseHandler.Arn
       Principal: sns.amazonaws.com
       SourceArn: !ImportValue brighid-infrastructure:ResponseTopicArn
+
+  AccountLinkStartUrl:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: /brighid/discord/account-link/start-url
+      Value: !Sub https://${DomainName}/account-link/start
