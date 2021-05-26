@@ -49,6 +49,10 @@ Parameters:
     Type: Number
     Description: Port to use for the Adapter Shell.
 
+  ClientId:
+    Type: String
+    Description: Client ID of the Discord Application.
+
 Resources:
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
@@ -299,4 +303,4 @@ Resources:
     Properties:
       Type: String
       Name: /brighid/discord/account-link/start-url
-      Value: !Sub https://${DomainName}/account-link/start
+      Value: !Sub https://discord.com/api/oauth2/authorize?client_id=${ClientId}&redirect_uri=https%3A%2F%2F${DomainName}%2Foauth2%2Fcallback&response_type=code&scope=identify
