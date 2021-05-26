@@ -50,6 +50,22 @@ Parameters:
     Description: Port to use for the Adapter Shell.
 
 Resources:
+  ServiceRegistryRecord:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Description: Service Registry Record for Brighid Discord Adapter
+      DnsConfig:
+        RoutingPolicy: MULTIVALUE
+        DnsRecords:
+          - TTL: 60
+            Type: A
+          - TTL: 60
+            Type: SRV
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      NamespaceId: !ImportValue brighid-infrastructure:ServiceRegistry
+      Name: discord
+
   IdentityApplication:
     Type: Custom::IdentityApplication
     Properties:
@@ -101,6 +117,7 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
+      ServiceName: discord-adapter
       Cluster: !ImportValue brighid-infrastructure:ClusterName
       LaunchType: FARGATE
       NetworkConfiguration:
@@ -117,6 +134,9 @@ Resources:
         - ContainerName: discord-adapter
           ContainerPort: 80
           TargetGroupArn: !Ref TargetGroup
+      ServiceRegistries:
+        - RegistryArn: !GetAtt ServiceRegistryRecord.Arn
+          Port: 80
       DesiredCount: 1
       DeploymentConfiguration:
         MinimumHealthyPercent: 1
