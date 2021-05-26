@@ -49,11 +49,11 @@
       },
       "MockQueryable.NSubstitute": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "lb4Bisy6Jx7ca6fXHRmaCIVNfVxvlgfx5HysMPRUZ6JNn2TbuOrvCQjB5dY4vE5QrDNR5xq7hl3z1K4VH6NCyg==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "uwqNZb/DVLAI++yYpOWkaCgIB6waOj9FU6jQwASvHlBgQa5ErZi6qCYfSPBWuHvMET73UH9uTe9jnbWWQ6yfAA==",
         "dependencies": {
-          "MockQueryable.EntityFrameworkCore": "5.0.0",
+          "MockQueryable.EntityFrameworkCore": "5.0.1",
           "NSubstitute": "4.2.1"
         }
       },
@@ -814,16 +814,16 @@
       },
       "MockQueryable.Core": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "dqHXs09CKn+ZNygh0X20fiXHtru6MZERtAHvl7halAVD4FQxfXH+dJuUn62r9c2WbLXSy9ZKGjPWM2V3OYxrEg=="
+        "resolved": "5.0.1",
+        "contentHash": "l8+aU1yAl9Dmep0geZR2PCu7UWNwo6kKFaeuigDSimOTSd7U8ScHSAbNT1pLusUrkU2p6lwb28dJ+3wfbv2F3A=="
       },
       "MockQueryable.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "I/Ja4UpaR+LDXbGs5pZb2B6eBCX+IrAc0vgaOzzXOMGoophNw0ybeJPtA7zBorno2eLYcgRb7G4fKsGjgv0tiw==",
+        "resolved": "5.0.1",
+        "contentHash": "LaS2NMn12kJO/tMLC3MHoGMw8JwLayjMPHHkO0oVDA1kZxF/cJ5+0zLXGN3j9pyA/3p0yHUrVya3JJFqF+16wQ==",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "5.0.0",
-          "MockQueryable.Core": "5.0.0"
+          "MockQueryable.Core": "5.0.1"
         }
       },
       "MySqlConnector": {
@@ -1826,8 +1826,8 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.1.23",
-          "AWSSDK.SimpleNotificationService": "3.7.1.12",
           "AWSSDK.SQS": "3.7.0.27",
+          "AWSSDK.SimpleNotificationService": "3.7.1.12",
           "Brighid.Discord.Core": "1.0.0",
           "Brighid.Identity.Client": "0.2.0-beta8",
           "Destructurama.Attributed": "2.0.0",
