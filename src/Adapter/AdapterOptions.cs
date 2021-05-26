@@ -17,5 +17,16 @@ namespace Brighid.Discord.Adapter
         /// </summary>
         [NotLogged]
         public string Token { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Client ID used for OAuth2 Operations on the Discord API.
+        /// </summary>
+        public string ClientId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Client Secret used for OAuth2 Operations on the Discord API.
+        /// </summary>
+        [NotLogged]
+        public string ClientSecret { get; set; } = string.Empty;
     }
 }
