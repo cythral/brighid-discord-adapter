@@ -47,7 +47,7 @@ namespace Brighid.Discord.Adapter
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
 
-            services.ConfigureBrighidIdentity("Identity");
+            services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();
