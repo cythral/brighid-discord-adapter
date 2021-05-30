@@ -203,7 +203,7 @@ namespace Brighid.Discord.Adapter.Users
 
                 await usersClient.Received().CreateLogin(
                     Is(identityUserId),
-                    Is<UserLogin>(userLogin =>
+                    Is<CreateUserLoginRequest>(userLogin =>
                         userLogin.LoginProvider == "discord" &&
                         userLogin.ProviderKey == discordUserId
                     ),

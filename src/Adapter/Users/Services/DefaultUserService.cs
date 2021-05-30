@@ -101,7 +101,7 @@ namespace Brighid.Discord.Adapter.Users
         {
             cancellationToken.ThrowIfCancellationRequested();
             var client = usersClientFactory.Create(accessToken);
-            var userLogin = new UserLogin { LoginProvider = "discord", ProviderKey = discordUserId };
+            var userLogin = new CreateUserLoginRequest { LoginProvider = "discord", ProviderKey = discordUserId };
             await client.CreateLogin(identityUserId, userLogin, cancellationToken);
         }
 
