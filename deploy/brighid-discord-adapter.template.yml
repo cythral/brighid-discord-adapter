@@ -209,6 +209,8 @@ Resources:
               Value: !Ref ClientId
             - Name: Encrypted__Adapter__ClientSecret
               Value: !Ref ClientSecret
+            - Name: Adapter__OAuth2RedirectUri
+              Value: !Sub https://${DomainName}/oauth2/callback
 
   TaskRole:
     Type: AWS::IAM::Role

@@ -93,6 +93,12 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "RichardSzalay.MockHttp": {
+        "type": "Direct",
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "bStGNqIX/MGYtML7K3EzdsE/k5HGVAcg7XgN23TQXGXqxNC9fvYFR94fA0sGM5hAT36R+BBGet6ZDQxXL/IPxg=="
+      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.333, )",
@@ -180,8 +186,8 @@
       },
       "Brighid.Identity.Client": {
         "type": "Transitive",
-        "resolved": "0.2.0",
-        "contentHash": "7ZGyh73jvq5y+8Z1GZFFYQ1Tsckxu+oGx9nTC6UOvgrb1sDUn49Ri+eUz4LSxGAu+LafB25MiIDAiVJ0EyrkYA==",
+        "resolved": "0.3.1",
+        "contentHash": "hrSst4oW/zDXVuo0tkAfUjBe6p5jfQuqihwj+OWUgyMuDRWBI9Ew6dLx4lPg76IrMe1inWJn3HBsoooEiEqN3A==",
         "dependencies": {
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.DependencyInjection": "5.0.1",
@@ -765,6 +771,29 @@
         "resolved": "5.0.0",
         "contentHash": "cI/VWn9G1fghXrNDagX9nYaaB/nokkZn0HYAawGaELQrl8InSezfe9OnfPZLcJq3esXxygh3hkq2c3qoV3SDyQ=="
       },
+      "Microsoft.IdentityModel.JsonWebTokens": {
+        "type": "Transitive",
+        "resolved": "6.11.1",
+        "contentHash": "WviaeOAlwxxDXMBj9GN4dKvKXHqEPqN7LtQdwjMdNvd/NR1ry43BpqIMk4MyHBhgwBCcXlq8079CzHhGxb3Prw==",
+        "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "6.11.1"
+        }
+      },
+      "Microsoft.IdentityModel.Logging": {
+        "type": "Transitive",
+        "resolved": "6.11.1",
+        "contentHash": "8G/kXAoKVCvTJyB4Ld8me4oDV/E9uWD+Rk86JBy7nfYpzVsrxvqG5svSlwaIltQFjVD5VOHwq1o+9kMw3Q7tGg=="
+      },
+      "Microsoft.IdentityModel.Tokens": {
+        "type": "Transitive",
+        "resolved": "6.11.1",
+        "contentHash": "B7vWX+WevuluZDjsf4Br2Zb7k20ps1D3RMX/J8DKsrkzJ4F3fcsLIEknI98JNYKPlN9VcqEZ1qeeEKEuwU3XcA==",
+        "dependencies": {
+          "Microsoft.CSharp": "4.5.0",
+          "Microsoft.IdentityModel.Logging": "6.11.1",
+          "System.Security.Cryptography.Cng": "4.5.0"
+        }
+      },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -1337,6 +1366,15 @@
           "System.Runtime.InteropServices": "4.3.0"
         }
       },
+      "System.IdentityModel.Tokens.Jwt": {
+        "type": "Transitive",
+        "resolved": "6.11.1",
+        "contentHash": "xh6/P+XdsUZoTbN1MgRg1zONdHTVfH8TDFSnPwXF4p8qhKvmUdXtE6UmTDN8HLe8jveY7Bjdjr+YP7sm2l7ufA==",
+        "dependencies": {
+          "Microsoft.IdentityModel.JsonWebTokens": "6.11.1",
+          "Microsoft.IdentityModel.Tokens": "6.11.1"
+        }
+      },
       "System.Interactive.Async": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -1632,6 +1670,11 @@
           "System.Security.Principal.Windows": "5.0.0"
         }
       },
+      "System.Security.Cryptography.Cng": {
+        "type": "Transitive",
+        "resolved": "4.5.0",
+        "contentHash": "WG3r7EyjUe9CMPFSs6bty5doUqT+q9pbI80hlNzo2SkPkZ4VTuZkGWjpp77JB8+uaL4DFPRdBsAY+DX3dBK92A=="
+      },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
         "resolved": "4.4.0",
@@ -1828,7 +1871,7 @@
           "AWSSDK.CloudWatch": "3.7.1.23",
           "AWSSDK.SimpleNotificationService": "3.7.1.12",
           "Brighid.Discord.Core": "1.0.0",
-          "Brighid.Identity.Client": "0.2.0",
+          "Brighid.Identity.Client": "0.3.1",
           "Destructurama.Attributed": "2.0.0",
           "Microsoft.EntityFrameworkCore.Design": "5.0.6",
           "Microsoft.Extensions.Hosting": "5.0.0",
@@ -1836,7 +1879,8 @@
           "Models": "1.0.0",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
           "RestClient": "1.0.0",
-          "Serilog.AspNetCore": "4.1.0"
+          "Serilog.AspNetCore": "4.1.0",
+          "System.IdentityModel.Tokens.Jwt": "6.11.1"
         }
       },
       "Brighid.Discord.Core": {
