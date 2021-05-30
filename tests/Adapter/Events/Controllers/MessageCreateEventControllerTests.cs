@@ -99,7 +99,7 @@ namespace Brighid.Discord.Adapter.Events
                 Snowflake botId,
                 Snowflake channelId,
                 [Frozen] Channel channel,
-                [Frozen] IdentityOptions options,
+                [Frozen] AdapterOptions options,
                 [Frozen] IStringLocalizer<Strings> strings,
                 [Frozen, Substitute] IDiscordUserClient userClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
@@ -121,7 +121,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.Received().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.Received().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.IdentityServerUri]!), Is(cancellationToken));
+                await channelClient.Received().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -131,7 +131,7 @@ namespace Brighid.Discord.Adapter.Events
                 Snowflake botId,
                 Snowflake channelId,
                 [Frozen] Channel channel,
-                [Frozen] IdentityOptions options,
+                [Frozen] AdapterOptions options,
                 [Frozen] IStringLocalizer<Strings> strings,
                 [Frozen, Substitute] IDiscordUserClient userClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
@@ -152,7 +152,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.DidNotReceive().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.IdentityServerUri]!), Is(cancellationToken));
+                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
             }
 
             [Test, Auto]
