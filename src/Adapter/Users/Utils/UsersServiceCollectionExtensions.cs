@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+
 using Brighid.Discord.Adapter.Users;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +19,10 @@ namespace Brighid.Discord.Adapter
         {
             services.AddSingleton<IUserIdCache, ConcurrentUserIdCache>();
             services.AddSingleton<IUserService, DefaultUserService>();
+            services.AddHttpClient<IUserService, DefaultUserService>();
+            services.AddSingleton(new JwtSecurityTokenHandler { MaximumTokenSizeInBytes = int.MaxValue });
             services.UseBrighidIdentityLoginProviders();
+            services.UseBrighidIdentityUsers();
         }
     }
 }

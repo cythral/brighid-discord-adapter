@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   adapter:
-    image: mcr.microsoft.com/dotnet/sdk:5.0.203
+    image: mcr.microsoft.com/dotnet/sdk:5.0.300
     entrypoint: dotnet watch --project src/Adapter run
     working_dir: /app
     restart: unless-stopped
