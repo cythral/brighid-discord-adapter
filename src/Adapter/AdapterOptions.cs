@@ -32,6 +32,11 @@ namespace Brighid.Discord.Adapter
         public string ClientSecret { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets the Registration URL sent to unregistered users on mention.
+        /// </summary>
+        public string RegistrationUrl { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the OAuth2 User Info Endpoint.
         /// </summary>
         public Uri OAuth2UserInfoEndpoint { get; set; } = new Uri("https://discord.com/api/users/@me");
