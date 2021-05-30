@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <NoWarn>SA1633;SA0001</NoWarn>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -29,6 +30,10 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\RestClient\RestClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
