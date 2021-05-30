@@ -4,7 +4,6 @@ using Brighid.Discord.Adapter.Gateway;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Brighid.Discord.Adapter
 {
@@ -27,7 +26,8 @@ namespace Brighid.Discord.Adapter
             services.AddSingleton<IGatewayUtilsFactory, DefaultGatewayUtilsFactory>();
             services.AddSingleton<IGatewayRestartService, DefaultGatewayRestartService>();
             services.AddSingleton<IGatewayService, DefaultGatewayService>();
-            services.AddSingleton<IHostedService>(provider => provider.GetRequiredService<IGatewayService>());
+
+            // services.AddSingleton<IHostedService>(provider => provider.GetRequiredService<IGatewayService>());
             services.AddTransient(provider => new MemoryStream());
 
             services.UseBrighidIdentityLoginProviders();

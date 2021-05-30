@@ -147,7 +147,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
-        public class GetDiscordUserIdTests
+        public class GetDiscordUserInfoTests
         {
             [Test, Auto]
             public async Task ShouldSendARequestToTheMeEndpointAndReturnTheUserId(
@@ -164,9 +164,9 @@ namespace Brighid.Discord.Adapter.Users
                 .WithHeaders("authorization", $"Bearer {token}")
                 .Respond("application/json", $@"{{""id"":""{userId.Value}""}}");
 
-                var result = await service.GetDiscordUserId(token, cancellationToken);
+                var result = await service.GetDiscordUserInfo(token, cancellationToken);
 
-                result.Should().Be(userId);
+                result.Id.Should().Be(userId);
                 handler.VerifyNoOutstandingExpectation();
             }
         }

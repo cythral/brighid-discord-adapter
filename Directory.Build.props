@@ -9,6 +9,7 @@
     <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
     <BaseOutputPath>$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName)/</BaseOutputPath>
+    <CompilerGeneratedFilesOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)/$(Configuration)</CompilerGeneratedFilesOutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
