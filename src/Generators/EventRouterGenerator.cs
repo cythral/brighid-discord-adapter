@@ -1,7 +1,6 @@
 ﻿#pragma warning disable SA1204, SA1009, CS1591, SA1600, SA1200, SA1633
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -43,6 +42,8 @@ namespace Brighid.Discord.Generators
             "SA1013",
             "SA1025",
             "SA1119",
+            "SA1516",
+            "SA0001",
         };
 
         public void Initialize(GeneratorInitializationContext context)
@@ -59,8 +60,7 @@ namespace Brighid.Discord.Generators
                          where attr.AttributeClass != null && TypeUtils.IsSymbolEqualToType(attr.AttributeClass, typeof(EventControllerAttribute))
                          select (node, attr);
 
-            File.WriteAllText("/tmp/test", "Number of event controllers: " + events.Count() + "\n");
-            var members = new MemberDeclarationSyntax[] { GenerateParseMember(events) };
+            var members = new MemberDeclarationSyntax[] { GenerateServiceProviderField(), GenerateConstructor(), GenerateParseMember(events) };
             var classDeclaration = ClassDeclaration("GeneratedEventRouter")
                 .WithModifiers(TokenList(Token(PublicKeyword), Token(PartialKeyword)))
                 .WithMembers(List(members));
@@ -76,6 +76,27 @@ namespace Brighid.Discord.Generators
 
             var generatedBody = compilationUnit.NormalizeWhitespace().GetText(Encoding.UTF8);
             context.AddSource("GeneratedEventRouter", generatedBody + "\n");
+        }
+
+        public static MemberDeclarationSyntax GenerateServiceProviderField()
+        {
+            var variableDeclarators = new[] { VariableDeclarator(Identifier("serviceProvider")) };
+            var variableDeclaration = VariableDeclaration(ParseTypeName("IServiceProvider"), SeparatedList(variableDeclarators));
+            return FieldDeclaration(List<AttributeListSyntax>(), TokenList(Token(PrivateKeyword), Token(ReadOnlyKeyword)), variableDeclaration);
+        }
+
+        public static MemberDeclarationSyntax GenerateConstructor()
+        {
+            static IEnumerable<StatementSyntax> GenerateBody()
+            {
+                yield return ParseStatement("this.serviceProvider = serviceProvider;");
+            }
+
+            var parameters = new ParameterSyntax[] { Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName("IServiceProvider"), Identifier("serviceProvider"), default) };
+            return ConstructorDeclaration("GeneratedEventRouter")
+                .WithModifiers(TokenList(Token(PublicKeyword)))
+                .WithParameterList(ParameterList(SeparatedList(parameters)))
+                .WithBody(Block(GenerateBody()));
         }
 
         public static MemberDeclarationSyntax GenerateParseMember(IEnumerable<(ClassDeclarationSyntax Node, AttributeData Attribute)> controllers)
@@ -102,12 +123,13 @@ namespace Brighid.Discord.Generators
                 switchArms.Add(discardPattern);
 
                 var switchExpression = SwitchExpression(IdentifierName(identifier), Token(SwitchKeyword), Token(OpenBraceToken), SeparatedList(switchArms, separators), Token(CloseBraceToken));
-                var parenthesizedExpression = ParenthesizedExpression(switchExpression);
-                var awaitExpression = AwaitExpression(parenthesizedExpression);
+                var variableDeclarators = new[] { VariableDeclarator(Identifier("task"), null, EqualsValueClause(Token(EqualsToken), switchExpression)) };
+                var variableDeclaration = VariableDeclaration(ParseTypeName("Task"), SeparatedList(variableDeclarators));
 
                 yield return ParseStatement("cancellationToken.ThrowIfCancellationRequested();");
                 yield return ParseStatement("using var scope = serviceProvider.CreateScope();");
-                yield return ExpressionStatement(awaitExpression);
+                yield return LocalDeclarationStatement(variableDeclaration);
+                yield return ParseStatement("await task;");
             }
 
             return MethodDeclaration(ParseTypeName($"Task"), "Route")

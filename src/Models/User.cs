@@ -8,6 +8,27 @@ namespace Brighid.Discord.Models
     public struct User
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="User" /> struct.
+        /// </summary>
+        /// <param name="id">ID of the user.</param>
+        public User(Snowflake id)
+        {
+            Id = id;
+            Name = string.Empty;
+            Discriminator = string.Empty;
+            Avatar = string.Empty;
+            IsBot = null;
+            IsSystem = null;
+            IsMfaEnabled = null;
+            Locale = null;
+            IsVerified = null;
+            Email = null;
+            Flags = null;
+            PremiumType = null;
+            PublicFlags = null;
+        }
+
+        /// <summary>
         /// Gets or sets the user's id.
         /// </summary>
         [JsonPropertyName("id")]

@@ -11,6 +11,7 @@ using FluentAssertions;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 using NSubstitute;
 
@@ -30,6 +31,7 @@ namespace Brighid.Discord.Adapter.Users
         )
         {
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            SetupTempData(controller);
 
             var result = await controller.Callback(code);
 
@@ -56,6 +58,7 @@ namespace Brighid.Discord.Adapter.Users
                 x[1] = null;
                 return false;
             });
+            SetupTempData(controller);
 
             var result = await controller.Callback(code);
 
@@ -74,6 +77,7 @@ namespace Brighid.Discord.Adapter.Users
         {
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
 
             await controller.Callback(code);
 
@@ -92,6 +96,7 @@ namespace Brighid.Discord.Adapter.Users
         {
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
 
             await controller.Callback(code);
 
@@ -112,10 +117,11 @@ namespace Brighid.Discord.Adapter.Users
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
             userService.ExchangeOAuth2CodeForToken(Is(code), Any<CancellationToken>()).Returns(discordToken);
             SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
 
             await controller.Callback(code);
 
-            await userService.Received().GetDiscordUserId(Is(discordToken), Is(httpContext.RequestAborted));
+            await userService.Received().GetDiscordUserInfo(Is(discordToken), Is(httpContext.RequestAborted));
         }
 
         [Test, Auto]
@@ -124,7 +130,7 @@ namespace Brighid.Discord.Adapter.Users
             string accessToken,
             string idToken,
             string discordToken,
-            Snowflake discordUserId,
+            User discordUser,
             Guid identityUserId,
             [Substitute] HttpContext httpContext,
             [Frozen, Substitute] IUserService userService,
@@ -132,14 +138,95 @@ namespace Brighid.Discord.Adapter.Users
         )
         {
             controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
-            userService.GetDiscordUserId(Is(discordToken), Any<CancellationToken>()).Returns(discordUserId);
+            userService.GetDiscordUserInfo(Is(discordToken), Any<CancellationToken>()).Returns(discordUser);
             userService.GetUserIdFromIdentityToken(Is(idToken)).Returns(identityUserId);
             userService.ExchangeOAuth2CodeForToken(Is(code), Any<CancellationToken>()).Returns(discordToken);
             SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
 
             await controller.Callback(code);
 
-            await userService.Received().LinkDiscordIdToUser(Is(discordUserId), Is(identityUserId), Is(accessToken), Is(httpContext.RequestAborted));
+            await userService.Received().LinkDiscordIdToUser(Is(discordUser.Id), Is(identityUserId), Is(accessToken), Is(httpContext.RequestAborted));
+        }
+
+        [Test, Auto]
+        public async Task ShouldReturnTheAccountLinkSuccessView(
+            string code,
+            string accessToken,
+            string idToken,
+            string discordToken,
+            User discordUser,
+            Guid identityUserId,
+            [Substitute] HttpContext httpContext,
+            [Frozen, Substitute] IUserService userService,
+            [Target] OAuth2Controller controller
+        )
+        {
+            controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            userService.GetDiscordUserInfo(Is(discordToken), Any<CancellationToken>()).Returns(discordUser);
+            userService.GetUserIdFromIdentityToken(Is(idToken)).Returns(identityUserId);
+            userService.ExchangeOAuth2CodeForToken(Is(code), Any<CancellationToken>()).Returns(discordToken);
+            SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
+
+            var result = await controller.Callback(code) as ViewResult;
+
+            result.Should().NotBeNull();
+            result!.ViewName.Should().Be("~/Users/Views/AccountLinkSuccess.cshtml");
+        }
+
+        [Test, Auto]
+        public async Task ShouldSetDiscordUserIdOnTheModelView(
+            string code,
+            string accessToken,
+            string idToken,
+            string discordToken,
+            User discordUser,
+            Guid identityUserId,
+            [Substitute] HttpContext httpContext,
+            [Frozen, Substitute] IUserService userService,
+            [Target] OAuth2Controller controller
+        )
+        {
+            controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            userService.GetDiscordUserInfo(Is(discordToken), Any<CancellationToken>()).Returns(discordUser);
+            userService.GetUserIdFromIdentityToken(Is(idToken)).Returns(identityUserId);
+            userService.ExchangeOAuth2CodeForToken(Is(code), Any<CancellationToken>()).Returns(discordToken);
+            SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
+
+            var result = await controller.Callback(code) as ViewResult;
+
+            result.Should().NotBeNull();
+            var model = (AccountLinkSuccessViewModel)result!.Model;
+            model.DiscordUserId.Should().Be(discordUser.Id);
+        }
+
+        [Test, Auto]
+        public async Task ShouldSetDiscordAvatarHashOnTheModelView(
+            string code,
+            string accessToken,
+            string idToken,
+            string discordToken,
+            User discordUser,
+            Guid identityUserId,
+            [Substitute] HttpContext httpContext,
+            [Frozen, Substitute] IUserService userService,
+            [Target] OAuth2Controller controller
+        )
+        {
+            controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+            userService.GetDiscordUserInfo(Is(discordToken), Any<CancellationToken>()).Returns(discordUser);
+            userService.GetUserIdFromIdentityToken(Is(idToken)).Returns(identityUserId);
+            userService.ExchangeOAuth2CodeForToken(Is(code), Any<CancellationToken>()).Returns(discordToken);
+            SetupHttpContext(httpContext, accessToken, idToken);
+            SetupTempData(controller);
+
+            var result = await controller.Callback(code) as ViewResult;
+
+            result.Should().NotBeNull();
+            var model = (AccountLinkSuccessViewModel)result!.Model;
+            model.DiscordAvatarHash.Should().Be(discordUser.Avatar);
         }
 
         private void SetupHttpContext(HttpContext httpContext, string accessToken, string idToken)
@@ -155,6 +242,14 @@ namespace Brighid.Discord.Adapter.Users
                 x[1] = idToken;
                 return true;
             });
+        }
+
+        private void SetupTempData(Controller controller)
+        {
+            var tempDataProvider = Substitute.For<ITempDataProvider>();
+            var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+            var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
+            controller.TempData = tempData;
         }
     }
 }

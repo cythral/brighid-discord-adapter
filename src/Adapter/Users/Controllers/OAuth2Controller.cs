@@ -47,9 +47,14 @@ namespace Brighid.Discord.Adapter.Users
 
             var identityUserId = userService.GetUserIdFromIdentityToken(idToken);
             var token = await userService.ExchangeOAuth2CodeForToken(code, HttpContext.RequestAborted);
-            var discordUserId = await userService.GetDiscordUserId(token, HttpContext.RequestAborted);
-            await userService.LinkDiscordIdToUser(discordUserId, identityUserId, accessToken, HttpContext.RequestAborted);
-            return Ok();
+            var discordUser = await userService.GetDiscordUserInfo(token, HttpContext.RequestAborted);
+            await userService.LinkDiscordIdToUser(discordUser.Id, identityUserId, accessToken, HttpContext.RequestAborted);
+
+            return View("~/Users/Views/AccountLinkSuccess.cshtml", new AccountLinkSuccessViewModel
+            {
+                DiscordUserId = discordUser.Id,
+                DiscordAvatarHash = discordUser.Avatar,
+            });
         }
     }
 }

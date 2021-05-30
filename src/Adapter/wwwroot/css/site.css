@@ -1,0 +1,131 @@
+@import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
+
+:root {
+  --primary-color: #b71c1c;
+  --primary-color-darker: #921616;
+}
+
+* {
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(
+    180deg,
+    var(--primary-color-darker) 0%,
+    #3a0647 70%
+  );
+  min-height: 100vh;
+  min-width: 100vw;
+  text-align: center;
+}
+
+.container {
+  padding: 15px;
+  margin: 15px;
+}
+
+a,
+.btn-link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover,
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.btn-link:hover i {
+  text-decoration: underline;
+}
+
+.text-danger {
+  color: var(--primary-color);
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary-color);
+}
+
+.content {
+  padding-top: 1.1rem;
+}
+
+.valid.modified:not([type="checkbox"]) {
+  outline: 1px solid #26b050;
+}
+
+.invalid {
+  outline: 1px solid red;
+}
+
+.validation-message {
+  color: red;
+}
+
+#blazor-error-ui {
+  background: lightyellow;
+  bottom: 0;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+  display: none;
+  left: 0;
+  padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+  cursor: pointer;
+  position: absolute;
+  right: 0.75rem;
+  top: 0.5rem;
+}
+
+body > .container {
+  max-width: 1200px;
+  display: inline-block;
+  width: calc(100% - 30px);
+  margin: 15px;
+  padding: 30px;
+  margin-top: 10%;
+  border-radius: 25px;
+  background: rgb(255, 255, 255);
+}
+  
+.discord-logo {
+  background-color: #5865F2;
+  padding: 30px;
+  border-radius: 15%;
+}
+
+.discord-user-avatar {
+  border-radius: 100%;
+}
+
+.discord-logo, .discord-user-avatar {
+  width: 25%;
+  max-width: 150px;
+  margin: 0 30px;
+  vertical-align: middle;
+}
+
+.discord-link {
+  display: inline-block;
+  vertical-align: middle;
+  height: 150px;
+  font-size: 50px;
+  color: #5865F2;
+  text-shadow: 0 1px 2px black;
+  line-height: 150px;
+}

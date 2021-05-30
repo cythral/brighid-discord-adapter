@@ -25,7 +25,7 @@ namespace Brighid.Discord.Adapter.Users
         /// <param name="token">Token to use when making a request to retrieve the Discord ID.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The user's ID.</returns>
-        Task<Snowflake> GetDiscordUserId(string token, CancellationToken cancellationToken = default);
+        Task<User> GetDiscordUserInfo(string token, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Link a Discord ID to the current user, given their Brighid Identity Access Token.

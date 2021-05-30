@@ -81,7 +81,7 @@ namespace Brighid.Discord.Adapter.Users
 #pragma warning disable IDE0004
 
         /// <inheritdoc />
-        public async Task<Snowflake> GetDiscordUserId(string token, CancellationToken cancellationToken = default)
+        public async Task<Models.User> GetDiscordUserInfo(string token, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var request = new HttpRequestMessage
@@ -93,7 +93,7 @@ namespace Brighid.Discord.Adapter.Users
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await httpClient.SendAsync(request, cancellationToken);
             var user = await response.Content.ReadFromJsonAsync<Models.User>(cancellationToken: cancellationToken);
-            return user.Id;
+            return user;
         }
 
         /// <inheritdoc />
