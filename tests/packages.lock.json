@@ -186,8 +186,8 @@
       },
       "Brighid.Identity.Client": {
         "type": "Transitive",
-        "resolved": "0.3.1",
-        "contentHash": "hrSst4oW/zDXVuo0tkAfUjBe6p5jfQuqihwj+OWUgyMuDRWBI9Ew6dLx4lPg76IrMe1inWJn3HBsoooEiEqN3A==",
+        "resolved": "0.3.2",
+        "contentHash": "Zw5zHoJSMQeqiGGVcbRXxFkHIK/SgeTy6LG6ggakyz/2KOriOMKd1kNVYyVKkkwZ11CqDo1cHpGlhlDEJ8GnDw==",
         "dependencies": {
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.DependencyInjection": "5.0.1",
@@ -1877,7 +1877,7 @@
           "AWSSDK.CloudWatch": "3.7.1.26",
           "AWSSDK.SimpleNotificationService": "3.7.1.12",
           "Brighid.Discord.Core": "1.0.0",
-          "Brighid.Identity.Client": "0.3.1",
+          "Brighid.Identity.Client": "0.3.2",
           "Destructurama.Attributed": "2.0.0",
           "Microsoft.EntityFrameworkCore.Design": "5.0.6",
           "Microsoft.Extensions.Hosting": "5.0.0",
