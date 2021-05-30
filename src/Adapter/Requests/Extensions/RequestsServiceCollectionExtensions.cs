@@ -27,8 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IBucketService, DefaultBucketService>();
             services.AddScoped<IBucketRepository, DefaultBucketRepository>();
             services.AddSingleton<HttpMessageInvoker, HttpClient>();
-
-            // services.AddHostedService<DefaultRequestWorker>();
+            services.AddHostedService<DefaultRequestWorker>();
         }
     }
 }
