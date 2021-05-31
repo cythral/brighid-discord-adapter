@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -26,6 +27,8 @@ using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
+using RichardSzalay.MockHttp;
+
 #pragma warning disable EF1001
 
 internal class AutoAttribute : AutoDataAttribute
@@ -44,6 +47,10 @@ internal class AutoAttribute : AutoDataAttribute
 
         var fixture = new Fixture();
         fixture.Inject(new CancellationToken(false));
+        var messageHandler = new MockHttpMessageHandler();
+        fixture.Inject(messageHandler);
+        fixture.Inject(new JwtSecurityTokenHandler { MaximumTokenSizeInBytes = int.MaxValue });
+        fixture.Inject(new System.Net.Http.HttpClient(messageHandler));
         fixture.Inject(provider.GetRequiredService<IStringLocalizer<Strings>>());
         fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
         fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.02 });
@@ -67,6 +74,7 @@ internal class AutoAttribute : AutoDataAttribute
         fixture.Customizations.Add(new TypeOmitter<MemoryStream>());
         fixture.Customizations.Add(new TypeOmitter<ISingletonOptionsInitializer>());
         fixture.Customizations.Insert(-1, new TargetRelay());
+        fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         return fixture;
     }
 }

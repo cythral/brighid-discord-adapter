@@ -47,7 +47,9 @@ namespace Brighid.Discord.Adapter
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
 
-            services.ConfigureBrighidIdentity("Identity");
+            services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
+            services.AddRazorPages();
+            services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();
@@ -84,6 +86,7 @@ namespace Brighid.Discord.Adapter
                 databaseContext.Database.MigrateAsync().GetAwaiter().GetResult();
             }
 
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

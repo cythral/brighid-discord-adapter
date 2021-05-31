@@ -25,7 +25,7 @@ namespace Brighid.Discord.Adapter.Events
         private readonly IDiscordUserClient discordUserClient;
         private readonly IDiscordChannelClient discordChannelClient;
         private readonly IStringLocalizer<Strings> strings;
-        private readonly IdentityOptions identityOptions;
+        private readonly AdapterOptions adapterOptions;
         private readonly IGatewayService gateway;
         private readonly IMetricReporter reporter;
         private readonly ILogger<MessageCreateEventController> logger;
@@ -38,7 +38,7 @@ namespace Brighid.Discord.Adapter.Events
         /// <param name="discordUserClient">Client used to send User API requests to Discord.</param>
         /// <param name="discordChannelClient">Client used to send Channel API requests to Discord.</param>
         /// <param name="strings">Localizer service for retrieving strings.</param>
-        /// <param name="identityOptions">Options to use for the identity service.</param>
+        /// <param name="adapterOptions">Options to use for the adapter.</param>
         /// <param name="gateway">Gateway that discord sends events through.</param>
         /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
@@ -48,7 +48,7 @@ namespace Brighid.Discord.Adapter.Events
             IDiscordUserClient discordUserClient,
             IDiscordChannelClient discordChannelClient,
             IStringLocalizer<Strings> strings,
-            IOptions<IdentityOptions> identityOptions,
+            IOptions<AdapterOptions> adapterOptions,
             IGatewayService gateway,
             IMetricReporter reporter,
             ILogger<MessageCreateEventController> logger
@@ -59,7 +59,7 @@ namespace Brighid.Discord.Adapter.Events
             this.discordUserClient = discordUserClient;
             this.discordChannelClient = discordChannelClient;
             this.strings = strings;
-            this.identityOptions = identityOptions.Value;
+            this.adapterOptions = adapterOptions.Value;
             this.gateway = gateway;
             this.reporter = reporter;
             this.logger = logger;
@@ -82,7 +82,7 @@ namespace Brighid.Discord.Adapter.Events
             if (@event.Message.Mentions.Any(mention => mention.Id == gateway.BotId))
             {
                 var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
-                var message = (string)strings["RegistrationGreeting", identityOptions.IdentityServerUri]!;
+                var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
                 await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
             }
         }

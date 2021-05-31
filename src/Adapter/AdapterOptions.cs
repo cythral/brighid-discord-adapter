@@ -1,3 +1,5 @@
+using System;
+
 using Destructurama.Attributed;
 
 namespace Brighid.Discord.Adapter
@@ -28,5 +30,25 @@ namespace Brighid.Discord.Adapter
         /// </summary>
         [NotLogged]
         public string ClientSecret { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Registration URL sent to unregistered users on mention.
+        /// </summary>
+        public string RegistrationUrl { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the OAuth2 User Info Endpoint.
+        /// </summary>
+        public Uri OAuth2UserInfoEndpoint { get; set; } = new Uri("https://discord.com/api/users/@me");
+
+        /// <summary>
+        /// Gets or sets the Discord OAuth2 Token Endpoint.
+        /// </summary>
+        public Uri OAuth2TokenEndpoint { get; set; } = new Uri("https://discord.com/api/oauth2/token");
+
+        /// <summary>
+        /// Gets or sets the Redirect URI used for Discord OAuth2.
+        /// </summary>
+        public Uri OAuth2RedirectUri { get; set; } = new Uri("http://localhost/oauth2/callback");
     }
 }

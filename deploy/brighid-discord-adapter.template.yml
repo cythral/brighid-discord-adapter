@@ -25,6 +25,10 @@ Parameters:
     Type: String
     Description: URI of the identity server.
 
+  RegistrationUrl:
+    Type: String
+    Description: URL that users can register and link their Discord account at.
+
   DatabaseName:
     Type: String
     Description: The name of the database to use
@@ -209,6 +213,10 @@ Resources:
               Value: !Ref ClientId
             - Name: Encrypted__Adapter__ClientSecret
               Value: !Ref ClientSecret
+            - Name: Adapter__RegistrationUrl
+              Value: !Ref RegistrationUrl
+            - Name: Adapter__OAuth2RedirectUri
+              Value: !Sub https://${DomainName}/oauth2/callback
 
   TaskRole:
     Type: AWS::IAM::Role
