@@ -1,0 +1,49 @@
+@using System
+
+@using Brighid.Discord.Adapter
+@using Brighid.Discord.Adapter.Users
+
+@using Microsoft.Extensions.Options
+@using Microsoft.Extensions.Localization
+
+@model AccountLinkViewModel
+
+@inject IOptions<IdentityOptions> identityOptions;
+@inject IStringLocalizer<Strings> localizer;
+@{
+    var failed = Model.Status != AccountLinkStatus.Success;
+    var icon = failed ? "fa-times failed" : "fa-link";
+
+    var discordId = Model.DiscordUsername != null && Model.DiscordDiscriminator != null
+    ? $"{Model.DiscordUsername}#{Model.DiscordDiscriminator}"
+    : "an unknown Discord account";
+
+    var avatarImageUri = Model.DiscordUserId != null && Model.DiscordAvatarHash != null
+    ? $"https://cdn.discordapp.com/avatars/{Model.DiscordUserId}/{Model.DiscordAvatarHash}.png"
+    : "https://www.freeiconspng.com/uploads/black-question-mark-icon-clip-art-10.png";
+
+    var message = localizer[$"AccountLink{Model.Status.ToString()}", discordId];
+    var identityServerUri = new UriBuilder(identityOptions.Value.IdentityServerUri)
+    {
+        Scheme = Uri.UriSchemeHttps,
+        Port = -1,
+    };
+}
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = failed ? "Account Link Failed" : "Account Linked";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    <div class="container">
+        <img class="discord-logo" src="https://discord.com/assets/9f6f9cd156ce35e2d94c0e62e3eff462.png" />
+        <i class="fa @icon discord-link"></i>
+        <img class="discord-user-avatar" src="@avatarImageUri" />
+    </div>
+    <p>@message</p>
+    <div class="container">
+        <a href="@identityServerUri">@localizer["ReturnToBrighidIdentity"] <i class="fa fa-chevron-right"></i></a>
+    </div>
+</div>

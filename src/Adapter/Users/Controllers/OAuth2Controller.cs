@@ -1,7 +1,12 @@
+using System;
+using System.Net;
 using System.Threading.Tasks;
+
+using Brighid.Identity.Client;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Adapter.Users
 {
@@ -12,16 +17,20 @@ namespace Brighid.Discord.Adapter.Users
     public class OAuth2Controller : Controller
     {
         private readonly IUserService userService;
+        private readonly ILogger<OAuth2Controller> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OAuth2Controller" /> class.
         /// </summary>
         /// <param name="userService">Service for user operations.</param>
+        /// <param name="logger">Logger used to log info to some destination(s).</param>
         public OAuth2Controller(
-            IUserService userService
+            IUserService userService,
+            ILogger<OAuth2Controller> logger
         )
         {
             this.userService = userService;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -45,15 +54,37 @@ namespace Brighid.Discord.Adapter.Users
                 return BadRequest();
             }
 
-            var identityUserId = userService.GetUserIdFromIdentityToken(idToken);
-            var token = await userService.ExchangeOAuth2CodeForToken(code, HttpContext.RequestAborted);
-            var discordUser = await userService.GetDiscordUserInfo(token, HttpContext.RequestAborted);
-            await userService.LinkDiscordIdToUser(discordUser.Id, identityUserId, accessToken, HttpContext.RequestAborted);
+            var discordUser = (Models.User?)null;
+            var status = AccountLinkStatus.Success;
 
-            return View("~/Users/Views/AccountLinkSuccess.cshtml", new AccountLinkSuccessViewModel
+            try
             {
-                DiscordUserId = discordUser.Id,
-                DiscordAvatarHash = discordUser.Avatar,
+                var identityUserId = userService.GetUserIdFromIdentityToken(idToken);
+                var token = await userService.ExchangeOAuth2CodeForToken(code, HttpContext.RequestAborted);
+                discordUser = await userService.GetDiscordUserInfo(token, HttpContext.RequestAborted);
+                await userService.LinkDiscordIdToUser(discordUser!.Value.Id, identityUserId, accessToken, HttpContext.RequestAborted);
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            }
+            catch (ApiException exception) when (exception.StatusCode == (int)HttpStatusCode.Conflict)
+            {
+                logger.LogError("Received conflict exception while attempting to link an account: {@exception}", exception);
+                status = AccountLinkStatus.AlreadyLinked;
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            }
+            catch (Exception exception)
+            {
+                logger.LogError("Received an error while attempting to link an account: {@exception}", exception);
+                status = AccountLinkStatus.Failed;
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+
+            return View("~/Users/Views/AccountLink.cshtml", new AccountLinkViewModel
+            {
+                Status = status,
+                DiscordUsername = discordUser?.Name,
+                DiscordDiscriminator = discordUser?.Discriminator,
+                DiscordUserId = discordUser?.Id,
+                DiscordAvatarHash = discordUser?.Avatar,
             });
         }
     }
