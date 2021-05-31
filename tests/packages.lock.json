@@ -170,10 +170,10 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.1.12",
-        "contentHash": "Ady6U2EnZWV+D2i0nybnvyn67uffuuVyesAoFb3d88yEeUpAvmX2nToNZ8vWEMfqrMGej7CJkjhswQ5l8nYfaQ==",
+        "resolved": "3.7.1.15",
+        "contentHash": "vr6IPFXfFZwbz02cM5fhmMSUdbkbNHg86dWRyBNzof9/rzsacCv5mCsqrh9EaLEgDB3S80MX5vGu6968aN74vA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.27, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.31, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
@@ -1875,7 +1875,7 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.1.26",
-          "AWSSDK.SimpleNotificationService": "3.7.1.12",
+          "AWSSDK.SimpleNotificationService": "3.7.1.15",
           "Brighid.Discord.Core": "1.0.0",
           "Brighid.Identity.Client": "0.3.3",
           "Destructurama.Attributed": "2.0.0",
