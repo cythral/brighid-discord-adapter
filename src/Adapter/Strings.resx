@@ -121,4 +121,20 @@
         <value>Hello!  In order to use my services, please register at {0}</value>
         <comment />
     </data>
+    <data name="AccountLinkSuccess" xml:space="preserve">
+        <value>{0} has been successfully linked to your Brighid account.</value>
+        <comment />
+    </data>
+    <data name="AccountLinkFailed" xml:space="preserve">
+        <value>An error occurred while attempting to link {0} to your Brighid account.</value>
+        <comment />
+    </data>
+    <data name="AccountLinkAlreadyLinked" xml:space="preserve">
+        <value>{0} has already been linked to a Brighid Identity account.</value>
+        <comment />
+    </data>
+    <data name="ReturnToBrighidIdentity" xml:space="preserve">
+        <value>Return to Brighid Identity</value>
+        <comment />
+    </data>
 </root>

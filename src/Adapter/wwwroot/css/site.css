@@ -106,11 +106,13 @@ body > .container {
 .discord-logo {
   background-color: #5865F2;
   padding: 30px;
-  border-radius: 15%;
+  padding-bottom: 20px;
+  border-radius: 100%;
 }
 
 .discord-user-avatar {
   border-radius: 100%;
+  border: 2px solid black;
 }
 
 .discord-logo, .discord-user-avatar {
@@ -128,4 +130,8 @@ body > .container {
   color: #5865F2;
   text-shadow: 0 1px 2px black;
   line-height: 150px;
+}
+
+.discord-link.failed {
+  color: var(--primary-color);
 }
