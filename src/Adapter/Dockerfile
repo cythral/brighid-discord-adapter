@@ -3,7 +3,7 @@ ARG AWSCLI_VERSION=2.2.1
 ARG ASPNET_VERSION
 ARG ASSEMBLY_NAME
 
-FROM public.ecr.aws/l2p2j5j0/unzip AS awscli
+FROM public.ecr.aws/cythral/unzip AS awscli
 ARG AWSCLI_VERSION
 WORKDIR /aws
 ADD https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWSCLI_VERSION}.zip ./awscli.zip
