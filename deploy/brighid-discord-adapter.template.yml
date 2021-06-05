@@ -85,6 +85,7 @@ Resources:
       Name: brighid-discord-adapter
       Roles:
         - Basic
+        - Impersonator
 
   RestQueue:
     Type: AWS::SQS::Queue
