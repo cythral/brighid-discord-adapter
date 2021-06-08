@@ -61,6 +61,10 @@ Parameters:
     Type: String
     Description: Encrypted Client Secret of the Discord Application.
 
+  CommandsServiceUri:
+    Type: String
+    Description: URI of the Commands Service
+
 Resources:
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
@@ -218,6 +222,8 @@ Resources:
               Value: !Ref RegistrationUrl
             - Name: Adapter__OAuth2RedirectUri
               Value: !Sub https://${DomainName}/oauth2/callback
+            - Name: Commands__ServiceUri
+              Value: !Ref CommandsServiceUri
 
   TaskRole:
     Type: AWS::IAM::Role

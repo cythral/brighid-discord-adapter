@@ -50,6 +50,7 @@ namespace Brighid.Discord.Adapter
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddRazorPages();
             services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
+            services.UseBrighidCommands(new Uri(configuration["Commands:ServiceUri"]));
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();

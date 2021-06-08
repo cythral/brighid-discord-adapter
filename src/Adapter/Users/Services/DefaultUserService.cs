@@ -133,5 +133,19 @@ namespace Brighid.Discord.Adapter.Users
                 return false;
             }
         }
+
+        /// <inheritdoc />
+        public async ValueTask<Guid> GetIdentityServiceUserId(Models.User user, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (userIdCache.TryGetValue(user.Id, out var cachedId))
+            {
+                return cachedId;
+            }
+
+            var result = await loginProvidersClient.GetUserByLoginProviderKey("discord", user.Id, cancellationToken);
+            userIdCache.Add(user.Id, result.Id);
+            return result.Id;
+        }
     }
 }

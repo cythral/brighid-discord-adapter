@@ -320,5 +320,46 @@ namespace Brighid.Discord.Adapter.Users
                 await client.Received().GetUserByLoginProviderKey(Is("discord"), Is(userId.ToString()), Is(cancellationToken));
             }
         }
+
+        [TestFixture]
+        public class GetIdentityServiceUserIdTests
+        {
+            [Test, Auto]
+            public async Task ShouldFetchTheUserIdFromTheIdentityService(
+                Models.User user,
+                [Frozen] Identity.Client.User identityUser,
+                [Frozen, Substitute] ILoginProvidersClient loginProvidersClient,
+                [Target] DefaultUserService service,
+                CancellationToken cancellationToken
+            )
+            {
+                var result = await service.GetIdentityServiceUserId(user, cancellationToken);
+
+                result.Should().Be(identityUser.Id);
+                await loginProvidersClient.Received().GetUserByLoginProviderKey(Is("discord"), Is(user.Id.Value.ToString()), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldRetrieveUserIdFromCacheIfPresent(
+                Models.User user,
+                Guid expectedId,
+                [Frozen, Substitute] IUserIdCache userIdCache,
+                [Frozen, Substitute] ILoginProvidersClient loginProvidersClient,
+                [Target] DefaultUserService service,
+                CancellationToken cancellationToken
+            )
+            {
+                userIdCache.TryGetValue(Any<Snowflake>(), out Any<Guid>()).Returns(x =>
+                {
+                    x[1] = expectedId;
+                    return true;
+                });
+
+                var result = await service.GetIdentityServiceUserId(user, cancellationToken);
+
+                result.Should().Be(expectedId);
+                await loginProvidersClient.DidNotReceive().GetUserByLoginProviderKey(Is("discord"), Is(user.Id.Value.ToString()), Is(cancellationToken));
+            }
+        }
     }
 }

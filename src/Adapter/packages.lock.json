@@ -20,11 +20,25 @@
           "AWSSDK.Core": "[3.7.0.31, 4.0.0)"
         }
       },
+      "Brighid.Commands.Client": {
+        "type": "Direct",
+        "requested": "[0.1.0-beta3, )",
+        "resolved": "0.1.0-beta3",
+        "contentHash": "YVPPq2Ycq67sazKbVHgx79xEX+FDZrL4AEKrzChkR58Mudj6DqtXhXHQJgdHZpG8u2RZuWJsRTg0cLS9+NXAWw==",
+        "dependencies": {
+          "Brighid.Identity.Client": "0.4.0-beta1",
+          "Microsoft.Extensions.Configuration": "5.0.0",
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Extensions.Http": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "5.0.0"
+        }
+      },
       "Brighid.Identity.Client": {
         "type": "Direct",
-        "requested": "[0.3.3, )",
-        "resolved": "0.3.3",
-        "contentHash": "g3hCZqnidsZR/KzqFb58OJ82WHGyQTIPe9D9ePiSOljZTgV7MRMpalcN/eiMk8RS+6N6/EKoY7+VwuqVu2LczA==",
+        "requested": "[0.4.0-beta1, )",
+        "resolved": "0.4.0-beta1",
+        "contentHash": "4RrRTTFaQPDk9G9c5id7B0XaLhurMQDTbdUFi8VI49q6Ki+VJSnVv/CiF/1vVE5P2xD/ustRlbmvSRQFVNUIgA==",
         "dependencies": {
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.DependencyInjection": "5.0.1",

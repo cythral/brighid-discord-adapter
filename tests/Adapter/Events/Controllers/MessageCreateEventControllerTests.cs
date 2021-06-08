@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Commands.Client;
+using Brighid.Commands.Client.Parser;
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
@@ -67,6 +69,124 @@ namespace Brighid.Discord.Adapter.Events
 
                 await emitter.Received().Emit(Is(message), Is(channelId), Is(cancellationToken));
                 await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldParseCommandIfUserIsRegistered(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                Guid identityUserId,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                Received.InOrder(async () =>
+                {
+                    await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
+                    await commandsClient.Received().ParseCommandAsUser(Is(message.Content), Is(identityUserId.ToString()), Is(cancellationToken));
+                });
+            }
+
+            [Test, Auto]
+            public async Task ShouldExecuteCommandAndReplyIfItExistsAndShouldReplyImmediately(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                Guid identityUserId,
+                [Frozen] Command command,
+                [Frozen] ExecuteCommandResponse executeCommandResponse,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+
+                executeCommandResponse.ReplyImmediately = true;
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                Received.InOrder(async () =>
+                {
+                    await commandsClient.Received().ExecuteCommand(Is(command.Name), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
+                    await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
+                });
+            }
+
+            [Test, Auto]
+            public async Task ShouldExecuteCommandButNotReplyIfItExistsButShouldNotReplyImmediately(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                Guid identityUserId,
+                [Frozen] Command command,
+                [Frozen] ExecuteCommandResponse executeCommandResponse,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+
+                executeCommandResponse.ReplyImmediately = false;
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await channelClient.DidNotReceive().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotExecuteCommandIfItDoesNotExist(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                Guid identityUserId,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+                commandsClient.ParseCommandAsUser(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns((Command?)null);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await commandsClient.DidNotReceiveWithAnyArgs().ExecuteCommand(Any<string>(), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
             }
 
             [Test, Auto]
