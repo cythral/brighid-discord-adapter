@@ -51,5 +51,13 @@ namespace Brighid.Discord.Adapter.Users
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>True if the user is registered, or false if not.</returns>
         Task<bool> IsUserRegistered(User user, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the identity service user id for a Discord User that has registered with the identity service.
+        /// </summary>
+        /// <param name="user">The user to get the identity service id for.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting identity service ID.</returns>
+        ValueTask<Guid> GetIdentityServiceUserId(User user, CancellationToken cancellationToken = default);
     }
 }
