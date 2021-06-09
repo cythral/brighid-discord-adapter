@@ -128,7 +128,12 @@ namespace Brighid.Discord.Adapter.Events
 
                 Received.InOrder(async () =>
                 {
-                    await commandsClient.Received().ExecuteCommand(Is(command.Name), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
+                    await commandsClient.Received().ExecuteCommand(
+                        Is(command.Name),
+                        Is<ExecuteCommandRequest>(req => req.Options == command.Options && req.Arguments == command.Arguments),
+                        Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()),
+                        Is(cancellationToken)
+                    );
                     await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
                 });
             }
@@ -186,7 +191,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                await commandsClient.DidNotReceiveWithAnyArgs().ExecuteCommand(Any<string>(), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
+                await commandsClient.DidNotReceiveWithAnyArgs().ExecuteCommand(Any<string>(), Any<ExecuteCommandRequest>(), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
             }
 
             [Test, Auto]

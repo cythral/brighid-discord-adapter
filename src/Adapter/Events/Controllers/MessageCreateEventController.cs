@@ -91,7 +91,8 @@ namespace Brighid.Discord.Adapter.Events
                 }
 
                 var executeCommandOptions = new ClientRequestOptions { ImpersonateUserId = userIdString };
-                var result = await commandsClient.ExecuteCommand(command!.Name, executeCommandOptions, cancellationToken);
+                var executeCommandRequest = new ExecuteCommandRequest { Options = command.Options, Arguments = command.Arguments };
+                var result = await commandsClient.ExecuteCommand(command!.Name, executeCommandRequest, executeCommandOptions, cancellationToken);
                 if (result.ReplyImmediately)
                 {
                     await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
