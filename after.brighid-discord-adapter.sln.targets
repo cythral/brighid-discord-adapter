@@ -11,7 +11,7 @@
             <EnvFileLines Include="ADAPTER_PROJECT_DIRECTORY=./src/Adapter" />
             <EnvFileLines Include="ADAPTER_OUTPUT_DIRECTORY=./bin/Adapter/Debug/net5.0" />
             <EnvFileLines Include="ADAPTER_ASSEMBLY_NAME=Adapter" />
-            <EnvFileLines Include="ASPNET_VERSION=5.0.6" />
+            <EnvFileLines Include="ASPNET_VERSION=5.0.7" />
             <EnvFileLines Include="REQUESTS_QUEUE_URL=$(Requests__QueueUrl)" />
             <EnvFileLines Include="ADAPTER_TOKEN=$(Adapter__Token)" />
             <EnvFileLines Include="GATEWAY_URI=$(Gateway__Uri)" />
