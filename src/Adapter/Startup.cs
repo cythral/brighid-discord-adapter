@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 
 using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 
+using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Database;
 
 using Destructurama;
@@ -50,7 +52,7 @@ namespace Brighid.Discord.Adapter
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddRazorPages();
             services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
-            services.UseBrighidCommands(new Uri(configuration["Commands:ServiceUri"]));
+            services.AddBrighidCommands(options => configuration.Bind("Commands", options));
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();
@@ -64,6 +66,7 @@ namespace Brighid.Discord.Adapter
 
             services.ConfigureRestClientResponseServices(configuration);
             services.ConfigureRestClientServices(configuration);
+            var descriptor = from service in services where service.ServiceType == typeof(ICommandsClient) select service;
         }
 
         /// <summary>
