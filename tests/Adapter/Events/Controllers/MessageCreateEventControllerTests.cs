@@ -72,13 +72,13 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
-            public async Task ShouldParseCommandIfUserIsRegistered(
+            public async Task ShouldParseAndExecuteCommandIfUserIsRegistered(
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
                 Guid identityUserId,
                 [Frozen, Substitute] IMessageEmitter emitter,
-                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
                 [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
             )
@@ -96,12 +96,12 @@ namespace Brighid.Discord.Adapter.Events
                 Received.InOrder(async () =>
                 {
                     await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
-                    await commandsClient.Received().ParseCommandAsUser(Is(message.Content), Is(identityUserId.ToString()), Is(cancellationToken));
+                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.ToString()), Is(cancellationToken));
                 });
             }
 
             [Test, Auto]
-            public async Task ShouldExecuteCommandAndReplyIfItExistsAndShouldReplyImmediately(
+            public async Task ShouldExecuteCommandAndReplyIfShouldReplyImmediately(
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
@@ -109,7 +109,7 @@ namespace Brighid.Discord.Adapter.Events
                 [Frozen] Command command,
                 [Frozen] ExecuteCommandResponse executeCommandResponse,
                 [Frozen, Substitute] IMessageEmitter emitter,
-                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
                 [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
@@ -128,10 +128,9 @@ namespace Brighid.Discord.Adapter.Events
 
                 Received.InOrder(async () =>
                 {
-                    await commandsClient.Received().ExecuteCommand(
-                        Is(command.Name),
-                        Is<ExecuteCommandRequest>(req => req.Options == command.Options && req.Arguments == command.Arguments),
-                        Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()),
+                    await commandsClient.Received().ParseAndExecuteCommandAsUser(
+                        Is(@event.Message.Content),
+                        Is(identityUserId.ToString()),
                         Is(cancellationToken)
                     );
                     await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
@@ -139,7 +138,7 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
-            public async Task ShouldExecuteCommandButNotReplyIfItExistsButShouldNotReplyImmediately(
+            public async Task ShouldExecuteCommandButNotReplyIfShouldNotReplyImmediately(
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
@@ -147,7 +146,7 @@ namespace Brighid.Discord.Adapter.Events
                 [Frozen] Command command,
                 [Frozen] ExecuteCommandResponse executeCommandResponse,
                 [Frozen, Substitute] IMessageEmitter emitter,
-                [Frozen, Substitute] ICommandsClient commandsClient,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
                 [Frozen, Substitute] IDiscordChannelClient channelClient,
                 [Frozen, Substitute] IUserService userService,
                 [Target] MessageCreateEventController controller
@@ -165,33 +164,6 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await channelClient.DidNotReceive().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldNotExecuteCommandIfItDoesNotExist(
-                string content,
-                Snowflake userId,
-                Snowflake channelId,
-                Guid identityUserId,
-                [Frozen, Substitute] IMessageEmitter emitter,
-                [Frozen, Substitute] ICommandsClient commandsClient,
-                [Frozen, Substitute] IDiscordChannelClient channelClient,
-                [Frozen, Substitute] IUserService userService,
-                [Target] MessageCreateEventController controller
-            )
-            {
-                var cancellationToken = new CancellationToken(false);
-                var author = new User { Id = userId };
-                var message = new Message { Content = content, Author = author, ChannelId = channelId };
-                var @event = new MessageCreateEvent { Message = message };
-
-                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
-                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
-                commandsClient.ParseCommandAsUser(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns((Command?)null);
-
-                await controller.Handle(@event, cancellationToken);
-
-                await commandsClient.DidNotReceiveWithAnyArgs().ExecuteCommand(Any<string>(), Any<ExecuteCommandRequest>(), Is<ClientRequestOptions>(opt => opt.ImpersonateUserId == identityUserId.ToString()), Is(cancellationToken));
             }
 
             [Test, Auto]

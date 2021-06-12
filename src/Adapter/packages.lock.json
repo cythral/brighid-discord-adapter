@@ -22,24 +22,11 @@
       },
       "Brighid.Commands.Client": {
         "type": "Direct",
-        "requested": "[0.1.0-beta5, )",
-        "resolved": "0.1.0-beta5",
-        "contentHash": "q3fY3wT+we5bVDc1KS8vGTPWrJ4BCvExtQg54MJ31CRyHJuVbWG0CSVmhea1QKhUt3P/LxlI4/a3A63w31PEYg==",
+        "requested": "[0.1.0-beta7, )",
+        "resolved": "0.1.0-beta7",
+        "contentHash": "1FnExbKNSmyD8gHxB51sAciEz3mulOQpl1+5vbfEyElp9DuXGwaOOJ2SttaKM1euGJWe0wDT5Fxoyck/vL628Q==",
         "dependencies": {
-          "Brighid.Identity.Client": "0.4.0-beta1",
-          "Microsoft.Extensions.Configuration": "5.0.0",
-          "Microsoft.Extensions.DependencyInjection": "5.0.1",
-          "Microsoft.Extensions.Http": "5.0.0",
-          "Microsoft.Extensions.Options": "5.0.0",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "5.0.0"
-        }
-      },
-      "Brighid.Identity.Client": {
-        "type": "Direct",
-        "requested": "[0.4.0-beta1, )",
-        "resolved": "0.4.0-beta1",
-        "contentHash": "4RrRTTFaQPDk9G9c5id7B0XaLhurMQDTbdUFi8VI49q6Ki+VJSnVv/CiF/1vVE5P2xD/ustRlbmvSRQFVNUIgA==",
-        "dependencies": {
+          "Brighid.Identity.Client": "0.4.0-beta2",
           "Microsoft.Extensions.Configuration": "5.0.0",
           "Microsoft.Extensions.DependencyInjection": "5.0.1",
           "Microsoft.Extensions.Http": "5.0.0",
@@ -186,6 +173,18 @@
         "contentHash": "oiI0T2xkZBcg74trX/NaBeL+SqCf/mdqtrXtWtAeaEZm/Gc8K6wdmMsdwYta1MIWc0pZu+diWdY9oYPRWuXlBw==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.0.32, 4.0.0)"
+        }
+      },
+      "Brighid.Identity.Client": {
+        "type": "Transitive",
+        "resolved": "0.4.0-beta2",
+        "contentHash": "P0GdHUyNx3U90OaXeY3XV6q0DWQEueZO1stD5lmIiFLB99lXfZkCIs1nK9GI2c27pgGb9F8be6Mk/2FcB6xchw==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "5.0.0",
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Extensions.Http": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "5.0.0"
         }
       },
       "Humanizer.Core": {

@@ -65,6 +65,10 @@ Parameters:
     Type: String
     Description: URI of the Commands Service
 
+  CommandsDefaultPrefix:
+    Type: String
+    Description: Default prefix to use for commands.
+
 Resources:
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
@@ -224,6 +228,8 @@ Resources:
               Value: !Sub https://${DomainName}/oauth2/callback
             - Name: Commands__ServiceUri
               Value: !Ref CommandsServiceUri
+            - Name: Commands__DefaultPrefix
+              Value: !Ref CommandsDefaultPrefix
 
   TaskRole:
     Type: AWS::IAM::Role

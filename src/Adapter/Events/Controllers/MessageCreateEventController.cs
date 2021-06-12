@@ -27,7 +27,7 @@ namespace Brighid.Discord.Adapter.Events
         private readonly IDiscordChannelClient discordChannelClient;
         private readonly IStringLocalizer<Strings> strings;
         private readonly AdapterOptions adapterOptions;
-        private readonly ICommandsClient commandsClient;
+        private readonly IBrighidCommandsService commandsService;
         private readonly IGatewayService gateway;
         private readonly IMetricReporter reporter;
         private readonly ILogger<MessageCreateEventController> logger;
@@ -41,7 +41,7 @@ namespace Brighid.Discord.Adapter.Events
         /// <param name="discordChannelClient">Client used to send Channel API requests to Discord.</param>
         /// <param name="strings">Localizer service for retrieving strings.</param>
         /// <param name="adapterOptions">Options to use for the adapter.</param>
-        /// <param name="commandsClient">Client for interacting with the commands service.</param>
+        /// <param name="commandsService">Client for interacting with the commands service.</param>
         /// <param name="gateway">Gateway that discord sends events through.</param>
         /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
@@ -52,7 +52,7 @@ namespace Brighid.Discord.Adapter.Events
             IDiscordChannelClient discordChannelClient,
             IStringLocalizer<Strings> strings,
             IOptions<AdapterOptions> adapterOptions,
-            ICommandsClient commandsClient,
+            IBrighidCommandsService commandsService,
             IGatewayService gateway,
             IMetricReporter reporter,
             ILogger<MessageCreateEventController> logger
@@ -64,7 +64,7 @@ namespace Brighid.Discord.Adapter.Events
             this.discordChannelClient = discordChannelClient;
             this.strings = strings;
             this.adapterOptions = adapterOptions.Value;
-            this.commandsClient = commandsClient;
+            this.commandsService = commandsService;
             this.gateway = gateway;
             this.reporter = reporter;
             this.logger = logger;
@@ -84,16 +84,10 @@ namespace Brighid.Discord.Adapter.Events
 
                 var userId = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
                 var userIdString = userId.ToString();
-                var command = await commandsClient.ParseCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
-                if (command == null)
-                {
-                    return;
-                }
 
-                var executeCommandOptions = new ClientRequestOptions { ImpersonateUserId = userIdString };
-                var executeCommandRequest = new ExecuteCommandRequest { Options = command.Options, Arguments = command.Arguments };
-                var result = await commandsClient.ExecuteCommand(command!.Name, executeCommandRequest, executeCommandOptions, cancellationToken);
-                if (result.ReplyImmediately)
+                var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
+                logger.LogInformation("Got result: {@result}", result);
+                if (result?.ReplyImmediately == true)
                 {
                     await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
                 }
