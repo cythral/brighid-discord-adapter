@@ -13,5 +13,6 @@
   "RestResponseServerPort": "19426",
   "ClientId": "671109403189182502",
   "ClientSecret": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQFmlOkXvZ9HttJWb/gOompYAAAAfzB9BgkqhkiG9w0BBwagcDBuAgEAMGkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMVjJBeVtX6XQnCZQiAgEQgDxaWuYXuC0m3cf/+yahEDvuw7jobdPyW//bPqhaKYrjmX8EXxCnKtl9KymF8ljWBuGNhcEy3u5gkYuzsfg=",
-  "CommandsServiceUri": "http://commands.brigh.id"
+  "CommandsServiceUri": "http://commands.brigh.id",
+  "CommandsDefaultPrefix": "."
 }
