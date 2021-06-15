@@ -91,13 +91,13 @@ Resources:
         Listeners:
           - PortMapping:
               Port: 80
-              Protocol: http2
+              Protocol: http
             HealthCheck:
               UnhealthyThreshold: 3
               HealthyThreshold: 5
               TimeoutMillis: 30000
               Path: /healthcheck
-              Protocol: http2
+              Protocol: http
               IntervalMillis: 30000
         ServiceDiscovery:
           AWSCloudMap:
@@ -114,7 +114,7 @@ Resources:
         Listeners:
           - PortMapping:
               Port: 80
-              Protocol: http2
+              Protocol: http
 
   MeshRoute:
     Type: AWS::AppMesh::Route
