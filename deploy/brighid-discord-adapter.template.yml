@@ -119,7 +119,7 @@ Resources:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
       VirtualGatewayName: internet
-      RouteName: !Ref MeshNodeName
+      GatewayRouteName: !Ref MeshNodeName
       Spec:
         HttpRoute:
           Action:
