@@ -75,28 +75,19 @@ Parameters:
 
   MeshNodeName:
     Type: String
-    Description: Name to use in the App Mesh.
+    Description: Name to use for the node in the App Mesh.
 
 Resources:
-  MeshRoute:
-    Type: AWS::AppMesh::Route
+  MeshService:
+    Type: AWS::AppMesh::VirtualService
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualRouterName: http
-      RouteName: !Ref MeshNodeName
+      VirtualServiceName: !Ref DomainName
       Spec:
-        HttpRoute:
-          Action:
-            WeightedTargets:
-              - VirtualNode: !GetAtt MeshNode.VirtualNodeName
-                Weight: 1
-          Match:
-            Prefix: /
-            Headers:
-              - Name: host
-                Match:
-                  Exact: !Ref DomainName
+        Provider:
+          VirtualNode:
+            VirtualNodeName: !GetAtt MeshNode.VirtualNodeName
 
   MeshNode:
     Type: AWS::AppMesh::VirtualNode
@@ -120,6 +111,22 @@ Resources:
           AWSCloudMap:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
+
+  MeshGatewayRoute:
+    Type: AWS::AppMesh::GatewayRoute
+    Properties:
+      MeshName: brighid-mesh
+      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
+      VirtualGatewayName: internet
+      GatewayRouteName: !Ref MeshNodeName
+      Spec:
+        HttpRoute:
+          Action:
+            Target:
+              VirtualService:
+                VirtualServiceName: !GetAtt MeshService.VirtualServiceName
+          Match:
+            Prefix: /
 
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
