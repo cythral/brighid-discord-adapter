@@ -80,8 +80,6 @@ Resources:
         Provider:
           VirtualRouter:
             VirtualRouterName: !GetAtt MeshRouter.VirtualRouterName
-          VirtualNode:
-            VirtualNodeName: !GetAtt MeshNode.VirtualNodeName
 
   MeshNode:
     Type: AWS::AppMesh::VirtualNode
