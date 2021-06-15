@@ -70,6 +70,29 @@ Parameters:
     Description: Default prefix to use for commands.
 
 Resources:
+  MeshService:
+    Type: AWS::AppMesh::VirtualService
+    Properties:
+      MeshName: brighid-mesh
+      MeshOwner: !ImportValue cfn-metadata:MasterAccountId
+      VirtualServiceName: discord
+      Spec:
+        Provider:
+          VirtualNode:
+            VirtualNodeName: !GetAtt MeshNode.VirtualNodeName
+
+  MeshNode:
+    Type: AWS::AppMesh::VirtualNode
+    Properties:
+      MeshName: brighid-mesh
+      MeshOwner: !ImportValue cfn-metadata:MasterAccountId
+      VirtualNodeName: discord
+      Spec:
+        ServiceDiscovery:
+          AWSCloudMap:
+            NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistry
+            ServiceName: discord
+
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
     Properties:
