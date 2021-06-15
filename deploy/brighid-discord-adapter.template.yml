@@ -217,6 +217,7 @@ Resources:
             - !ImportValue cfn-utilities:SubnetIds
           SecurityGroups:
             - !ImportValue cfn-utilities:WebSecurityGroupId
+            - !ImportValue cfn-utilities:EnvoySecurityGroupId
             - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
