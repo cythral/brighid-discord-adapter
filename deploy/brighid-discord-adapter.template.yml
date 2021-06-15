@@ -69,6 +69,10 @@ Parameters:
     Type: String
     Description: Default prefix to use for commands.
 
+  EnvoyImage:
+    Type: String
+    Description: Image to use for the Envoy Sidecar.
+
 Resources:
   MeshService:
     Type: AWS::AppMesh::VirtualService
@@ -242,10 +246,27 @@ Resources:
       TaskRoleArn: !GetAtt TaskRole.Arn
       RequiresCompatibilities:
         - FARGATE
+      ProxyConfiguration:
+        Type: APPMESH
+        ContainerName: envoy
+        ProxyConfigurationProperties:
+          - Name: IgnoredUID
+            Value: "1337"
+          - Name: ProxyIngressPort
+            Value: "15000"
+          - Name: ProxyEgressPort
+            Value: "15001"
+          - Name: AppPorts
+            Value: "80"
+          - Name: EgressIgnoredIPs
+            Value: 169.254.170.2,169.254.169.254
       ContainerDefinitions:
         - Name: discord-adapter
           Essential: true
           Image: !Ref Image
+          DependsOn:
+            - ContainerName: envoy
+              Condition: HEALTHY
           PortMappings:
             - ContainerPort: 80
           LogConfiguration:
@@ -295,12 +316,41 @@ Resources:
               Value: !Ref CommandsServiceUri
             - Name: Commands__DefaultPrefix
               Value: !Ref CommandsDefaultPrefix
+        - Name: envoy
+          Image: !Ref EnvoyImage
+          Essential: true
+          User: "1337"
+          Ulimits:
+            - Name: "nofile"
+              HardLimit: 15000
+              SoftLimit: 15000
+          PortMappings:
+            - ContainerPort: 9901
+            - ContainerPort: 15000
+            - ContainerPort: 15001
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -s http://localhost:9901/server_info | grep state | grep -q LIVE
+            Interval: 5
+            Timeout: 2
+            Retries: 3
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: brighid
+          Environment:
+            - Name: APPMESH_VIRTUAL_NODE_NAME
+              Value: !Sub mesh/brighid-mesh/virtualNode/${MeshNode.VirtualNodeName}
 
   TaskRole:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
         - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
       AssumeRolePolicyDocument:
