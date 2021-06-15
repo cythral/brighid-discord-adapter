@@ -79,18 +79,18 @@ Resources:
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualServiceName: discord
+      VirtualServiceName: !Ref DomainName
       Spec:
         Provider:
-          VirtualRouter:
-            VirtualRouterName: !GetAtt MeshRouter.VirtualRouterName
+          VirtualNode:
+            VirtualNodeName: !GetAtt MeshNode.VirtualNodeName
 
   MeshNode:
     Type: AWS::AppMesh::VirtualNode
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualNodeName: discord
+      VirtualNodeName: !Ref DomainName
       Spec:
         Listeners:
           - PortMapping:
@@ -108,36 +108,21 @@ Resources:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
 
-  MeshRouter:
-    Type: AWS::AppMesh::VirtualRouter
+  MeshGatewayRoute:
+    Type: AWS::AppMesh::GatewayRoute
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualRouterName: discord
-      Spec:
-        Listeners:
-          - PortMapping:
-              Port: 80
-              Protocol: http
-
-  MeshRoute:
-    Type: AWS::AppMesh::Route
-    Properties:
-      MeshName: brighid-mesh
-      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualRouterName: !GetAtt MeshRouter.VirtualRouterName
+      VirtualGatewayName: internet
+      GatewayRouteName: !Ref DomainName
       Spec:
         HttpRoute:
           Action:
-            WeightedTargets:
-              - VirtualNode: !GetAtt MeshNode.VirtualNodeName
-                Weight: 1
+            Target:
+              VirtualService:
+                VirtualServiceName: !GetAtt MeshService.VirtualServiceName
           Match:
             Prefix: /
-            Headers:
-              - Name: host
-                Match:
-                  Exact: !Ref DomainName
 
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
