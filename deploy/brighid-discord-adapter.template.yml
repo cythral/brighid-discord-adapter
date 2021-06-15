@@ -74,7 +74,7 @@ Resources:
     Type: AWS::AppMesh::VirtualService
     Properties:
       MeshName: brighid-mesh
-      MeshOwner: !ImportValue cfn-metadata:MasterAccountId
+      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
       VirtualServiceName: discord
       Spec:
         Provider:
@@ -85,7 +85,7 @@ Resources:
     Type: AWS::AppMesh::VirtualNode
     Properties:
       MeshName: brighid-mesh
-      MeshOwner: !ImportValue cfn-metadata:MasterAccountId
+      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
       VirtualNodeName: discord
       Spec:
         ServiceDiscovery:
