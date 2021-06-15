@@ -112,6 +112,25 @@ Resources:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
 
+  MeshGatewayRoute:
+    Type: Custom::MeshGatewayRoute
+    Properties:
+      ServiceToken: !ImportValue cfn-gateway-route-resource:GatewayRouteLambdaArn
+      MeshName: brighid-mesh
+      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
+      VirtualGatewayName: internet
+      RouteName: !Ref MeshNodeName
+      Spec:
+        HttpRoute:
+          Action:
+            Target:
+              VirtualService:
+                VirtualServiceName: !GetAtt MeshService.VirtualServiceName
+          Match:
+            Prefix: /
+            Hostname:
+              Exact: !Ref DomainName
+
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
     Properties:
