@@ -58,6 +58,21 @@ Resources:
             HostedZoneId: !ImportValue cfn-gateway:LoadBalancerCanonicalHostedZoneId
             DNSName: !ImportValue cfn-gateway:LoadBalancerDnsName
 
+  ProdGatewayRoute:
+    Type: AWS::AppMesh::GatewayRoute
+    Properties:
+      MeshName: brighid-mesh
+      MeshOwner: !Ref AWS::AccountId
+      VirtualGatewayName: internet
+      Spec:
+        HttpRoute:
+          Action:
+            Target:
+              VirtualService:
+                VirtualServiceName: discord.brigh.id
+          Match:
+            Prefix: /
+
   ArtifactStore:
     Type: AWS::S3::Bucket
 
