@@ -73,28 +73,37 @@ Parameters:
     Type: String
     Description: Image to use for the Envoy Sidecar.
 
-  MeshServiceName:
+  MeshNodeName:
     Type: String
     Description: Name to use in the App Mesh.
 
 Resources:
-  MeshService:
-    Type: AWS::AppMesh::VirtualService
+  MeshRoute:
+    Type: AWS::AppMesh::Route
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualServiceName: !Ref MeshServiceName
+      VirtualRouterName: http
+      RouteName: !Ref MeshNodeName
       Spec:
-        Provider:
-          VirtualNode:
-            VirtualNodeName: !GetAtt MeshNode.VirtualNodeName
+        HttpRoute:
+          Action:
+            WeightedTargets:
+              - VirtualNode: !GetAtt MeshNode.VirtualNodeName
+                Weight: 1
+          Match:
+            Prefix: /
+            Headers:
+              - Name: host
+                Match:
+                  Exact: !Ref DomainName
 
   MeshNode:
     Type: AWS::AppMesh::VirtualNode
     Properties:
       MeshName: brighid-mesh
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualNodeName: !Ref MeshServiceName
+      VirtualNodeName: !Ref MeshNodeName
       Spec:
         Listeners:
           - PortMapping:
@@ -111,22 +120,6 @@ Resources:
           AWSCloudMap:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
-
-  MeshGatewayRoute:
-    Type: AWS::AppMesh::GatewayRoute
-    Properties:
-      MeshName: brighid-mesh
-      MeshOwner: !ImportValue cfn-metadata:SharedAccountId
-      VirtualGatewayName: internet
-      GatewayRouteName: !Ref MeshServiceName
-      Spec:
-        HttpRoute:
-          Action:
-            Target:
-              VirtualService:
-                VirtualServiceName: !GetAtt MeshService.VirtualServiceName
-          Match:
-            Prefix: /
 
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service

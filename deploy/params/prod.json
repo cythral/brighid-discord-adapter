@@ -16,5 +16,5 @@
   "CommandsServiceUri": "http://commands.brigh.id",
   "CommandsDefaultPrefix": ".",
   "EnvoyImage": "840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.17.2.0-prod",
-  "MeshServiceName": "discord-dev"
+  "MeshNodeName": "discord-dev"
 }
