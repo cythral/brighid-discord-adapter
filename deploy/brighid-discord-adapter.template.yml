@@ -343,7 +343,9 @@ Resources:
               awslogs-stream-prefix: brighid
           Environment:
             - Name: APPMESH_VIRTUAL_NODE_NAME
-              Value: !Sub mesh/brighid-mesh/virtualNode/${MeshNode.VirtualNodeName}
+              Value: !Sub
+                - mesh/brighid-mesh@${SharedAccountId}/virtualNode/${MeshNode.VirtualNodeName}
+                - SharedAccountId: !ImportValue cfn-metadata:SharedAccountId
 
   TaskRole:
     Type: AWS::IAM::Role
