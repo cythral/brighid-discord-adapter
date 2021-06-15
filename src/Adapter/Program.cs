@@ -31,10 +31,6 @@ namespace Brighid.Discord.Adapter
             {
                 builder.UseStartup<Startup>();
                 builder.UseUrls("http://0.0.0.0:80");
-                builder.ConfigureKestrel(options =>
-                {
-                    options.ConfigureEndpointDefaults(lo => lo.Protocols = HttpProtocols.Http2);
-                });
             });
         }
     }
