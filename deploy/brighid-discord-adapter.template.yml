@@ -123,7 +123,7 @@ Resources:
       MeshOwner: !ImportValue cfn-metadata:SharedAccountId
       VirtualRouterName: !GetAtt MeshRouter.VirtualRouterName
       Spec:
-        Http2Route:
+        HttpRoute:
           Action:
             WeightedTargets:
               - VirtualNode: !GetAtt MeshNode.VirtualNodeName
