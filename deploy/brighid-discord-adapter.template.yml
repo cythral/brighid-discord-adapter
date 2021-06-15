@@ -101,7 +101,7 @@ Resources:
               IntervalMillis: 30000
         ServiceDiscovery:
           AWSCloudMap:
-            NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistry
+            NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
 
   MeshRouter:
