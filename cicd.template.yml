@@ -65,7 +65,7 @@ Resources:
       Priority: 21
       Actions:
         - Type: forward
-          TargetGroupArn: !ImportValue cfn-gateway:DevTargetGroupArn
+          TargetGroupArn: !ImportValue cfn-gateway:MeshTargetGroupArn
       Conditions:
         - Field: host-header
           HostHeaderConfig:
