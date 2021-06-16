@@ -173,7 +173,6 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
-      ServiceName: discord-adapter
       Cluster: !ImportValue brighid-infrastructure:ClusterName
       LaunchType: FARGATE
       NetworkConfiguration:
