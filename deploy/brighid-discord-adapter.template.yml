@@ -128,10 +128,8 @@ Resources:
                 VirtualServiceName: !GetAtt MeshService.VirtualServiceName
           Match:
             Prefix: /
-            Headers:
-              - Name: host
-                Match:
-                  Exact: !Ref DomainName
+            Hostname:
+              Exact: !Ref DomainName
 
   ServiceRegistryRecord:
     Type: AWS::ServiceDiscovery::Service
