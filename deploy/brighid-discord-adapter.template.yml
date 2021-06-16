@@ -170,20 +170,6 @@ Resources:
           ToPort: !Ref RestResponseServerPort
           CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
 
-  ListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      ListenerArn: !ImportValue cfn-utilities:HttpListenerArn
-      Priority: 6
-      Actions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
-      Conditions:
-        - Field: host-header
-          HostHeaderConfig:
-            Values:
-              - !Ref DomainName
-
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
