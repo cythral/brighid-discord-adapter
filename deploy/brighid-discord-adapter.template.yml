@@ -170,18 +170,6 @@ Resources:
           ToPort: !Ref RestResponseServerPort
           CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
 
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      TargetType: ip
-      VpcId: !ImportValue cfn-utilities:VpcId
-      Protocol: HTTP
-      Port: 80
-      HealthCheckPath: /healthcheck
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: "30"
-
   Service:
     Type: AWS::ECS::Service
     Properties:
@@ -199,10 +187,6 @@ Resources:
             - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
-      LoadBalancers:
-        - ContainerName: discord-adapter
-          ContainerPort: 80
-          TargetGroupArn: !Ref TargetGroup
       ServiceRegistries:
         - RegistryArn: !GetAtt ServiceRegistryRecord.Arn
           Port: 80
