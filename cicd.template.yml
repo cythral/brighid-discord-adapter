@@ -58,21 +58,6 @@ Resources:
             HostedZoneId: !ImportValue cfn-gateway:LoadBalancerCanonicalHostedZoneId
             DNSName: !ImportValue cfn-gateway:LoadBalancerDnsName
 
-  # MeshListenerRule:
-  #   Type: AWS::ElasticLoadBalancingV2::ListenerRule
-  #   Properties:
-  #     ListenerArn: !ImportValue cfn-gateway:HttpsListenerArn
-  #     Priority: 21
-  #     Actions:
-  #       - Type: forward
-  #         TargetGroupArn: !ImportValue cfn-gateway:MeshTargetGroupArn
-  #     Conditions:
-  #       - Field: host-header
-  #         HostHeaderConfig:
-  #           Values:
-  #             - discord.dev.brigh.id
-  #             - discord.brigh.id
-
   ArtifactStore:
     Type: AWS::S3::Bucket
 
