@@ -335,7 +335,7 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
-            - Name: APPMESH_VIRTUAL_NODE_NAME
+            - Name: APPMESH_RESOURCE_ARN
               Value: !Sub
                 - mesh/brighid-mesh@${SharedAccountId}/virtualNode/${MeshNode.VirtualNodeName}
                 - SharedAccountId: !ImportValue cfn-metadata:SharedAccountId
