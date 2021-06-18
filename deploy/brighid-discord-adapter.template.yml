@@ -99,13 +99,13 @@ Resources:
         Listeners:
           - PortMapping:
               Port: 80
-              Protocol: http2
+              Protocol: http
             HealthCheck:
               UnhealthyThreshold: 3
               HealthyThreshold: 5
               TimeoutMillis: 30000
               Path: /healthcheck
-              Protocol: http2
+              Protocol: http
               IntervalMillis: 30000
         ServiceDiscovery:
           AWSCloudMap:
@@ -121,7 +121,7 @@ Resources:
       VirtualGatewayName: internet
       GatewayRouteName: !Ref MeshNodeName
       Spec:
-        Http2Route:
+        HttpRoute:
           Action:
             Target:
               VirtualService:
@@ -170,9 +170,36 @@ Resources:
           ToPort: !Ref RestResponseServerPort
           CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
 
+  ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !ImportValue cfn-utilities:HttpListenerArn
+      Priority: 6
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: host-header
+          HostHeaderConfig:
+            Values:
+              - !Ref DomainName
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetType: ip
+      VpcId: !ImportValue cfn-utilities:VpcId
+      Protocol: HTTP
+      Port: 80
+      HealthCheckPath: /healthcheck
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: "30"
+
   Service:
     Type: AWS::ECS::Service
     Properties:
+      ServiceName: discord-adapter
       Cluster: !ImportValue brighid-infrastructure:ClusterName
       LaunchType: FARGATE
       NetworkConfiguration:
@@ -186,6 +213,10 @@ Resources:
             - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
+      LoadBalancers:
+        - ContainerName: discord-adapter
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup
       ServiceRegistries:
         - RegistryArn: !GetAtt ServiceRegistryRecord.Arn
           Port: 80
@@ -304,7 +335,7 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
-            - Name: APPMESH_RESOURCE_ARN
+            - Name: APPMESH_VIRTUAL_NODE_NAME
               Value: !Sub
                 - mesh/brighid-mesh@${SharedAccountId}/virtualNode/${MeshNode.VirtualNodeName}
                 - SharedAccountId: !ImportValue cfn-metadata:SharedAccountId

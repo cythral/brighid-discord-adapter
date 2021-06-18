@@ -1,8 +1,6 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -31,13 +29,7 @@ namespace Brighid.Discord.Adapter
             .ConfigureWebHostDefaults(builder =>
             {
                 builder.UseStartup<Startup>();
-                builder.ConfigureKestrel(options =>
-                {
-                    options.Listen(IPAddress.Any, 80, listenOptions =>
-                    {
-                        listenOptions.Protocols = HttpProtocols.Http2;
-                    });
-                });
+                builder.UseUrls("http://0.0.0.0:80");
             });
         }
     }
