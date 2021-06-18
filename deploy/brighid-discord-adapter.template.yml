@@ -219,7 +219,7 @@ Resources:
           - Name: ProxyEgressPort
             Value: "15001"
           - Name: AppPorts
-            Value: "80"
+            Value: !Sub "80,${RestResponseServerPort}"
           - Name: EgressIgnoredIPs
             Value: 169.254.170.2,169.254.169.254
       ContainerDefinitions:
