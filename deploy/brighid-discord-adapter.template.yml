@@ -107,6 +107,9 @@ Resources:
               Path: /healthcheck
               Protocol: http2
               IntervalMillis: 30000
+          - PortMapping:
+              Port: !Ref RestResponseServerPort
+              Protocol: tcp
         ServiceDiscovery:
           AWSCloudMap:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
