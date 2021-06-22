@@ -159,18 +159,18 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.2",
-        "contentHash": "gRGM8nnECgSXJ6dnwWMphUevffXUq9zrC+UQO+hXqhZUWpmW47vspgMtMfrEU8boMiYVOUUAP1F55Ad0Z0U1LA==",
+        "resolved": "3.7.2.4",
+        "contentHash": "BsyVsK6Gg7GrTXCDzPADFBY4tmWyi+EUDuiN4bbkNjXivqb/xSc3vvCnxtNek1Nc4G+ZsVTmCEMLHfT8pV6iLw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.31, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.0.31",
-        "contentHash": "oiI0T2xkZBcg74trX/NaBeL+SqCf/mdqtrXtWtAeaEZm/Gc8K6wdmMsdwYta1MIWc0pZu+diWdY9oYPRWuXlBw==",
+        "resolved": "3.7.0.34",
+        "contentHash": "ZccIgZlV0eGFkT4MhcDjkTm7tt9t5MILLyLzWFVXRyel5e775FACmYKiUou/CSQTR+7ivNYh3MZN/lElQDN7sA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.32, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -1763,8 +1763,8 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.1.30",
-          "AWSSDK.SimpleNotificationService": "3.7.2",
-          "Brighid.Commands.Client": "0.1.0-beta7",
+          "AWSSDK.SimpleNotificationService": "3.7.2.4",
+          "Brighid.Commands.Client": "0.1.0-beta8",
           "Brighid.Discord.Core": "1.0.0",
           "Destructurama.Attributed": "2.0.0",
           "Microsoft.EntityFrameworkCore": "5.0.7",
@@ -1792,7 +1792,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.31",
+          "AWSSDK.SQS": "3.7.0.34",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.0",
           "Lambdajection.Layer": "0.8.0",
@@ -1803,7 +1803,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.31",
+          "AWSSDK.SQS": "3.7.0.34",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
