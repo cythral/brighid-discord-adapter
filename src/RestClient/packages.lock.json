@@ -4,11 +4,11 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.0.33, )",
-        "resolved": "3.7.0.33",
-        "contentHash": "bPOmsDNxJc15+9ZevmswbNPEpNrlHQmR3yAwW3mxl5GlhZxPVlWsfkzoKoVydVUSu0WWMCPCzvNWbQEuYWD9MQ==",
+        "requested": "[3.7.0.31, )",
+        "resolved": "3.7.0.31",
+        "contentHash": "oiI0T2xkZBcg74trX/NaBeL+SqCf/mdqtrXtWtAeaEZm/Gc8K6wdmMsdwYta1MIWc0pZu+diWdY9oYPRWuXlBw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.34, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.32, 4.0.0)"
         }
       },
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
@@ -58,17 +58,17 @@
       },
       "StyleCop.Analyzers": {
         "type": "Direct",
-        "requested": "[1.2.0-beta.333, )",
-        "resolved": "1.2.0-beta.333",
-        "contentHash": "o2r6o6TVTb6VdTtWEYT88/SgixcujjZ3gXMktvI/aNkA3y0CxUSVZEL23OjFe4/sDiTvldkdhKEyAQP9Z8r5wA==",
+        "requested": "[1.2.0-beta.354, )",
+        "resolved": "1.2.0-beta.354",
+        "contentHash": "oDSJNxnEvIzAQTkpkc/FnJP4dQ7TV6fHMsI+2ckU5DOaMiwiEfh1fawMsSqz2bCoNwbTt9lS6MgYvyVKujNJoA==",
         "dependencies": {
-          "StyleCop.Analyzers.Unstable": "1.2.0.333"
+          "StyleCop.Analyzers.Unstable": "1.2.0.354"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.34",
-        "contentHash": "5EGFEfIIiIF2iQfxcwSjbuL1gvs2ESVLwECAxgpD2BDzfXdjxsHwNRXQPT+7R7iS78hjBETF/ka1iTMuNqU4ww=="
+        "resolved": "3.7.0.32",
+        "contentHash": "4p5xrY5uSfUKiexYQYwcL/qBDi0WcqbPZm9Lp4Ta7ONGwzy3h2lFjXghwzqScGmh6/Zo2pfJVa9gavSGj4Frkg=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -305,8 +305,8 @@
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
-        "resolved": "1.2.0.333",
-        "contentHash": "7mwxcwa3xZnyU71OTqSgntCDpsZ5gkc4saXhuJeyg5Xc+3xiQxzyhy26uG8rVF8Z7GKpXCsHCL3rd5ZomA+a/A=="
+        "resolved": "1.2.0.354",
+        "contentHash": "/3RlM31XbJ02gaWh7dVumWOyMvGHswb/zygGJXd9oEJMRyyYc/HFJlAC5gBPxvi9cB4CMvIyyUTmZz5VLKwTvg=="
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",

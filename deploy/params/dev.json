@@ -9,7 +9,7 @@
   "DatabaseName": "brighid-discord",
   "DatabasePassword": "AQICAHjCPp/4JJqnSjdP1A4JZ+E3yC2Gqmk9GshiMiqu57jujwFTov91m7LK3hkwJI3An32uAAAAbzBtBgkqhkiG9w0BBwagYDBeAgEAMFkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMIxkKMyEvY/io7eRCAgEQgCw4hT/q4b4D40Gl4ajJ2pU9xaoZkvzTT/A3q/FNzxyeXRuAK4/u0gEu6BLkHA==",
   "DotnetLayerVersion": "2",
-  "LambdajectionLayerVersion": "8",
+  "LambdajectionLayerVersion": "7",
   "RestResponseServerPort": "19426",
   "ClientId": "834067055162556446",
   "ClientSecret": "AQICAHjCPp/4JJqnSjdP1A4JZ+E3yC2Gqmk9GshiMiqu57jujwHA1fBeUj4VJAQk5BMUiffkAAAAfzB9BgkqhkiG9w0BBwagcDBuAgEAMGkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMzOoLZuffCjfk6TwgAgEQgDyvHCBOxfbT9nJxUJOas9LyEIhMQQXgnzzkAIS8oKU5oUwLLnCAgCXCPmFrIuy9kGtrlsjWkEqAO6zWva0=",
