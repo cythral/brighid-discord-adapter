@@ -167,10 +167,10 @@
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.0.34",
-        "contentHash": "ZccIgZlV0eGFkT4MhcDjkTm7tt9t5MILLyLzWFVXRyel5e775FACmYKiUou/CSQTR+7ivNYh3MZN/lElQDN7sA==",
+        "resolved": "3.7.0.35",
+        "contentHash": "/MfdFaa+uw6l1wyoyNJZ8ilF3hsJR+RSYmRL2Jogs1ZdmuvTB2HeaXh0YqBhMTki83Ty9UdV8wdy3wLdsRfs6g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.36, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -1792,7 +1792,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.34",
+          "AWSSDK.SQS": "3.7.0.35",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.2",
           "Lambdajection.Layer": "0.8.2",
@@ -1803,7 +1803,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.34",
+          "AWSSDK.SQS": "3.7.0.35",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
