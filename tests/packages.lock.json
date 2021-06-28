@@ -146,16 +146,16 @@
       },
       "AWSSDK.CloudWatch": {
         "type": "Transitive",
-        "resolved": "3.7.1.31",
-        "contentHash": "E4oeWNZQSFPRQw16GUqHp2yxD7apGxZi2JwiyPNLusBl+nrOi+O6q0OEMM6Ke/yENVnSJFJU9eultieCZB5aGA==",
+        "resolved": "3.7.1.30",
+        "contentHash": "IUh9FW3mDZAH3o+XqF4OwPGkH1IhPJkfOUdivkss/SpNltOSwedFgcDDHW08VjOWu9xms0mu650hR0HV+2tpfQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.36, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.36",
-        "contentHash": "Av9aSxxA2l/1iIXjyF5Wj0s8rhTxbsdmiM85hh+J9yJC5377kzIIfmgsAWefrJGfZilBB2k2HtgFJKA0ZzpJUA=="
+        "resolved": "3.7.0.35",
+        "contentHash": "bjPgNNSv8ZuT8MQ1EBQaEecAyAXbNh7Hp6WDDnU6/msdKtEGFyF0G3s6fvqqCMzBUWHFgobaD3zm487g3pJ4tg=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
@@ -167,10 +167,10 @@
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.0.35",
-        "contentHash": "/MfdFaa+uw6l1wyoyNJZ8ilF3hsJR+RSYmRL2Jogs1ZdmuvTB2HeaXh0YqBhMTki83Ty9UdV8wdy3wLdsRfs6g==",
+        "resolved": "3.7.0.34",
+        "contentHash": "ZccIgZlV0eGFkT4MhcDjkTm7tt9t5MILLyLzWFVXRyel5e775FACmYKiUou/CSQTR+7ivNYh3MZN/lElQDN7sA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.36, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -303,8 +303,8 @@
       },
       "Lambdajection.Runtime": {
         "type": "Transitive",
-        "resolved": "0.8.2",
-        "contentHash": "u9FoBOOTkh/xymzUpm5bVbPbTIFGNyV6nboV60OKa/mDDfU8+Taiuz5s7+5E1zAzxz7Mr02DPWsG4lib549dzw==",
+        "resolved": "0.8.3",
+        "contentHash": "dfRXGTY3o8RQTmVkfE6r1Z73Ja7bgi2jqWouv5uiUHo2La5kKW1uR1T9TBk5APBYH9920YtHBzV3NNCEga8tVQ==",
         "dependencies": {
           "Amazon.Lambda.RuntimeSupport": "1.3.0"
         }
@@ -835,8 +835,8 @@
       },
       "MySqlConnector": {
         "type": "Transitive",
-        "resolved": "1.3.7",
-        "contentHash": "cceT5xpMPgInT8sVnmhZ62aouEux6dWJjOaMSsYW0TmLvK+gwG0eKw8J9NklTw+Q5Cch9Sd04OBux3GSITvABw=="
+        "resolved": "1.3.10",
+        "contentHash": "geL3pNiwbSXzUqQLHLm2/igDHuz5Q4qqp2rKczYoIHtdvvrsd5fnYHN8eFgP81qu77Blv0+0IOn69RJATNQoSQ=="
       },
       "NETStandard.Library": {
         "type": "Transitive",
@@ -887,12 +887,12 @@
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "5T1c5sjnzhryUwD647l209Fsvhfzu1R5vS9G26HuT6T8tEtli9xTBJInge+17Cqy2Q2XTYug+vVfTk3gNH5Zjw==",
+        "resolved": "5.0.1",
+        "contentHash": "15t0Zda7kZFIe3U68komYU18KLGBr5K9lFydWBOycN7Xzb98xopVlyvb07GZb2OKJfX+sInhhD/U+jmHY9ceOg==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "[5.0.5, 6.0.0)",
+          "Microsoft.EntityFrameworkCore.Relational": "[5.0.7, 6.0.0)",
           "Microsoft.Extensions.DependencyInjection": "5.0.1",
-          "MySqlConnector": "1.3.7"
+          "MySqlConnector": "1.3.10"
         }
       },
       "runtime.native.System": {
@@ -1762,7 +1762,7 @@
       "adapter": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.1.31",
+          "AWSSDK.CloudWatch": "3.7.1.30",
           "AWSSDK.SimpleNotificationService": "3.7.2.4",
           "Brighid.Commands.Client": "0.1.0-beta8",
           "Brighid.Discord.Core": "1.0.0",
@@ -1772,7 +1772,7 @@
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
           "Models": "1.0.0",
-          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.1",
           "RestClient": "1.0.0",
           "Serilog.AspNetCore": "4.1.0",
           "System.IdentityModel.Tokens.Jwt": "6.11.1"
@@ -1792,18 +1792,18 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.35",
+          "AWSSDK.SQS": "3.7.0.34",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.2",
           "Lambdajection.Layer": "0.8.2",
-          "Lambdajection.Runtime": "0.8.2",
+          "Lambdajection.Runtime": "0.8.3",
           "Models": "1.0.0"
         }
       },
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.35",
+          "AWSSDK.SQS": "3.7.0.34",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
