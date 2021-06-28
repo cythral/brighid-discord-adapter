@@ -115,7 +115,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 if (message.Data != null)
                 {
-                    await eventRouter.Route(message.Data, cancellationToken);
+                    _ = eventRouter.Route(message.Data, cancellationToken);
                 }
 
                 logger.LogInformation("Received message: {@message}", message);
