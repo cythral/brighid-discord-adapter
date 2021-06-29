@@ -154,8 +154,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.35",
-        "contentHash": "bjPgNNSv8ZuT8MQ1EBQaEecAyAXbNh7Hp6WDDnU6/msdKtEGFyF0G3s6fvqqCMzBUWHFgobaD3zm487g3pJ4tg=="
+        "resolved": "3.7.0.37",
+        "contentHash": "urpl1vl9PnwOqc4WXWj+MmuB/fHmzxVPmsjuu5j7FW0h0964aUuFbCJhM++ahu55JI7JlmKHSXxlCjKiJGHeyg=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
@@ -167,10 +167,10 @@
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.0.34",
-        "contentHash": "ZccIgZlV0eGFkT4MhcDjkTm7tt9t5MILLyLzWFVXRyel5e775FACmYKiUou/CSQTR+7ivNYh3MZN/lElQDN7sA==",
+        "resolved": "3.7.0.36",
+        "contentHash": "/1Nvqpzp9O712lgC61P99J0hV40x2JbXvGZw/0g3SrUuYArbYmeImS9BedILop6fOJnLj14Wx97gslnP+5pc4A==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.35, 4.0.0)"
+          "AWSSDK.Core": "[3.7.0.37, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -1791,7 +1791,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.34",
+          "AWSSDK.SQS": "3.7.0.36",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.3",
           "Lambdajection.Layer": "0.8.3",
@@ -1802,7 +1802,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.34",
+          "AWSSDK.SQS": "3.7.0.36",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
