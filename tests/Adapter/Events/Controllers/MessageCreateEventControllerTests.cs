@@ -6,7 +6,6 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Commands.Client;
-using Brighid.Commands.Client.Parser;
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
@@ -23,6 +22,8 @@ using NSubstitute;
 using NUnit.Framework;
 
 using static NSubstitute.Arg;
+
+using Command = Brighid.Commands.Client.Parser.Command;
 
 namespace Brighid.Discord.Adapter.Events
 {
