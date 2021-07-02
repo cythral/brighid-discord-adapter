@@ -253,7 +253,7 @@ Resources:
             - Name: Sns__TopicArn
               Value: !ImportValue brighid-infrastructure:RequestTopicArn
             - Name: Identity__IdentityServerUri
-              Value: !Ref IdentityServerUri
+              Value: !Sub http://${IdentityServerUri}
             - Name: Identity__ClientId
               Value: !GetAtt IdentityApplication.Id
             - Name: Encrypted__Identity__ClientSecret
@@ -278,6 +278,10 @@ Resources:
               Value: !Ref CommandsServiceUri
             - Name: Commands__DefaultPrefix
               Value: !Ref CommandsDefaultPrefix
+            - Name: Auth__MetadataAddress
+              Value: !Sub http://${IdentityServerUri}/.well-known/openid-configuration
+            - Name: Auth__ValidIssuer
+              Value: !Sub https://${IdentityServerUri}
         - Name: envoy
           Image: !Ref EnvoyImage
           Essential: true
