@@ -11,6 +11,7 @@ using Brighid.Discord.Adapter.Database;
 using Destructurama;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,10 +50,11 @@ namespace Brighid.Discord.Adapter
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
 
+            services.Configure<ForwardedHeadersOptions>(ConfigureForwardedHeadersOptions);
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddRazorPages();
             services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
-            services.AddBrighidCommands(options => configuration.Bind("Commands", options));
+            services.AddBrighidCommands(configuration.GetSection("Commands").Bind);
             services.ConfigureSerializationServices();
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();
@@ -63,6 +65,7 @@ namespace Brighid.Discord.Adapter
             services.ConfigureGatewayServices(configuration);
             services.ConfigureMessageServices(configuration);
             services.ConfigureMetricServices(configuration);
+            services.ConfigureAuthServices(configuration.GetSection("Auth").Bind);
 
             services.ConfigureRestClientResponseServices(configuration);
             services.ConfigureRestClientServices(configuration);
@@ -90,13 +93,21 @@ namespace Brighid.Discord.Adapter
                 databaseContext.Database.MigrateAsync().GetAwaiter().GetResult();
             }
 
+            app.UseForwardedHeaders();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/healthcheck");
                 endpoints.MapControllers();
             });
+        }
+
+        private static void ConfigureForwardedHeadersOptions(ForwardedHeadersOptions options)
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
         }
 
         private static void ConfigureAwsServices(IServiceCollection services)

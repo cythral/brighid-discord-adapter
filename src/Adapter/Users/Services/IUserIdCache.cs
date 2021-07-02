@@ -10,5 +10,10 @@ namespace Brighid.Discord.Adapter.Users
     /// </summary>
     public interface IUserIdCache : IDictionary<Snowflake, Guid>
     {
+        /// <summary>
+        /// Remove a cache entry by the <paramref name="identityId" />.
+        /// </summary>
+        /// <param name="identityId">ID of the user to remove from the cache.</param>
+        void RemoveByIdentityId(Guid identityId);
     }
 }
