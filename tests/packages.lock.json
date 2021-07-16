@@ -310,8 +310,8 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "5.0.7",
-        "contentHash": "80zYklKE6CZZswm5zjCUNbDx2Pavt45qfmVWLY1Heoe7GiJsPGGs9odgmsUFZ75bq4D6F4ZwK0LOam1TGUlHCg==",
+        "resolved": "5.0.8",
+        "contentHash": "5XuTlEkJe7tzY1UQ0FndajTv/SB4PPaYRaAokZVGevoHTkioEF2bbvPxhrqaYr7ayHaN1KItzKsAwMWGil6wRg==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.7.1"
         }
@@ -1792,7 +1792,7 @@
           "Brighid.Commands.Client": "0.1.0",
           "Brighid.Discord.Core": "1.0.0",
           "Destructurama.Attributed": "2.0.0",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.7",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.8",
           "Microsoft.EntityFrameworkCore": "5.0.7",
           "Microsoft.EntityFrameworkCore.Design": "5.0.7",
           "Microsoft.Extensions.Hosting": "5.0.0",
