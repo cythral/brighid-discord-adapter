@@ -302,8 +302,8 @@
       },
       "Lambdajection.Runtime": {
         "type": "Transitive",
-        "resolved": "0.8.3",
-        "contentHash": "dfRXGTY3o8RQTmVkfE6r1Z73Ja7bgi2jqWouv5uiUHo2La5kKW1uR1T9TBk5APBYH9920YtHBzV3NNCEga8tVQ==",
+        "resolved": "0.8.4",
+        "contentHash": "FteXjVQgWIa5VXvf59DpmKUfi34QoJU0GtRFd+VFg+VBRF9P9dTcyiH876M/LDGhxDzSb+YzPcwvHqKG9qL61w==",
         "dependencies": {
           "Amazon.Lambda.RuntimeSupport": "1.3.0"
         }
@@ -1822,7 +1822,7 @@
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.3",
           "Lambdajection.Layer": "0.8.3",
-          "Lambdajection.Runtime": "0.8.3",
+          "Lambdajection.Runtime": "0.8.4",
           "Models": "1.0.0"
         }
       },
