@@ -1,9 +1,9 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
   ],
-  "postUpgradeTasks": {
-    "commands": ["curl -sL https://dot.net/v1/dotnet-install.sh | bash -s -- --jsonfile global.json"],
-    "executionMode": "branch"
+  "constraints": {
+    "dotnet": "5.0.302"
   }
 }
