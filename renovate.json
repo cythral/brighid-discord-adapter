@@ -1,5 +1,9 @@
 {
   "extends": [
     "config:base"
-  ]
+  ],
+  "postUpgradeTasks": {
+    "commands": ["curl -sL https://dot.net/v1/dotnet-install.sh | bash -s -- --jsonfile global.json"],
+    "executionMode": "branch"
+  }
 }
