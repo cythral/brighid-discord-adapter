@@ -146,16 +146,16 @@
       },
       "AWSSDK.CloudWatch": {
         "type": "Transitive",
-        "resolved": "3.7.1.39",
-        "contentHash": "r8qHCeTiV9qi7+JYUZNr8GA+UJfFyuIy3Gl8MlBchJ8dG4S1EQs3dBxrs0u9mhjj5Al+YgqDC85V0TTpb3ey3Q==",
+        "resolved": "3.7.1.41",
+        "contentHash": "b1v7MlGJxJ0M0+9m8DmBunJ8F47vYKcExTCCFRp8KeGUjjHlXic0jDmqoKhbD5igh06OuoIxtbbgL8kdTTaqxA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.44, 4.0.0)"
+          "AWSSDK.Core": "[3.7.1, 4.0.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.44",
-        "contentHash": "Nn3sCc5dD9yvDrOwoTdMOY3AgFXC2on78sPXytz8r7eyO9qIQfiU3ZYeNZv7dAodCdb0309YZqaMrsAghKXbhQ=="
+        "resolved": "3.7.1",
+        "contentHash": "VWnzRxzrMedMJr6Xkl1/HFzgYfRuT3rkUGhp4rqOkXgutaMoNk8HV+6TfjmAhz99CmTV23RxSMUwGwPfIrxy5w=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
@@ -302,8 +302,8 @@
       },
       "Lambdajection.Runtime": {
         "type": "Transitive",
-        "resolved": "0.8.3",
-        "contentHash": "dfRXGTY3o8RQTmVkfE6r1Z73Ja7bgi2jqWouv5uiUHo2La5kKW1uR1T9TBk5APBYH9920YtHBzV3NNCEga8tVQ==",
+        "resolved": "0.8.4",
+        "contentHash": "FteXjVQgWIa5VXvf59DpmKUfi34QoJU0GtRFd+VFg+VBRF9P9dTcyiH876M/LDGhxDzSb+YzPcwvHqKG9qL61w==",
         "dependencies": {
           "Amazon.Lambda.RuntimeSupport": "1.3.0"
         }
@@ -1787,7 +1787,7 @@
       "adapter": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.1.39",
+          "AWSSDK.CloudWatch": "3.7.1.41",
           "AWSSDK.SimpleNotificationService": "3.7.2.8",
           "Brighid.Commands.Client": "0.1.0",
           "Brighid.Discord.Core": "1.0.0",
@@ -1822,7 +1822,7 @@
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.3",
           "Lambdajection.Layer": "0.8.3",
-          "Lambdajection.Runtime": "0.8.3",
+          "Lambdajection.Runtime": "0.8.4",
           "Models": "1.0.0"
         }
       },
