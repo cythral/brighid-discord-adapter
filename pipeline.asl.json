@@ -60,9 +60,23 @@
         {
           "Variable": "$.SupersededOutput.Superseded",
           "BooleanEquals": false,
-          "Next": "Deploy to Dev"
+          "Next": "Deploy Identity"
         }
       ]
+    },
+    "Deploy Identity": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Next": "Deploy to Dev",
+      "ResultPath": null,
+      "Parameters": {
+        "FunctionName": "${EcsDeploymentFunctionArn}",
+        "Payload": {
+          "RoleArn": "${DevRoleArn}",
+          "ClusterName": "brighid",
+          "ServiceName": "identity"
+        }
+      }
     },
     "Deploy to Dev": {
       "Type": "Task",
