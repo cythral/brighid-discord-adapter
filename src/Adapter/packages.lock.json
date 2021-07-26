@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.1.41, )",
-        "resolved": "3.7.1.41",
-        "contentHash": "b1v7MlGJxJ0M0+9m8DmBunJ8F47vYKcExTCCFRp8KeGUjjHlXic0jDmqoKhbD5igh06OuoIxtbbgL8kdTTaqxA==",
+        "requested": "[3.7.2, )",
+        "resolved": "3.7.2",
+        "contentHash": "5/Ll/coXfXRhWEx2KdByLz1IIQK3jRaScPVTSBB1u1EP/LYJFrZ3Mtk/R5793sTGaQp16RXmQkhDKicHavK6Nw==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.1, 4.0.0)"
         }
