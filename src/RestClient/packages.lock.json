@@ -11,12 +11,6 @@
           "AWSSDK.Core": "[3.7.1, 4.0.0)"
         }
       },
-      "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
-        "type": "Direct",
-        "requested": "[3.10.0, )",
-        "resolved": "3.10.0",
-        "contentHash": "jnPs5tldUmQqKoWUCwdm0ZXhdgE5b5HHQF1Q1anHIdZqHLZ05mKRN7IgaMOiyo73OM+pHFPLJDudM5LXuu15TA=="
-      },
       "Microsoft.Extensions.Hosting": {
         "type": "Direct",
         "requested": "[5.0.0, )",
