@@ -365,6 +365,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
+      LogGroupName: /brighid/discord-adapter
       RetentionInDays: 14
 
   ResponseHandler:
