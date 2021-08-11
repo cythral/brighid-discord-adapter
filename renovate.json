@@ -1,9 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
-  ],
-  "constraints": {
-    "dotnet": "5.0.302"
-  }
+    "local>cythral/.github:renovate-config"
+  ]
 }
