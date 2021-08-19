@@ -15,6 +15,6 @@
   "ClientSecret": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQFmlOkXvZ9HttJWb/gOompYAAAAfzB9BgkqhkiG9w0BBwagcDBuAgEAMGkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMVjJBeVtX6XQnCZQiAgEQgDxaWuYXuC0m3cf/+yahEDvuw7jobdPyW//bPqhaKYrjmX8EXxCnKtl9KymF8ljWBuGNhcEy3u5gkYuzsfg=",
   "CommandsServiceUri": "http://commands.brigh.id",
   "CommandsDefaultPrefix": ".",
-  "EnvoyImage": "840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.18.3.0-prod",
+  "EnvoyImage": "840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.0.0-prod",
   "MeshNodeName": "discord-prod"
 }
