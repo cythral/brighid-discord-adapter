@@ -4,20 +4,20 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.2.11, )",
-        "resolved": "3.7.2.11",
-        "contentHash": "3rinWImX0n5KtUy7JJ0Vq56hSSUw5scBoFbMN3cY3TMH8oq/hz4AACJt/knTqP6OaopnkJT48XRYk1oYOR2Q8A==",
+        "requested": "[3.7.2.12, )",
+        "resolved": "3.7.2.12",
+        "contentHash": "EGi+6Vp0nH12kcPBOjFBU2q0genF3joeN9Izf6cpbyKz3sw7EUHZCpNBlSMGPeUFa0a9xBvw/Rjk3+jXC/tmUw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.2.7, 4.0.0)"
+          "AWSSDK.Core": "[3.7.2.8, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
-        "requested": "[3.7.2.26, )",
-        "resolved": "3.7.2.26",
-        "contentHash": "0ZrOhHACH4Q3vaESET8qHsrkiuBGfbq2zhLED2TEnlZLo8m+8H2haFtTJMqNknppXXGDkAzUMJuJ7Cp97Q6IuQ==",
+        "requested": "[3.7.2.27, )",
+        "resolved": "3.7.2.27",
+        "contentHash": "NwxGxPfEfIu6qeC6NzK3z7wt+xQlak3NKgOdH3mth6PXUN4QDv77mDGigscws6CwqPMzbcwTcQ+bL5qZTd5XGw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.2.7, 4.0.0)"
+          "AWSSDK.Core": "[3.7.2.8, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -167,15 +167,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.2.7",
-        "contentHash": "4mcH2fC3ujcANIbiOI/F0Vqnc4qUoUuvkvvsz6oCoNyCHhcRucvWIzVT/S5seOwOGWN8xl5IqmDAprPmr0KG9Q=="
+        "resolved": "3.7.2.8",
+        "contentHash": "SAD5pnyetTGvTuVBVWw2zfdelcWe8TOpC5VVEHeaqRUvFgff9juwSs4w7Ich/oMKOda+AqXCB2/u56dt3jhtng=="
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.0.56",
-        "contentHash": "qulcNH+/5+066/bbZqelu3L3zlChnjB4HhgDjZii/dOUCkgi0UKKet793UoWCPTmLyGM4KcPE0VCHCw+38Wk4w==",
+        "resolved": "3.7.0.57",
+        "contentHash": "Vqt0DYmZhQXLEn8eQE8t/jkbJfhWFEz3FJxu+L2L2brxk0tPF1c6ecKuc7FbU5dojPjCKs207ZlPrlHQtXuAsg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.2.7, 4.0.0)"
+          "AWSSDK.Core": "[3.7.2.8, 4.0.0)"
         }
       },
       "Brighid.Identity.Client": {
@@ -1382,7 +1382,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.0.56",
+          "AWSSDK.SQS": "3.7.0.57",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
