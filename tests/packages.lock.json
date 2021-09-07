@@ -153,18 +153,18 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.2.32",
-        "contentHash": "p+FrPlsdJvXp/37aQM2n7ABCCQ3txdbzzmVUDRy/eCKKiHdcSHDaTgcjDJYtBg9uOtKrx22in+sXfzNR316c3A==",
+        "resolved": "3.7.2.33",
+        "contentHash": "Gfynyo05NfXVh8A1Lb8jN0FRxdjlnOzJACiwaXtSc2zl7d8zZ/LdT6hAU1XOYTizZAManmLHiLyAVQ5CbVqLQg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.2, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.1.4",
-        "contentHash": "L2BeD+C8RxfRyeVBJbKNuYLpKBnWw10tyLzkd9g0aQy98kUJhK5aKD/oXIKqTZc9Ufa5E44emo6mVBLl3ZX4gA==",
+        "resolved": "3.7.1.5",
+        "contentHash": "J3lUwDiVRBVSbhYmEMSwV4leHs6oIEYahWrIjvPHPG1PKdAt7LN0lUbgsQ4vPgjshYuBTM+vdQPnK0vxOjHIBA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.2, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -1782,7 +1782,7 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.2.18",
-          "AWSSDK.SimpleNotificationService": "3.7.2.32",
+          "AWSSDK.SimpleNotificationService": "3.7.2.33",
           "Brighid.Commands.Client": "0.1.0",
           "Brighid.Discord.Core": "1.0.0",
           "Destructurama.Attributed": "2.0.0",
@@ -1812,7 +1812,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.1.4",
+          "AWSSDK.SQS": "3.7.1.5",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.4",
           "Lambdajection.Layer": "0.8.4",
@@ -1823,7 +1823,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.1.4",
+          "AWSSDK.SQS": "3.7.1.5",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
