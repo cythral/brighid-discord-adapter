@@ -82,6 +82,8 @@ Resources:
   DockerRepo:
     Type: AWS::ECR::Repository
     Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
       RepositoryPolicyText:
         Version: 2012-10-17
         Statement:
