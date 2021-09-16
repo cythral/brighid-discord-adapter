@@ -14,15 +14,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   adapter: 
-    image: mcr.microsoft.com/dotnet/sdk:5.0.401-alpine3.14
-    entrypoint: dotnet watch --project src/Adapter run
+    image: brighid/discord-adapter
     working_dir: /app
     restart: unless-stopped
     ports:
       - "80"
     volumes:
-      - ./:/app
-      - ~/.aws:/root/.aws
+      - ./bin/Adapter/Debug/net5.0/linux-musl-x64:/app
+      - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local
       CONFIGURATION: Debug

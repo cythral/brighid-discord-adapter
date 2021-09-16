@@ -1798,7 +1798,7 @@
           "System.IdentityModel.Tokens.Jwt": "6.12.2"
         }
       },
-      "Brighid.Discord.Core": {
+      "brighid.discord.core": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "5.0.2",

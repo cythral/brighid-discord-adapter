@@ -1,0 +1,15 @@
+<Project DefaultTargets="Build">
+    <ItemGroup>
+        <Watch Include="src\**\*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectsToBuild Include="src\Adapter\Adapter.csproj" />
+    </ItemGroup>
+
+    <Target Name="Build">
+        <MSBuild Targets="Build" Projects="@(ProjectsToBuild)" />
+    </Target>
+
+    <Import Project="$(MSBuildExtensionsPath)\Microsoft.Common.targets" />
+</Project>
