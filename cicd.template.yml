@@ -135,6 +135,31 @@ Resources:
           Context: AWS CodeBuild (brighid-discord-adapter)
           TargetUrl: !Sub https://sso.brigh.id/start/shared?destination=https://console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/${AWS::StackName}-build/build/$CODEBUILD_BUILD_ID/?region=${AWS::Region}
 
+  TagImageBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-tag-image
+      ServiceRole: !ImportValue cfn-utilities:BuilderRoleArn
+      EncryptionKey: !ImportValue cfn-utilities:ArtifactKeyArn
+      Environment:
+        PrivilegedMode: true
+        Image: aws/codebuild/standard:4.0
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: REPOSITORY_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DockerRepo}
+        Type: LINUX_CONTAINER
+      Cache:
+        Type: LOCAL
+        Modes:
+          - LOCAL_DOCKER_LAYER_CACHE
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Source:
+        Type: GITHUB
+        BuildSpec: deploy/tasks/tag-image.yml
+        Location: !Sub https://github.com/${GithubOwner}/${GithubRepo}.git
+
   TestReportGroup:
     Type: AWS::CodeBuild::ReportGroup
     Properties:
@@ -188,6 +213,7 @@ Resources:
         GithubOwner: !Ref GithubOwner
         ArtifactStore: !Ref ArtifactStore
         BuildProject: !Ref BuildProject
+        TagImageBuildProject: !Ref TagImageBuildProject
         DeploymentQueue: !Ref DeploymentQueue
         SupersessionQueue: !Ref SupersessionQueue
         DevRoleArn: !ImportValue cfn-metadata:DevAgentRoleArn
