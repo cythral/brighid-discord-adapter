@@ -116,7 +116,7 @@
           {
             "Name": "OLD_TAG",
             "Type": "PLAINTEXT",
-            "Value.$": "$.BuildOutput.Build.BuildNumber"
+            "Value.$": "States.Format('{}', $.BuildOutput.Build.BuildNumber)"
           },
           {
             "Name": "NEW_TAG",
@@ -196,7 +196,7 @@
           {
             "Name": "OLD_TAG",
             "Type": "PLAINTEXT",
-            "Value.$": "$.BuildOutput.Build.BuildNumber"
+            "Value.$": "States.Format('{}', $.BuildOutput.Build.BuildNumber)"
           },
           {
             "Name": "NEW_TAG",
