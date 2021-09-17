@@ -121,7 +121,7 @@
           {
             "Name": "NEW_TAG",
             "Type": "PLAINTEXT",
-            "Value.$": "dev"
+            "Value": "dev"
           }
         ]
       },
@@ -201,7 +201,7 @@
           {
             "Name": "NEW_TAG",
             "Type": "PLAINTEXT",
-            "Value.$": "prod"
+            "Value": "prod"
           }
         ]
       },
