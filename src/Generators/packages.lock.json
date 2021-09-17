@@ -1179,7 +1179,7 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "brighid.discord.core": {
+      "Brighid.Discord.Core": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "5.0.2",
