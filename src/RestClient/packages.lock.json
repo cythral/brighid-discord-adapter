@@ -4,11 +4,11 @@
     ".NETCoreApp,Version=v5.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.1.12, )",
-        "resolved": "3.7.1.12",
-        "contentHash": "HOwycF8jbzzOj6lRRPGBjPckkVeEhXevYmo5opJgywJu7HIx68SPfJqFIxMVTN5TLZcfYlQ5DsCqr93lj1fGCA==",
+        "requested": "[3.7.1.13, )",
+        "resolved": "3.7.1.13",
+        "contentHash": "GSRpzFoZrQGsU+dw7ZZHf/1cw7UCP+PMIMbqqCl+ni22UsZPZRaSwEwD/KM8owqT1Z/uS96S1BVCpWmHUOeSHw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.9, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.10, 4.0.0)"
         }
       },
       "Microsoft.Extensions.Hosting": {
@@ -61,8 +61,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.3.9",
-        "contentHash": "o0Yfe2ehbkA0fKSKyGIK3NgTUSW91c96GSohDhQ68qv3fa+D81U+IhU9Hp0itdxKZMc5qjoDFTtKBgrDcdLQQg=="
+        "resolved": "3.7.3.10",
+        "contentHash": "eFjx+rNlfue9KiRzCwRATfIb/KxRxVQWeX9OxvL9bksSuoLJRDqZ3bUhmv5T2a8X179SPiIdsoFFouyv2DkCQA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
