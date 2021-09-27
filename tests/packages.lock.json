@@ -211,10 +211,10 @@
       },
       "Destructurama.Attributed": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "WKW8UJQMf0fB2CsalGW4wyW+ObNtnnxQtuOd8SoZPIy+sCeL3r3G8bMmGipLitWkr3As5E9i2Bnlokw3EFYRaQ==",
+        "resolved": "3.0.0",
+        "contentHash": "Wam0fvMhCrtN0HvRIiHpNsW8HhlKHM5CkAlUzrAdzqkzuHVBj3zd/zfY9610NELW296Vugcnmf/TMiaUMvepvA==",
         "dependencies": {
-          "Serilog": "2.6.0"
+          "Serilog": "[2.8.0, 3.0.0)"
         }
       },
       "Fare": {
@@ -1785,7 +1785,7 @@
           "AWSSDK.SimpleNotificationService": "3.7.2.43",
           "Brighid.Commands.Client": "0.1.0",
           "Brighid.Discord.Core": "1.0.0",
-          "Destructurama.Attributed": "2.0.0",
+          "Destructurama.Attributed": "3.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.10",
           "Microsoft.EntityFrameworkCore": "5.0.10",
           "Microsoft.EntityFrameworkCore.Design": "5.0.10",
