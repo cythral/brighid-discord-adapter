@@ -140,31 +140,31 @@
       },
       "AWSSDK.CloudWatch": {
         "type": "Transitive",
-        "resolved": "3.7.2.44",
-        "contentHash": "aVAzCIt6Hgb3yfM4wvhMUR8aN/5LvTc61uYFskNxj+eCB3yuXjOyYfanrXVVIcj+2NjS0SBUfCGPSWRQmfx2Xw==",
+        "resolved": "3.7.2.45",
+        "contentHash": "Kjw4N0yYGek0YEzOkPgpR0Vv5REf0lqGHSXxS/TynjrtJGb/qsA/qaTqXhaN8iL0Io3q5PJ4JBdUQW96c59zhg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.28, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.29, 4.0.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.3.28",
-        "contentHash": "Ge/Luwar1KCKYO3yg/gpAI2ue4jej5/H65+EcfKf/1AZ4P0vjk05seyQRKd5MUtShC6iHjVVtv1tF/fqPyVgAw=="
+        "resolved": "3.7.3.29",
+        "contentHash": "1SpqCIGnNeSQSWfkxvMMuVWuPXKBXD5RMM1g0Puy/eYEncMFL318qZW8yAmzXpRzOnqn+uVpCQ4YzU29eGSTPg=="
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.2.59",
-        "contentHash": "6YPc5Aw8t20C+ongeK7gV+jH6osGz/uVo7eKojL1gAJNZ/Bl2dPd8ji2v31Onfq8hw1WfeElLMnhLjEIpA6/xA==",
+        "resolved": "3.7.2.60",
+        "contentHash": "laoDPgzhq8T2O48xfFcVvY7nLo+TT8aMRLRTsIQkxlU00T/ovivqXiFzD4luoSt5Q+6Y0haIgSTO+lD6Xpn6Og==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.28, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.29, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.1.31",
-        "contentHash": "sM5qvDZ8EXeINeql1tJnAI5mSPjS/kSjf7LpMgnTAexHnCFdFIbTmo12WIZ6AE9EJ+F0jiVgNouVzioG9QoRPw==",
+        "resolved": "3.7.1.32",
+        "contentHash": "wUafLKRP7J9cvsr18ETbt6a7k3LjNn1iMz7LPwOKDKKtixl5ekof9BXrLTuVcoibyYqMjEcnNN9uKE2L6ZuV0g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.28, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.29, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -1781,8 +1781,8 @@
       "adapter": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.2.44",
-          "AWSSDK.SimpleNotificationService": "3.7.2.59",
+          "AWSSDK.CloudWatch": "3.7.2.45",
+          "AWSSDK.SimpleNotificationService": "3.7.2.60",
           "Brighid.Commands.Client": "0.1.0",
           "Brighid.Discord.Core": "1.0.0",
           "Destructurama.Attributed": "3.0.0",
@@ -1812,7 +1812,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.1.31",
+          "AWSSDK.SQS": "3.7.1.32",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.8.4",
           "Lambdajection.Layer": "0.8.4",
@@ -1823,7 +1823,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.1.31",
+          "AWSSDK.SQS": "3.7.1.32",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
