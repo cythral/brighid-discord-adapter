@@ -29,6 +29,10 @@ Parameters:
     Type: String
     Description: URL that users can register and link their Discord account at.
 
+  DatabaseHost:
+    Type: String
+    Description: The hostname of the database to use.
+
   DatabaseName:
     Type: String
     Description: The name of the database to use
@@ -260,7 +264,7 @@ Resources:
             - Name: Encrypted__Identity__ClientSecret
               Value: !GetAtt IdentityApplication.EncryptedSecret
             - Name: Database__Host
-              Value: !ImportValue mutedac:ClusterAddress
+              Value: !Ref DatabaseHost
             - Name: Database__Name
               Value: !Ref DatabaseName
             - Name: Database__User
