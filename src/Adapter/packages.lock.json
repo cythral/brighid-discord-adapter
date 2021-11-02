@@ -13,11 +13,11 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
-        "requested": "[3.7.2.60, )",
-        "resolved": "3.7.2.60",
-        "contentHash": "laoDPgzhq8T2O48xfFcVvY7nLo+TT8aMRLRTsIQkxlU00T/ovivqXiFzD4luoSt5Q+6Y0haIgSTO+lD6Xpn6Og==",
+        "requested": "[3.7.2.61, )",
+        "resolved": "3.7.2.61",
+        "contentHash": "KnYCYqblqt22tyNEOAThy6vTggMGlgVI5MTt9byRXDp7b8xYimpFzWPyITWlcrN/FcJq6iTB9lcgJ4hGWYxKYg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.29, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.30, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -172,10 +172,10 @@
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.1.32",
-        "contentHash": "wUafLKRP7J9cvsr18ETbt6a7k3LjNn1iMz7LPwOKDKKtixl5ekof9BXrLTuVcoibyYqMjEcnNN9uKE2L6ZuV0g==",
+        "resolved": "3.7.1.33",
+        "contentHash": "nUOM93/y5jh06KxXtxCP8M/NJknlwDpvaR/E9wVbkvhTJZcR22vnTYAcwFCvJrzY5uBJD0fglfRUdMTBFpdilA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.3.29, 4.0.0)"
+          "AWSSDK.Core": "[3.7.3.30, 4.0.0)"
         }
       },
       "Brighid.Identity.Client": {
@@ -1172,7 +1172,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.1.32",
+          "AWSSDK.SQS": "3.7.1.33",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
