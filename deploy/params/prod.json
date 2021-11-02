@@ -5,6 +5,7 @@
   "MetricsNamespace": "BrighidDiscordAdapter",
   "IdentityServerUri": "identity.brigh.id",
   "RegistrationUrl": "https://identity.brigh.id/account/link/discord",
+  "DatabaseHost": "db.brigh.id",
   "DatabaseUser": "brighid-discord",
   "DatabaseName": "brighid-discord",
   "DatabasePassword": "AQICAHj/2SUStzyXNMLx0/GX2lnjChwPoR4BUvoYRIybQNwYyQGYDlyJcWxnm2HX1OEFg3qrAAAAbzBtBgkqhkiG9w0BBwagYDBeAgEAMFkGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMFN8ERCNLIML21BezAgEQgCwiVhQ6CvdQJnvtv3MX0cBRvooKZLZs2T4za+67ujRvJdXEjXr8z2Jb4CV6Ag==",
