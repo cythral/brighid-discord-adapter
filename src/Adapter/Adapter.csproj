@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Brighid.Commands.Client" Version="0.1.0" />
+    <PackageReference Include="Brighid.Commands.Client" Version="0.2.0-beta2" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.2.47" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.2.62" />
     <PackageReference Include="Destructurama.Attributed" Version="3.0.0" />
