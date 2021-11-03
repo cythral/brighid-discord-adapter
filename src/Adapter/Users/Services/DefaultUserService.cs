@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -124,7 +126,8 @@ namespace Brighid.Discord.Adapter.Users
             try
             {
                 var result = await loginProvidersClient.GetUserByLoginProviderKey("discord", user.Id, cancellationToken);
-                userIdCache.Add(user.Id, result.Id);
+                var userId = GetUserId(result, "discord");
+                userIdCache.Add(user.Id, userId);
                 return true;
             }
             catch (ApiException exception)
@@ -135,7 +138,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         /// <inheritdoc />
-        public async ValueTask<Guid> GetIdentityServiceUserId(Models.User user, CancellationToken cancellationToken = default)
+        public async ValueTask<UserId> GetIdentityServiceUserId(Models.User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (userIdCache.TryGetValue(user.Id, out var cachedId))
@@ -144,8 +147,20 @@ namespace Brighid.Discord.Adapter.Users
             }
 
             var result = await loginProvidersClient.GetUserByLoginProviderKey("discord", user.Id, cancellationToken);
-            userIdCache.Add(user.Id, result.Id);
-            return result.Id;
+            var userId = GetUserId(result, "discord");
+            userIdCache.Add(user.Id, userId);
+            return userId;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static UserId GetUserId(Identity.Client.User user, string provider)
+        {
+            var query = from login in user.Logins
+                        where login.LoginProvider == provider
+                        select login;
+
+            var queryResult = query.First();
+            return new UserId(user.Id, queryResult.Enabled);
         }
     }
 }

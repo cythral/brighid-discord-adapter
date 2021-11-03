@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -259,7 +260,8 @@ namespace Brighid.Discord.Adapter.Users
             )
             {
                 var user = new Models.User { Id = userId };
-                var remoteUser = new Identity.Client.User { Id = remoteId };
+                var login = new UserLogin { LoginProvider = "discord", Enabled = true };
+                var remoteUser = new Identity.Client.User { Id = remoteId, Logins = new List<UserLogin> { login } };
                 var cancellationToken = new CancellationToken(false);
 
                 cache.ContainsKey(Any<Snowflake>()).Returns(false);
@@ -282,7 +284,8 @@ namespace Brighid.Discord.Adapter.Users
             )
             {
                 var user = new Models.User { Id = userId };
-                var remoteUser = new Identity.Client.User { Id = remoteId };
+                var login = new UserLogin { LoginProvider = "discord", Enabled = true };
+                var remoteUser = new Identity.Client.User { Id = remoteId, Logins = new List<UserLogin> { login } };
                 var cancellationToken = new CancellationToken(false);
 
                 cache.ContainsKey(Any<Snowflake>()).Returns(false);
@@ -290,7 +293,7 @@ namespace Brighid.Discord.Adapter.Users
 
                 await service.IsUserRegistered(user, cancellationToken);
 
-                cache.Received().Add(Is(user.Id), Is(remoteId));
+                cache.Received().Add(Is(user.Id), Is<UserId>(id => id.Id == remoteId && id.Enabled));
             }
 
             [Test, Auto]
@@ -333,23 +336,28 @@ namespace Brighid.Discord.Adapter.Users
                 CancellationToken cancellationToken
             )
             {
+                var login = new UserLogin { LoginProvider = "discord", Enabled = true };
+                identityUser.Logins.Add(login);
+
                 var result = await service.GetIdentityServiceUserId(user, cancellationToken);
 
-                result.Should().Be(identityUser.Id);
+                result.Id.Should().Be(identityUser.Id);
+                result.Enabled.Should().BeTrue();
+
                 await loginProvidersClient.Received().GetUserByLoginProviderKey(Is("discord"), Is(user.Id.Value.ToString()), Is(cancellationToken));
             }
 
             [Test, Auto]
             public async Task ShouldRetrieveUserIdFromCacheIfPresent(
                 Models.User user,
-                Guid expectedId,
+                UserId expectedId,
                 [Frozen, Substitute] IUserIdCache userIdCache,
                 [Frozen, Substitute] ILoginProvidersClient loginProvidersClient,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
-                userIdCache.TryGetValue(Any<Snowflake>(), out Any<Guid>()).Returns(x =>
+                userIdCache.TryGetValue(Any<Snowflake>(), out Any<UserId>()).Returns(x =>
                 {
                     x[1] = expectedId;
                     return true;

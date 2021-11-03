@@ -8,7 +8,7 @@ namespace Brighid.Discord.Adapter.Users
     /// <summary>
     /// A cache that maps discord snowflake IDs to Identity Server GUIDs.
     /// </summary>
-    public interface IUserIdCache : IDictionary<Snowflake, Guid>
+    public interface IUserIdCache : IDictionary<Snowflake, UserId>
     {
         /// <summary>
         /// Remove a cache entry by the <paramref name="identityId" />.
