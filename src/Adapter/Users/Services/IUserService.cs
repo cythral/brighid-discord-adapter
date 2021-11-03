@@ -58,6 +58,6 @@ namespace Brighid.Discord.Adapter.Users
         /// <param name="user">The user to get the identity service id for.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting identity service ID.</returns>
-        ValueTask<Guid> GetIdentityServiceUserId(User user, CancellationToken cancellationToken = default);
+        ValueTask<UserId> GetIdentityServiceUserId(User user, CancellationToken cancellationToken = default);
     }
 }

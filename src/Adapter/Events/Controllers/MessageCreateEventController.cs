@@ -79,17 +79,20 @@ namespace Brighid.Discord.Adapter.Events
 
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
-                logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
-                _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
-
                 var userId = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
-                var userIdString = userId.ToString();
+                var userIdString = userId.Id.ToString();
 
-                var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
-                logger.LogInformation("Got result: {@result}", result);
-                if (result?.ReplyImmediately == true)
+                if (userId.Enabled)
                 {
-                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
+                    logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
+                    _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+
+                    var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
+                    logger.LogInformation("Got result: {@result}", result);
+                    if (result?.ReplyImmediately == true)
+                    {
+                        await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
+                    }
                 }
 
                 return;

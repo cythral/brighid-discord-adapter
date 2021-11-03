@@ -63,8 +63,10 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
+                var remoteUserId = new UserId(Guid.NewGuid(), true);
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
 
                 await controller.Handle(@event, cancellationToken);
 
@@ -73,11 +75,35 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
+            public async Task ShouldNotEmitMessageIfUserIsDisabled(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+                var remoteUserId = new UserId(Guid.NewGuid(), false);
+
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await emitter.DidNotReceive().Emit(Is(message), Is(channelId), Is(cancellationToken));
+                await userService.Received().IsUserRegistered(Is(author), Is(cancellationToken));
+            }
+
+            [Test, Auto]
             public async Task ShouldParseAndExecuteCommandIfUserIsRegistered(
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
-                Guid identityUserId,
                 [Frozen, Substitute] IMessageEmitter emitter,
                 [Frozen, Substitute] IBrighidCommandsService commandsClient,
                 [Frozen, Substitute] IUserService userService,
@@ -85,6 +111,7 @@ namespace Brighid.Discord.Adapter.Events
             )
             {
                 var cancellationToken = new CancellationToken(false);
+                var identityUserId = new UserId(Guid.NewGuid(), true);
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
@@ -97,7 +124,7 @@ namespace Brighid.Discord.Adapter.Events
                 Received.InOrder(async () =>
                 {
                     await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
-                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.ToString()), Is(cancellationToken));
+                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(cancellationToken));
                 });
             }
 
@@ -106,7 +133,6 @@ namespace Brighid.Discord.Adapter.Events
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
-                Guid identityUserId,
                 [Frozen] Command command,
                 [Frozen] ExecuteCommandResponse executeCommandResponse,
                 [Frozen, Substitute] IMessageEmitter emitter,
@@ -120,6 +146,7 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
+                var identityUserId = new UserId(Guid.NewGuid(), true);
 
                 executeCommandResponse.ReplyImmediately = true;
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
@@ -131,7 +158,7 @@ namespace Brighid.Discord.Adapter.Events
                 {
                     await commandsClient.Received().ParseAndExecuteCommandAsUser(
                         Is(@event.Message.Content),
-                        Is(identityUserId.ToString()),
+                        Is(identityUserId.Id.ToString()),
                         Is(cancellationToken)
                     );
                     await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
@@ -143,7 +170,7 @@ namespace Brighid.Discord.Adapter.Events
                 string content,
                 Snowflake userId,
                 Snowflake channelId,
-                Guid identityUserId,
+                UserId identityUserId,
                 [Frozen] Command command,
                 [Frozen] ExecuteCommandResponse executeCommandResponse,
                 [Frozen, Substitute] IMessageEmitter emitter,
