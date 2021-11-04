@@ -58,7 +58,7 @@ services:
       - my-db:/var/lib/mysql
 
   envoy:
-    image: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.1.1-prod
+    image: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.0.0-prod
     profiles: 
       - prod
 
