@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
         <SelfContained>true</SelfContained>
-        <PublishReadyToRunUseCrossgen2>true</PublishReadyToRunUseCrossgen2>
+        <PublishReadyToRun>true</PublishReadyToRun>
         <NoWarn>SA1400;SA1600;SA1205;SA1204;SA1601;SA1201;SA1210;SA1518;SA1633;SA1208;CS1591</NoWarn>
     </PropertyGroup>
 
