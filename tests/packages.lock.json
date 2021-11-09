@@ -906,8 +906,8 @@
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Transitive",
-        "resolved": "5.0.2",
-        "contentHash": "Vy6nC+FWWyZujmzEUN2mqoKsZi4xawtcJ8PJ861X7BG7EnJl+zH9uBvCCcO/qFOkS9zSCvWtYul3aFQOAJuGyA==",
+        "resolved": "5.0.3",
+        "contentHash": "MtIjBlhfSpCbJx3NPFCBUpVlXN/+prd4P4vbGzfIAi8lOGX6SFdde3uBrSgJeSlpt1+oDtU1Tjtr2eC4VuvOhg==",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[5.0.10, 6.0.0)",
           "Microsoft.Extensions.DependencyInjection": "5.0.2",
@@ -1792,7 +1792,7 @@
           "Microsoft.Extensions.Hosting": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
           "Models": "1.0.0",
-          "Pomelo.EntityFrameworkCore.MySql": "5.0.2",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.3",
           "RestClient": "1.0.0",
           "Serilog.AspNetCore": "4.1.0",
           "System.IdentityModel.Tokens.Jwt": "6.14.1"
