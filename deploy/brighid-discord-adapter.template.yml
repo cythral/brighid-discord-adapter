@@ -378,7 +378,7 @@ Resources:
       Handler: ResponseHandler::Brighid.Discord.Adapter.ResponseHandler.Handler::Run
       Runtime: provided.al2
       Timeout: 30
-      CodeUri: ../bin/ResponseHandler/Release/net5.0/linux-x64/publish/
+      CodeUri: ../bin/ResponseHandler/Release/net6.0/linux-x64/publish/
       MemorySize: 512
       Layers:
         - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:dotnet:${DotnetLayerVersion}
