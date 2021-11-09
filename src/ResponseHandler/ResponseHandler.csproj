@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RuntimeIdentifiers>osx-x64;linux-x64</RuntimeIdentifiers>
+        <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
         <NoWarn>SA1400;SA1600;SA1205;SA1204;SA1601;SA1201;SA1210;SA1518;SA1633;SA1208;CS1591</NoWarn>
     </PropertyGroup>
 
