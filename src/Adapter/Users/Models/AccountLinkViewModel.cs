@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Brighid.Discord.Adapter
 {
     /// <summary>
     /// View Model for the Account Link Success Page.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class AccountLinkViewModel
     {
         /// <summary>

@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Brighid.Discord.Adapter.Auth
 {
     /// <summary>
     /// Options used for authentication and authorization.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class AuthOptions
     {
         /// <summary>

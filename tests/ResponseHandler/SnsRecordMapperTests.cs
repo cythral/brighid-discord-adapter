@@ -1,13 +1,18 @@
-using System.Text.Json;
-
 using Amazon.Lambda.SNSEvents;
+
+using AutoFixture.NUnit3;
 
 using Brighid.Discord.Models;
 using Brighid.Discord.Models.Payloads;
+using Brighid.Discord.Serialization;
 
 using FluentAssertions;
 
+using NSubstitute;
+
 using NUnit.Framework;
+
+using static NSubstitute.Arg;
 
 namespace Brighid.Discord.Adapter.ResponseHandler
 {
@@ -46,17 +51,19 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             [Test, Auto]
             public void ShouldSetBody(
                 string channelId,
-                string content,
+                string expectedBody,
                 SNSEvent.SNSRecord record,
+                [Frozen] ISerializer serializer,
                 [Target] SnsRecordMapper mapper
             )
             {
-                record.Sns.Message = content;
+                serializer.Serialize(Any<CreateMessagePayload>()).Returns(expectedBody);
+
+                record.Sns.Message = expectedBody;
                 record.Sns.MessageAttributes["Brighid.SourceId"] = new SNSEvent.MessageAttribute { Type = "String", Value = channelId };
 
                 var result = mapper.MapToRequest(record);
-                var deserializedBody = JsonSerializer.Deserialize<CreateMessagePayload>(result.RequestBody!);
-                deserializedBody.Content.Should().Be(content);
+                result.RequestBody.Should().Be(expectedBody);
             }
         }
     }

@@ -46,16 +46,17 @@ internal class AutoAttribute : AutoDataAttribute
         .BuildServiceProvider();
 
         var fixture = new Fixture();
-        fixture.Inject(new CancellationToken(false));
         var messageHandler = new MockHttpMessageHandler();
         fixture.Inject(messageHandler);
+        fixture.Inject(new CancellationToken(false));
+        fixture.Inject<JsonSerializerContext>(JsonContext.Default);
         fixture.Inject(new JwtSecurityTokenHandler { MaximumTokenSizeInBytes = int.MaxValue });
         fixture.Inject(new System.Net.Http.HttpClient(messageHandler));
         fixture.Inject(provider.GetRequiredService<IStringLocalizer<Strings>>());
         fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
         fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.05 });
         fixture.Inject<JsonConverter<GatewayMessage>>(new MockGatewayMessageConverter());
-        fixture.Inject<IEntityType>(new EntityType("test", new Model(), ConfigurationSource.Convention));
+        fixture.Inject<IEntityType>(new EntityType("test", new Model(), true, ConfigurationSource.Convention));
         fixture.Register<IChannel<RequestMessage>>(() => new Channel<RequestMessage>());
         fixture.Register(() =>
         {

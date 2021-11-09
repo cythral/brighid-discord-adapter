@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Brighid.Discord.Adapter.Metrics
 {
     /// <summary>
     /// Options to use when publishing metrics.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class MetricOptions
     {
         /// <summary>

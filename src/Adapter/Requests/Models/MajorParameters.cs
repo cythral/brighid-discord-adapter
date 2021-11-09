@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable IDE0060
 
@@ -7,6 +8,7 @@ namespace Brighid.Discord.Adapter.Requests
     /// <summary>
     /// Represents major parameters in a Discord REST API Endpoint.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public readonly struct MajorParameters
     {
         private static readonly HashSet<string> ValidParameters = new() { "channel.id", "guild.id", "webhook.id", "webhook.token" };

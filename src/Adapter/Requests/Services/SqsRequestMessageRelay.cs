@@ -131,7 +131,7 @@ namespace Brighid.Discord.Adapter.Requests
             };
 
             using var client = await tcpClientFactory.CreateTcpClient(host, port, cancellationToken);
-            var payload = await serializer.Serialize(response, cancellationToken);
+            var payload = serializer.Serialize(response);
             await client.Write(payload, cancellationToken);
             client.Close();
         }
@@ -172,9 +172,11 @@ namespace Brighid.Discord.Adapter.Requests
         private async Task<RequestMessage?> ParseSqsMessage(Amazon.SQS.Model.Message message, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await Task.CompletedTask;
+
             try
             {
-                var request = await serializer.Deserialize<Request>(message.Body, cancellationToken);
+                var request = serializer.Deserialize<Request>(message.Body);
 
                 return request == null
                     ? throw new SerializationException("Request unexpectedly deserialized to null.")

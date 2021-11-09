@@ -5,6 +5,7 @@ namespace Brighid.Discord.Adapter.Messages
     /// <summary>
     /// Represents a message sent directly to/from the gateway.
     /// </summary>
+    [JsonConverter(typeof(GatewayMessageConverter))]
     public struct GatewayMessage
     {
         /// <summary>

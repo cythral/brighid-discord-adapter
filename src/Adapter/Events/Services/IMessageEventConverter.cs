@@ -2,8 +2,6 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Brighid.Discord.Models;
-
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
 #pragma warning disable CS1591, SA1600
@@ -16,13 +14,13 @@ namespace Brighid.Discord.Adapter.Events
         {
             return new TMessageEvent()
             {
-                Message = SystemTextJsonSerializer.Deserialize<Message>(ref reader, options),
+                Message = SystemTextJsonSerializer.Deserialize(ref reader, JsonContext.Default.Message),
             };
         }
 
         public override void Write(Utf8JsonWriter writer, TMessageEvent value, JsonSerializerOptions options)
         {
-            SystemTextJsonSerializer.Serialize(writer, value.Message, options);
+            SystemTextJsonSerializer.Serialize(writer, value.Message, JsonContext.Default.Message);
         }
     }
 }

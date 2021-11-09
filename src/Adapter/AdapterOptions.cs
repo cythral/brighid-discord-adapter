@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Destructurama.Attributed;
 
@@ -7,6 +8,7 @@ namespace Brighid.Discord.Adapter
     /// <summary>
     /// Miscellaneous config used across adapter services.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class AdapterOptions
     {
         /// <summary>

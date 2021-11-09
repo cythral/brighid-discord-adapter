@@ -1,8 +1,11 @@
+using System;
 using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter;
 using Brighid.Discord.Adapter.Events;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Models;
@@ -36,12 +39,11 @@ namespace Brighid.Discord.Serialization
         }
 
         [Test, Auto]
-        public async Task HelloMessagesShouldSerialize(
+        public void HelloMessagesShouldSerialize(
             uint interval,
             int sequenceNumber
         )
         {
-            var cancellationToken = new CancellationToken(false);
             var serializer = CreateSerializer();
             var gatewayMessage = new GatewayMessage
             {
@@ -53,7 +55,7 @@ namespace Brighid.Discord.Serialization
                 },
             };
 
-            var result = await serializer.Serialize(gatewayMessage, cancellationToken);
+            var result = serializer.Serialize(gatewayMessage);
             result.Should().MatchRegex("\"op\":[ ]?10", "Op Code should equal 10.");
             result.Should().MatchRegex($"\"s\":[ ]?{sequenceNumber}", $"Sequence number should equal {sequenceNumber}");
             result.Should().MatchRegex($"\"d\":[ ]?{{[ ]?\"heartbeat_interval\":[ ]?{interval}[ ]?}}", $"Data should contain heartbeat interval of {interval}");
@@ -91,13 +93,12 @@ namespace Brighid.Discord.Serialization
         }
 
         [Test, Auto]
-        public async Task ReadyMessagesShouldSerialize(
+        public void ReadyMessagesShouldSerialize(
             uint version,
             ulong userId,
             int sequenceNumber
         )
         {
-            var cancellationToken = new CancellationToken(false);
             var serializer = CreateSerializer();
             var gatewayMessage = new GatewayMessage
             {
@@ -114,7 +115,7 @@ namespace Brighid.Discord.Serialization
                 },
             };
 
-            var result = await serializer.Serialize(gatewayMessage, cancellationToken);
+            var result = serializer.Serialize(gatewayMessage);
             result.Should().MatchRegex("\"op\":[ ]?0", "Op Code should equal 0.");
             result.Should().MatchRegex($"\"s\":[ ]?{sequenceNumber}", $"Sequence number should equal {sequenceNumber}");
             result.Should().MatchRegex($"\"t\":[ ]?\"READY\"", $"Event name should equal READY");
@@ -123,11 +124,10 @@ namespace Brighid.Discord.Serialization
         }
 
         [Test, Auto]
-        public async Task HeartbeatMessagesShouldSerialize(
+        public void HeartbeatMessagesShouldSerialize(
             int sequenceNumber
         )
         {
-            var cancellationToken = new CancellationToken(false);
             var serializer = CreateSerializer();
             var gatewayMessage = new GatewayMessage
             {
@@ -135,7 +135,7 @@ namespace Brighid.Discord.Serialization
                 Data = new HeartbeatEvent(sequenceNumber),
             };
 
-            var result = await serializer.Serialize(gatewayMessage, cancellationToken);
+            var result = serializer.Serialize(gatewayMessage);
             result.Should().MatchRegex("\"op\":[ ]?1", "Op Code should equal 1.");
             result.Should().MatchRegex($"\"d\":[ ]?{sequenceNumber}", $"Data should equal the sequence number ({sequenceNumber})");
         }
@@ -155,13 +155,12 @@ namespace Brighid.Discord.Serialization
         }
 
         [Test, Auto]
-        public async Task ResumeMessagesShouldSerialize(
+        public void ResumeMessagesShouldSerialize(
             string token,
             string sessionId,
             int sequenceNumber
         )
         {
-            var cancellationToken = new CancellationToken(false);
             var serializer = CreateSerializer();
             var gatewayMessage = new GatewayMessage
             {
@@ -174,7 +173,7 @@ namespace Brighid.Discord.Serialization
                 },
             };
 
-            var result = await serializer.Serialize(gatewayMessage, cancellationToken);
+            var result = serializer.Serialize(gatewayMessage);
             result.Should().MatchRegex("\"op\":[ ]?6", "Op Code should equal 6.");
             result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"token\":[ ]?\"{token}\"(.*?)}}", $"Data should contain the token.");
             result.Should().MatchRegex($"\"d\":[ ]?{{(.*?)\"session_id\":[ ]?\"{sessionId}\"(.*?)}}", $"Data should contain the session id.");
@@ -207,10 +206,7 @@ namespace Brighid.Discord.Serialization
 
         private ISerializer CreateSerializer()
         {
-            var messageParser = new GeneratedMessageParser();
-            var messageConverter = new GatewayMessageConverter(messageParser);
-            var converters = new[] { messageConverter };
-            return new JsonSerializer(converters);
+            return new JsonSerializer(JsonContext.Default, Array.Empty<JsonConverter>());
         }
     }
 }

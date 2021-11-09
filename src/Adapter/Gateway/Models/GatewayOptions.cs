@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Brighid.Discord.Adapter.Gateway
 {
     /// <summary>
     /// Options to use for the default gateway service.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class GatewayOptions
     {
         /// <summary>

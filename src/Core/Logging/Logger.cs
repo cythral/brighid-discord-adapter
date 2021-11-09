@@ -48,7 +48,7 @@ namespace Brighid.Discord
         }
 
         /// <inheritdoc />
-        void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             logger.Log(logLevel, eventId, state, exception, formatter);
         }

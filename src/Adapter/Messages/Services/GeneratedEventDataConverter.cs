@@ -5,7 +5,7 @@
 namespace Brighid.Discord.Adapter.Messages
 {
     /// <inheritdoc />
-    public partial class GeneratedMessageParser : IMessageParser
+    public partial class GeneratedEventDataConverter : IEventDataConverter
     {
     }
 }

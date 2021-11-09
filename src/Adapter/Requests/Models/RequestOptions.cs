@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Brighid.Discord.Adapter.Requests
 {
     /// <summary>
     /// Options used for requests.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class RequestOptions
     {
         /// <summary>

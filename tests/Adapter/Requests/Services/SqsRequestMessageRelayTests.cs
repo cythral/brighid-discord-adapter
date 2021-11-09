@@ -491,7 +491,7 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 var receiveMessageResponse = new ReceiveMessageResponse { Messages = new() { sqsMessage } };
                 sqs.ReceiveMessageAsync(Any<ReceiveMessageRequest>(), Any<CancellationToken>()).Returns(receiveMessageResponse);
-                serializer.Deserialize<Request>(Any<string>(), Any<CancellationToken>()).Returns(request);
+                serializer.Deserialize<Request>(Any<string>()).Returns(request);
 
                 var result = await relay.Receive(cancellationToken);
                 var resultMessage = result.ElementAt(0);
@@ -499,7 +499,7 @@ namespace Brighid.Discord.Adapter.Requests
                 resultMessage.RequestDetails.Should().Be(request);
                 resultMessage.State.Should().Be(RequestMessageState.InFlight);
                 resultMessage.ReceiptHandle.Should().Be(sqsMessage.ReceiptHandle);
-                await serializer.Received().Deserialize<Request>(Is(sqsMessage.Body), Is(cancellationToken));
+                serializer.Received().Deserialize<Request>(Is(sqsMessage.Body));
             }
 
             [Test, Auto]
@@ -514,7 +514,7 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 var receiveMessageResponse = new ReceiveMessageResponse { Messages = new() { sqsMessage } };
                 sqs.ReceiveMessageAsync(Any<ReceiveMessageRequest>(), Any<CancellationToken>()).Returns(receiveMessageResponse);
-                serializer.Deserialize<Request>(Any<string>(), Any<CancellationToken>()).Throws<Exception>();
+                serializer.Deserialize<Request>(Any<string>()).Throws<Exception>();
 
                 Func<Task> func = () => relay.Receive(cancellationToken);
 
@@ -533,7 +533,7 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 var receiveMessageResponse = new ReceiveMessageResponse { Messages = new() { sqsMessage } };
                 sqs.ReceiveMessageAsync(Any<ReceiveMessageRequest>(), Any<CancellationToken>()).Returns(receiveMessageResponse);
-                serializer.Deserialize<Request>(Any<string>(), Any<CancellationToken>()).Throws<Exception>();
+                serializer.Deserialize<Request>(Any<string>()).Throws<Exception>();
 
                 var result = await relay.Receive(cancellationToken);
 
@@ -626,9 +626,8 @@ namespace Brighid.Discord.Adapter.Requests
                 message.RequestDetails.Id = requestId;
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
-                await serializer.Received().Serialize(
-                    Is<Response>(response => response.RequestId == requestId),
-                    Is(cancellationToken)
+                serializer.Received().Serialize(
+                    Is<Response>(response => response.RequestId == requestId)
                 );
             }
 
@@ -644,9 +643,8 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
-                await serializer.Received().Serialize(
-                    Is<Response>(response => response.StatusCode == statusCode),
-                    Is(cancellationToken)
+                serializer.Received().Serialize(
+                    Is<Response>(response => response.StatusCode == statusCode)
                 );
             }
 
@@ -662,9 +660,8 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
-                await serializer.Received().Serialize(
-                    Is<Response>(response => response.Body == body),
-                    Is(cancellationToken)
+                serializer.Received().Serialize(
+                    Is<Response>(response => response.Body == body)
                 );
             }
 
@@ -680,7 +677,7 @@ namespace Brighid.Discord.Adapter.Requests
                 CancellationToken cancellationToken
             )
             {
-                serializer.Serialize(Any<Response>(), Any<CancellationToken>()).Returns(response);
+                serializer.Serialize(Any<Response>()).Returns(response);
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
                 await tcpClient.Received().Write(Is(response), Is(cancellationToken));

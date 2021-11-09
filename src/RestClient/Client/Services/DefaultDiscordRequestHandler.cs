@@ -50,13 +50,13 @@ namespace Brighid.Discord.RestClient.Client
                 Id = requestId,
                 Parameters = parameters ?? new Dictionary<string, string>(),
                 Headers = headers ?? new Dictionary<string, string>(),
-                RequestBody = await serializer.Serialize(request, cancellationToken),
+                RequestBody = serializer.Serialize(request),
                 ResponseURL = server.Uri,
             };
 
             await queuer.QueueRequest(payload, cancellationToken);
             var response = await server.ListenForResponse(requestId, promise);
-            return await serializer.Deserialize<TResponse>(response.Body ?? "{}", cancellationToken);
+            return serializer.Deserialize<TResponse>(response.Body ?? "{}");
         }
 
         /// <inheritdoc />
@@ -74,7 +74,7 @@ namespace Brighid.Discord.RestClient.Client
                 Id = requestId,
                 Parameters = parameters ?? new Dictionary<string, string>(),
                 Headers = headers ?? new Dictionary<string, string>(),
-                RequestBody = await serializer.Serialize(request, cancellationToken),
+                RequestBody = serializer.Serialize(request),
             };
 
             await queuer.QueueRequest(payload, cancellationToken);

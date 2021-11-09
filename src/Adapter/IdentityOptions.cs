@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Brighid.Discord.Adapter
 {
     /// <summary>
     /// Options for the identity server.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class IdentityOptions
     {
         /// <summary>

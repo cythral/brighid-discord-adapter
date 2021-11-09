@@ -62,6 +62,9 @@ dotnet_diagnostic.SA1633.severity = none
 # Using directive inside namespace
 dotnet_diagnostic.SA1200.severity = none
 
+# Elements must be documented (StyleCop takes care of this)
+dotnet_diagnostic.CS1591.severity = none
+
 [tests/**.{cs,csx}]
 # Unused parameters
 dotnet_diagnostic.CA1801.severity = none
@@ -76,26 +79,9 @@ dotnet_diagnostic.SA1600.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
 [obj/**.{cs,csx}]
-# Unnecessary usings - we don't have much control over these
-dotnet_diagnostic.CS8019.severity = none
-
-# Accessibility modifiers on assembly classes
-dotnet_diagnostic.IDE0040.severity = none
-
-# Using directive inside namespace
-dotnet_diagnostic.SA1200.severity = none
-
-# XML Comments
+generated_code = true
 dotnet_diagnostic.CS1591.severity = none
-dotnet_diagnostic.SA1601.severity = none
 
 [src/Adapter/Database/Migrations/*.cs]
-
-# XML Comments
+generated_code = true
 dotnet_diagnostic.CS1591.severity = none
-dotnet_diagnostic.SA1600.severity = none
-dotnet_diagnostic.SA1601.severity = none
-
-[obj/**.cs]
-dotnet_analyzer_diagnostic.category-Style.severity = none
-dotnet_diagnostic.SA1633.severity = none

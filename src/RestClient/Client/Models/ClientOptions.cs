@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Brighid.Discord.RestClient.Client
 {
     /// <summary>
     /// Options to use when making client requests.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class ClientOptions
     {
         /// <summary>

@@ -108,7 +108,6 @@ namespace Brighid.Discord.Models
 
         /// <inheritdoc />
         [JsonPropertyName("referenced_message")]
-        [JsonConverter(typeof(IMessageConverter))]
         public IMessage ReferencedMessage { get; set; }
 
         /// <inheritdoc />

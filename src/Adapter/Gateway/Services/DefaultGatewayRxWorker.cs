@@ -106,8 +106,8 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 stream.Position = 0;
-                var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
 
+                var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
                 if (message.SequenceNumber != null)
                 {
                     gateway!.SequenceNumber = message.SequenceNumber;

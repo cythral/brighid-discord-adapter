@@ -2,14 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Database;
 
 using FluentAssertions;
-
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using NSubstitute;
 
@@ -47,26 +44,6 @@ namespace Brighid.Discord.Adapter.Requests
                 Func<Task> func = () => repository.Add(bucket, cancellationToken);
 
                 await func.Should().NotThrowAsync<OperationCanceledException>();
-            }
-
-            [Test, Auto]
-            public async Task ShouldCreateANewBucket(
-                Bucket bucket,
-                Bucket resultingBucket,
-                [Substitute] EntityEntry<Bucket> resultingBucketEntry,
-                [Frozen] DatabaseContext databaseContext,
-                [Target] DefaultBucketRepository repository,
-                CancellationToken cancellationToken
-            )
-            {
-                resultingBucketEntry.Entity.Returns(resultingBucket);
-                databaseContext.AddAsync(Any<Bucket>(), Any<CancellationToken>()).Returns(resultingBucketEntry);
-
-                var result = await repository.Add(bucket, cancellationToken);
-
-                result.Should().Be(resultingBucket);
-                await databaseContext.Received().AddAsync(Is(bucket), Is(cancellationToken));
-                await databaseContext.Received().SaveChangesAsync(Is(cancellationToken));
             }
         }
 

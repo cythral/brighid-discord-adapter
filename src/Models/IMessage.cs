@@ -6,6 +6,7 @@ namespace Brighid.Discord.Models
     /// <summary>
     /// A message that is sent by a user or bot to Discord.
     /// </summary>
+    [JsonConverter(typeof(IMessageConverter))]
     public interface IMessage
     {
         /// <summary>

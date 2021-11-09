@@ -20,7 +20,7 @@ namespace Brighid.Discord.Adapter.Messages
             Count = count;
             EndOfMessage = endOfMessage;
 
-            buffer.Slice(0, count).CopyTo(Bytes);
+            buffer[0..count].CopyTo(Bytes);
         }
 
         /// <summary>

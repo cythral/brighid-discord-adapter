@@ -96,7 +96,7 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             var message = await channel.Read(cancellationToken);
-            var serializedMessage = await serializer.SerializeToBytes(message, cancellationToken);
+            var serializedMessage = serializer.SerializeToBytes(message);
 
             logger.LogInformation("Sending Message: {@message}", message);
             await webSocket!.Send(serializedMessage, WebSocketMessageType.Text, true, cancellationToken);

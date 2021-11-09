@@ -256,7 +256,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 await worker.Start(gateway, clientWebSocket);
                 await worker.Run(cancellationToken);
 
-                await serializer.Received().SerializeToBytes(Is(message), Is(cancellationToken));
+                serializer.Received().SerializeToBytes(Is(message));
             }
 
             [Test, Auto, Timeout(1000)]
@@ -274,7 +274,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
                 var cancellationToken = new CancellationToken(false);
 
-                serializer.SerializeToBytes(Any<GatewayMessage>(), Any<CancellationToken>()).Returns(bytes);
+                serializer.SerializeToBytes(Any<GatewayMessage>()).Returns(bytes);
                 channel.Read(Any<CancellationToken>()).Returns(new ValueTask<GatewayMessage>(message));
 
                 clientWebSocket.State.Returns(WebSocketState.Open);

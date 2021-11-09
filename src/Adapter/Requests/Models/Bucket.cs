@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 using Brighid.Discord.Models;
 
@@ -12,6 +13,7 @@ namespace Brighid.Discord.Adapter.Requests
     /// <summary>
     /// Represents a Rate Limit Bucket.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class Bucket
     {
         /// <summary>
