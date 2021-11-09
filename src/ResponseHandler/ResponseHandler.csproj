@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
-        <SelfContained>true</SelfContained>
+        <SelfContained>false</SelfContained>
         <NoWarn>SA1400;SA1600;SA1205;SA1204;SA1601;SA1201;SA1210;SA1518;SA1633;SA1208;CS1591</NoWarn>
     </PropertyGroup>
 
