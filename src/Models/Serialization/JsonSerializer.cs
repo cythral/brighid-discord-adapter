@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -22,18 +21,11 @@ namespace Brighid.Discord.Serialization
         /// Initializes a new instance of the <see cref="JsonSerializer" /> class.
         /// </summary>
         /// <param name="serializerContext">Serializer context to use.</param>
-        /// <param name="converters">Converters to add to the json serializer context.</param>
         public JsonSerializer(
-            JsonSerializerContext serializerContext,
-            IEnumerable<JsonConverter> converters
+            JsonSerializerContext serializerContext
         )
         {
             this.serializerContext = serializerContext;
-
-            foreach (var converter in converters)
-            {
-                serializerContext.Options.Converters.Add(converter);
-            }
         }
 
         /// <inheritdoc />

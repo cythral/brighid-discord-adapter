@@ -1,7 +1,5 @@
-using System;
 using System.IO;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -206,7 +204,7 @@ namespace Brighid.Discord.Serialization
 
         private ISerializer CreateSerializer()
         {
-            return new JsonSerializer(JsonContext.Default, Array.Empty<JsonConverter>());
+            return new JsonSerializer(JsonContext.Default);
         }
     }
 }

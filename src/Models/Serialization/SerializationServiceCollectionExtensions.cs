@@ -17,7 +17,6 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void ConfigureSerializationServices(this IServiceCollection services, JsonSerializerContext serializerContext)
         {
             services.AddSingleton(serializerContext);
-            services.AddSingleton<JsonConverter, ServiceProviderInjectionConverter>();
             services.AddSingleton<ISerializer, JsonSerializer>();
         }
     }
