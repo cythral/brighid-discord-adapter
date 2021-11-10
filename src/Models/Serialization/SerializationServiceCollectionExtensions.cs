@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using Brighid.Discord.Serialization;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -11,8 +13,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Configures gateway services on the service collection.
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
-        public static void ConfigureSerializationServices(this IServiceCollection services)
+        /// <param name="serializerContext">Context to use for serialization/deserialization.</param>
+        public static void ConfigureSerializationServices(this IServiceCollection services, JsonSerializerContext serializerContext)
         {
+            services.AddSingleton(serializerContext);
             services.AddSingleton<ISerializer, JsonSerializer>();
         }
     }

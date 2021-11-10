@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -12,45 +10,58 @@ namespace Brighid.Discord.Adapter.Messages
 {
     public class GatewayMessageConverter : JsonConverter<GatewayMessage>
     {
-        private readonly IMessageParser parser;
-        private readonly IDictionary<string, string> propertyNames;
+        private readonly IEventDataConverter eventDataConverter;
 
-        public GatewayMessageConverter(IMessageParser parser)
+        public GatewayMessageConverter()
+            : this(new GeneratedEventDataConverter())
         {
-            this.parser = parser;
-            propertyNames = (from prop in typeof(GatewayMessage).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                             let attributes = prop.GetCustomAttributes(typeof(JsonPropertyNameAttribute), true)
-                             let attribute = (JsonPropertyNameAttribute?)attributes.FirstOrDefault()
-                             let jsonPropName = attribute == null ? prop.Name : attribute.Name
-                             select new { PropertyName = prop.Name, JsonPropertyName = jsonPropName })
-                            .ToDictionary(result => result.PropertyName, result => result.JsonPropertyName);
+        }
+
+        internal GatewayMessageConverter(IEventDataConverter eventDataConverter)
+        {
+            this.eventDataConverter = eventDataConverter;
         }
 
         public override GatewayMessage Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var messageWithoutData = SystemTextJsonSerializer.Deserialize<GatewayMessageWithoutData>(ref reader, options)!;
-            return parser.ParseEventData(messageWithoutData, options);
+            var messageWithoutData = SystemTextJsonSerializer.Deserialize(ref reader, JsonContext.Default.GatewayMessageWithoutData)!;
+            return eventDataConverter.ParseEventData(messageWithoutData);
         }
 
         public override void Write(Utf8JsonWriter writer, GatewayMessage value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            Write(writer, propertyNames["OpCode"], (decimal)(int)value.OpCode, options);
-            Write(writer, propertyNames["SequenceNumber"], (decimal?)value.SequenceNumber, options);
-            Write(writer, propertyNames["EventName"], value.EventName, options);
-            Write(writer, propertyNames["Data"], value.Data, options);
+
+            writer.WriteNumber("op", (int)value.OpCode);
+
+            if (value.SequenceNumber != null)
+            {
+                writer.WriteNumber("s", (int)value.SequenceNumber);
+            }
+
+            if (value.EventName != null)
+            {
+                writer.WriteString("t", value.EventName);
+            }
+
+            if (value.Data != null)
+            {
+                eventDataConverter.WriteEventData(writer, value.Data);
+            }
+
             writer.WriteEndObject();
         }
 
-        private void Write(Utf8JsonWriter writer, string name, object? value, JsonSerializerOptions options)
+        private void WriteData<TValue>(Utf8JsonWriter writer, string name, in TValue value, JsonTypeInfo typeInfo)
         {
-            if (value == null && (options.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull || options.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingDefault))
+            Console.WriteLine(typeof(TValue).Name);
+            if (value != null && typeInfo is JsonTypeInfo<TValue> jsonTypeInfo && jsonTypeInfo.SerializeHandler != null)
             {
+                writer.WritePropertyName(name);
+                jsonTypeInfo.SerializeHandler(writer, value);
+                writer.Flush();
                 return;
             }
-
-            writer.WritePropertyName(name);
-            SystemTextJsonSerializer.Serialize(writer, value, value?.GetType() ?? typeof(object), options);
         }
     }
 }

@@ -1,11 +1,12 @@
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Amazon.Lambda.SNSEvents;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+
+using Brighid.Discord.Serialization;
 
 using Lambdajection.Attributes;
 
@@ -18,18 +19,21 @@ namespace Brighid.Discord.Adapter.ResponseHandler
     public partial class Handler
     {
         private readonly IAmazonSQS sqs;
+        private readonly ISerializer serializer;
         private readonly ISnsRecordMapper mapper;
         private readonly Options options;
         private readonly ILogger<Handler> logger;
 
         public Handler(
             IAmazonSQS sqs,
+            ISerializer serializer,
             ISnsRecordMapper mapper,
             IOptions<Options> options,
             ILogger<Handler> logger
         )
         {
             this.sqs = sqs;
+            this.serializer = serializer;
             this.mapper = mapper;
             this.options = options.Value;
             this.logger = logger;
@@ -40,7 +44,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             cancellationToken.ThrowIfCancellationRequested();
             var entries = from record in @event.Records
                           let mappedRequest = mapper.MapToRequest(record)
-                          let message = JsonSerializer.Serialize(mappedRequest)
+                          let message = serializer.Serialize(mappedRequest)
                           select new SendMessageBatchRequestEntry
                           {
                               Id = mappedRequest.Id.ToString(),

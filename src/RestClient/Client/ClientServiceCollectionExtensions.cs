@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Amazon.SQS;
 
 using Brighid.Discord.RestClient.Client;
@@ -17,6 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
         /// <param name="configuration">Configuration to use for the services.</param>
+        [RequiresUnreferencedCode("Brighid.Discord.RestClient.Client.ClientOptions should be preserved")]
         public static void ConfigureRestClientServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ClientOptions>(configuration.GetSection("RestClient"));

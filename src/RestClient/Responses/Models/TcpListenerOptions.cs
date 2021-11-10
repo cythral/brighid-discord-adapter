@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Brighid.Discord.RestClient.Responses
@@ -5,6 +6,7 @@ namespace Brighid.Discord.RestClient.Responses
     /// <summary>
     /// Options to use for the TCP Listener.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class TcpListenerOptions
     {
         /// <summary>

@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Brighid.Discord.Adapter.Messages
 {
     /// <summary>
     /// Options to use for the <see cref="SnsMessageEmitter" />.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class SnsMessageEmitterOptions
     {
         /// <summary>

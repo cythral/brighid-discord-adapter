@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using Brighid.Discord.Adapter.Gateway;
@@ -18,6 +19,7 @@ namespace Brighid.Discord.Adapter
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
         /// <param name="configuration">The app configuration.</param>
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced in the loaded assembly is manually preserved in ILLink.Descriptors.xml")]
         public static void ConfigureGatewayServices(this IServiceCollection services, IConfiguration configuration)
         {
             var gatewayOptions = configuration.GetSection("Gateway");

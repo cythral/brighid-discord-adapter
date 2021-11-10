@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Brighid.Discord.Adapter.Database;
 
@@ -17,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
         /// <param name="configuration">Application configuration object.</param>
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         public static void ConfigureDatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
             var databaseOptions = configuration.GetSection("Database").Get<DatabaseOptions>();

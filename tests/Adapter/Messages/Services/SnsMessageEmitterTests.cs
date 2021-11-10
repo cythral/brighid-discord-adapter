@@ -33,12 +33,12 @@ namespace Brighid.Discord.Adapter.Messages
             [Target] SnsMessageEmitter emitter
         )
         {
-            serializer.Serialize(Any<string>(), Any<CancellationToken>()).Returns(serializedMessage);
+            serializer.Serialize(Any<string>()).Returns(serializedMessage);
             var cancellationToken = new CancellationToken(false);
 
             await emitter.Emit(message, channelId, cancellationToken);
 
-            await serializer.Received().Serialize(Is(message), Is(cancellationToken));
+            serializer.Received().Serialize(Is(message));
             await snsClient.Received().PublishAsync(
                 Is<PublishRequest>(req =>
                     req.TopicArn == options.Value.TopicArn &&
@@ -63,7 +63,7 @@ namespace Brighid.Discord.Adapter.Messages
 
             await emitter.Emit(message, channelId, cancellationToken);
 
-            await serializer.Received().Serialize(Is(message), Is(cancellationToken));
+            serializer.Received().Serialize(Is(message));
             await snsClient.Received().PublishAsync(
                 Is<PublishRequest>(req =>
                     req.MessageAttributes.Any(attribute =>
@@ -91,7 +91,7 @@ namespace Brighid.Discord.Adapter.Messages
 
             await emitter.Emit(message, channelId, cancellationToken);
 
-            await serializer.Received().Serialize(Is(message), Is(cancellationToken));
+            serializer.Received().Serialize(Is(message));
             await snsClient.Received().PublishAsync(
                 Is<PublishRequest>(req =>
                     req.MessageAttributes.Any(attribute =>

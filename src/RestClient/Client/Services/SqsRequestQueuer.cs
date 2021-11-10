@@ -40,7 +40,7 @@ namespace Brighid.Discord.RestClient.Client
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var message = await serializer.Serialize(request, cancellationToken);
+            var message = serializer.Serialize(request);
             await sqsClient.SendMessageAsync(options.RequestQueueUrl, message, cancellationToken);
         }
     }

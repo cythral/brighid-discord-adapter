@@ -77,7 +77,7 @@ namespace Brighid.Discord.Adapter.Users
             };
 
             var response = await httpClient.SendAsync(request, cancellationToken);
-            var tokenResponse = await response.Content.ReadFromJsonAsync<OAuth2TokenResponse>(cancellationToken: cancellationToken);
+            var tokenResponse = await response.Content.ReadFromJsonAsync(JsonContext.Default.OAuth2TokenResponse, cancellationToken: cancellationToken);
             return tokenResponse.AccessToken;
         }
 #pragma warning disable IDE0004
@@ -94,7 +94,7 @@ namespace Brighid.Discord.Adapter.Users
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await httpClient.SendAsync(request, cancellationToken);
-            var user = await response.Content.ReadFromJsonAsync<Models.User>(cancellationToken: cancellationToken);
+            var user = await response.Content.ReadFromJsonAsync(JsonContext.Default.User, cancellationToken: cancellationToken);
             return user;
         }
 

@@ -9,7 +9,7 @@
             <EnvFileLines Include="DB_PASSWORD=$([System.Guid]::NewGuid())" />
             <EnvFileLines Include="DB_NAME=adapter" />
             <EnvFileLines Include="ADAPTER_PROJECT_DIRECTORY=./src/Adapter" />
-            <EnvFileLines Include="ADAPTER_OUTPUT_DIRECTORY=./bin/Adapter/Debug/net5.0" />
+            <EnvFileLines Include="ADAPTER_OUTPUT_DIRECTORY=./bin/Adapter/Debug/net6.0" />
             <EnvFileLines Include="ADAPTER_ASSEMBLY_NAME=Adapter" />
             <EnvFileLines Include="ASPNET_VERSION=5.0.7" />
             <EnvFileLines Include="REQUESTS_QUEUE_URL=$(Requests__QueueUrl)" />

@@ -8,7 +8,7 @@ namespace Brighid.Discord.Adapter.Events
     /// Event sent when a message is created in a guild.
     /// </summary>
     [GatewayEvent(GatewayOpCode.Dispatch, "MESSAGE_CREATE")]
-    [JsonConverter(typeof(IMessageEventConverterFactory))]
+    [JsonConverter(typeof(IMessageEventConverter<MessageCreateEvent>))]
     public struct MessageCreateEvent : IGatewayEvent, IMessageEvent
     {
         /// <summary>

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Brighid.Discord.Adapter.Requests
     /// <summary>
     /// Encapsulates a message from SQS and its metadata.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class RequestMessage
     {
         /// <summary>

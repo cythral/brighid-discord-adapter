@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Brighid.Discord.Adapter.Database
 {
     /// <summary>
     /// Options to use when interacting with the database.
     /// </summary>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     public class DatabaseOptions
     {
         /// <summary>

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Brighid.Discord.RestClient.Responses;
 
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection to configure.</param>
         /// <param name="configuration">Configuration to use for the response services.</param>
+        [RequiresUnreferencedCode("Brighid.Discord.RestClient.Responses.TcpListenerOptions should be preserved.")]
         public static void ConfigureRestClientResponseServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<TcpListenerOptions>(configuration.GetSection("ResponseServer"));

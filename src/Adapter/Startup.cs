@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
@@ -43,17 +44,16 @@ namespace Brighid.Discord.Adapter
         }
 
         /// <inheritdoc />
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
+            ConfigureBrighidServices(services);
 
             services.Configure<ForwardedHeadersOptions>(ConfigureForwardedHeadersOptions);
-            services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddRazorPages();
-            services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
-            services.AddBrighidCommands(configuration.GetSection("Commands").Bind);
-            services.ConfigureSerializationServices();
+            services.ConfigureSerializationServices(JsonContext.Default);
             services.ConfigureThreadingServices();
             services.ConfigureDependencyInjectionServices();
             services.ConfigureEventsServices();
@@ -113,6 +113,15 @@ namespace Brighid.Discord.Adapter
             services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
         }
 
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
+        private void ConfigureBrighidServices(IServiceCollection services)
+        {
+            services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
+            services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
+            services.AddBrighidCommands(configuration.GetSection("Commands").Bind);
+        }
+
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         private void ConfigureMiscServices(IServiceCollection services)
         {
             services.AddControllers();

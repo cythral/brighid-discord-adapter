@@ -11,18 +11,19 @@
 @inject IOptions<IdentityOptions> identityOptions;
 @inject IStringLocalizer<Strings> localizer;
 @{
-    var failed = Model.Status != AccountLinkStatus.Success;
+    var status = Model?.Status ?? AccountLinkStatus.Failed;
+    var failed = status != AccountLinkStatus.Success;
     var icon = failed ? "fa-times failed" : "fa-link";
 
-    var discordId = Model.DiscordUsername != null && Model.DiscordDiscriminator != null
+    var discordId = Model?.DiscordUsername != null && Model?.DiscordDiscriminator != null
     ? $"{Model.DiscordUsername}#{Model.DiscordDiscriminator}"
     : "an unknown Discord account";
 
-    var avatarImageUri = Model.DiscordUserId != null && Model.DiscordAvatarHash != null
+    var avatarImageUri = Model?.DiscordUserId != null && Model?.DiscordAvatarHash != null
     ? $"https://cdn.discordapp.com/avatars/{Model.DiscordUserId}/{Model.DiscordAvatarHash}.png"
     : "https://www.freeiconspng.com/uploads/black-question-mark-icon-clip-art-10.png";
 
-    var message = localizer[$"AccountLink{Model.Status.ToString()}", discordId];
+    var message = localizer[$"AccountLink{status.ToString()}", discordId];
     var identityServerUri = new UriBuilder(identityOptions.Value.IdentityServerUri)
     {
         Scheme = Uri.UriSchemeHttps,

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +10,7 @@ using Amazon.SQS.Model;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Models;
+using Brighid.Discord.Serialization;
 
 using FluentAssertions;
 
@@ -50,11 +50,14 @@ namespace Brighid.Discord.Adapter.ResponseHandler
 
         [Test, Auto]
         public async Task ShouldPublishMessagesWithBodyToSQS(
+            string serializedRequest1,
+            string serializedRequest2,
             SNSEvent snsEvent,
             SNSEvent.SNSRecord record1,
             SNSEvent.SNSRecord record2,
             Request request1,
             Request request2,
+            [Frozen] ISerializer serializer,
             [Frozen] IAmazonSQS sqs,
             [Frozen] ISnsRecordMapper mapper,
             [Target] Handler handler,
@@ -65,13 +68,15 @@ namespace Brighid.Discord.Adapter.ResponseHandler
 
             mapper.MapToRequest(Is(record1)).Returns(request1);
             mapper.MapToRequest(Is(record2)).Returns(request2);
-            var serializedRequest1 = JsonSerializer.Serialize(request1);
-            var serializedRequest2 = JsonSerializer.Serialize(request2);
+
+            serializer.Serialize(Is(request1)).Returns(serializedRequest1);
+            serializer.Serialize(Is(request2)).Returns(serializedRequest2);
 
             await handler.Handle(snsEvent, cancellationToken);
 
             await sqs.Received().SendMessageBatchAsync(Any<SendMessageBatchRequest>(), Is(cancellationToken));
             var request = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
+
             request.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest1);
             request.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest2);
         }

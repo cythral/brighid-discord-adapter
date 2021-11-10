@@ -61,7 +61,7 @@ namespace Brighid.Discord.Adapter.Messages
         {
             using var scope = logger.BeginScope("{@ApiCall}", "sns:Publish");
 
-            var serializedMessage = await serializer.Serialize(message, cancellationToken);
+            var serializedMessage = serializer.Serialize(message);
             var request = new PublishRequest
             {
                 TopicArn = options.TopicArn,

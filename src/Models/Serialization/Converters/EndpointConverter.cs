@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,6 +12,7 @@ namespace Brighid.Discord.Models
     {
         private static readonly Dictionary<char, Type> CategoryDictionary = new();
 
+        [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Will be converted to a source generator at a later date.")]
         static EndpointConverter()
         {
             foreach (var type in typeof(EndpointConverter).Assembly.GetTypes())

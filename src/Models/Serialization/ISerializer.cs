@@ -14,27 +14,24 @@ namespace Brighid.Discord.Serialization
         /// </summary>
         /// <typeparam name="TSerializableType">The type of object to serialize.</typeparam>
         /// <param name="serializable">The object to serialize.</param>
-        /// <param name="cancellationToken">Token used to cancel the task.</param>
         /// <returns>The serialized string.</returns>
-        Task<string> Serialize<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken);
+        string Serialize<TSerializableType>(TSerializableType serializable);
 
         /// <summary>
         /// Serializes an object to a byte stream.
         /// </summary>
         /// <typeparam name="TSerializableType">The type of object to serialize to JSON.</typeparam>
         /// <param name="serializable">The object to serialize to JSON.</param>
-        /// <param name="cancellationToken">Token used to cancel the task.</param>
         /// <returns>The serialized string.</returns>
-        Task<byte[]> SerializeToBytes<TSerializableType>(TSerializableType serializable, CancellationToken cancellationToken);
+        byte[] SerializeToBytes<TSerializableType>(TSerializableType serializable);
 
         /// <summary>
         /// Deserializes text into an object.
         /// </summary>
         /// <typeparam name="TResultType">The resulting object's type.</typeparam>
         /// <param name="deserializable">The text to deserialize.</param>
-        /// <param name="cancellationToken">Token used to cancel the task.</param>
         /// <returns>The resulting object.</returns>
-        Task<TResultType?> Deserialize<TResultType>(string deserializable, CancellationToken cancellationToken);
+        TResultType? Deserialize<TResultType>(string deserializable);
 
         /// <summary>
         /// Deserializes a stream into an object.

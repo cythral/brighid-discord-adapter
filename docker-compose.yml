@@ -20,7 +20,7 @@ services:
     ports:
       - "80"
     volumes:
-      - ./bin/Adapter/Debug/net5.0/linux-musl-x64:/app
+      - ./bin/Adapter/Debug/net6.0/linux-musl-x64/publish:/app
       - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local

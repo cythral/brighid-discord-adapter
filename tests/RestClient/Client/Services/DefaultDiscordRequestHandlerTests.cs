@@ -118,7 +118,7 @@ namespace Brighid.Discord.RestClient.Client
                 CancellationToken cancellationToken
             )
             {
-                serializer.Serialize(Any<object>(), Any<CancellationToken>()).Returns(body);
+                serializer.Serialize(Any<object>()).Returns(body);
                 await handler.Handle(endpoint, request, parameters, headers, cancellationToken);
 
                 await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
@@ -223,7 +223,7 @@ namespace Brighid.Discord.RestClient.Client
                 CancellationToken cancellationToken
             )
             {
-                serializer.Serialize(Any<object>(), Any<CancellationToken>()).Returns(body);
+                serializer.Serialize(Any<object>()).Returns(body);
                 await handler.Handle<object, object>(endpoint, request, parameters, headers, cancellationToken);
 
                 await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
@@ -263,11 +263,11 @@ namespace Brighid.Discord.RestClient.Client
                 CancellationToken cancellationToken
             )
             {
-                serializer.Deserialize<object>(Any<string>(), Any<CancellationToken>()).Returns(response);
+                serializer.Deserialize<object>(Any<string>()).Returns(response);
                 var result = await handler.Handle<object, object>(endpoint, request, parameters, headers, cancellationToken);
 
                 result.Should().Be(response);
-                await serializer.Received().Deserialize<object>(Is(response.Body!), Is(cancellationToken));
+                serializer.Received().Deserialize<object>(Is(response.Body!));
             }
         }
     }

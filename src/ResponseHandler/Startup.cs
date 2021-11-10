@@ -14,6 +14,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
         {
             services.UseAwsService<IAmazonSQS>();
             services.AddSingleton<ISnsRecordMapper, SnsRecordMapper>();
+            services.ConfigureSerializationServices(JsonContext.Default);
         }
     }
 }
