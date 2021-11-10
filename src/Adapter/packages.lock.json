@@ -118,14 +118,13 @@
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Direct",
-        "requested": "[6.0.0-rc.1, )",
-        "resolved": "6.0.0-rc.1",
-        "contentHash": "lPIJdL7m7YEvGleYKkHOOX7YMRyACiKEGBU06bnf7FtCE7JVK4DeYmzj5T6hNxxcR03JYP+vJVBxd4VwkMwMgw==",
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "iWloXFjpN6BllZA9oPqZTW9mNtFV5Q6DFv0WwFyh1IuOJ71btS3ifTwpLmaFXSlXzuEU9o7Rul0dU0WiwkOq0Q==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Design": "6.0.0-rc.1.21452.10",
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.0-rc.1.21452.10",
-          "Microsoft.Extensions.DependencyInjection": "6.0.0-rc.1.21451.13",
-          "MySqlConnector": "1.4.0-beta.4"
+          "Microsoft.EntityFrameworkCore.Relational": "[6.0.0, 7.0.0)",
+          "Microsoft.Extensions.DependencyInjection": "6.0.0",
+          "MySqlConnector": "2.0.0"
         }
       },
       "Serilog.AspNetCore": {
@@ -555,8 +554,8 @@
       },
       "MySqlConnector": {
         "type": "Transitive",
-        "resolved": "1.4.0-beta.4",
-        "contentHash": "vY+UZokHgcqE6KXYDjQr12EQmvZb54q33So4LGjodxbINOqG0MJENiUVYF2JlcOgWen0MdJpeabhskz/FYfAew=="
+        "resolved": "2.0.0",
+        "contentHash": "EY0KXqQas+QvdZQU0NPkqBSfJitWAl8IUCg0v/Qn0P7f/KApJTFJFm8czYWoDPyewUjPHrAnE/cSYzzSFGc8Ng=="
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
