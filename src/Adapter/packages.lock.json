@@ -4,11 +4,11 @@
     "net6.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.2.54, )",
-        "resolved": "3.7.2.54",
-        "contentHash": "u8Ks2XTgBJPkWNMKnZGX/k8PN0FT8tgEE/HroQOag8P4EUUSZxYFeDthahHm4jCvFukv/aPsLYgeN5tDPGxltg==",
+        "requested": "[3.7.2.55, )",
+        "resolved": "3.7.2.55",
+        "contentHash": "fiDtF9oA2kOo8tq2RcfReDmvkJYpbYj/EY8Ll4okN/n3kP224dDxxOU16iiXTQwhTf/hMTK5Fc72W8R0K2Ea+A==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.4.3, 4.0.0)"
+          "AWSSDK.Core": "[3.7.4.4, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
@@ -165,8 +165,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.4.3",
-        "contentHash": "YBN+d0J+s/fYLZrp6qdB9uJDzrjrcjAYheOpyJqwo8quqjl5pEAXmWfc9uA0PbckWGEdSxcwl/KuuPnPtAycfQ=="
+        "resolved": "3.7.4.4",
+        "contentHash": "5CVA9hnBsQ6eA0MFFUi4nXSvugZ09H5Zmbp2+MxhxkiCF8hbAa3PGnsvbkzLAPlos4+B4n6mvycGulJIkOOwoQ=="
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
