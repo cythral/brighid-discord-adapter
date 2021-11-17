@@ -22,6 +22,42 @@
           "NUnit": "[3.7.0, 4.0.0)"
         }
       },
+      "AWSSDK.Lambda": {
+        "type": "Direct",
+        "requested": "[3.7.4.27, )",
+        "resolved": "3.7.4.27",
+        "contentHash": "dAxksY4pjB4WofIiyZLY4em/fT8sYeJ7eKMV3FmBYRkNFpvm/Z8AcCMtayaWvurjVlQV1n5meBMBmtRto8kgGg==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+        }
+      },
+      "AWSSDK.Organizations": {
+        "type": "Direct",
+        "requested": "[3.7.0.101, )",
+        "resolved": "3.7.0.101",
+        "contentHash": "pxBxya5C26dDXb/OXc1fZxn9IKMp71jtuYkopAPQHYC47SIUkx5hutStrWADSOovZ15FrNUIUnjWfXMntotTUA==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+        }
+      },
+      "AWSSDK.SecurityToken": {
+        "type": "Direct",
+        "requested": "[3.7.1.90, )",
+        "resolved": "3.7.1.90",
+        "contentHash": "NOH58gwoMmHo/3GmM9qYd8jQT1WUihoj0nXRZ9yp103wF7kksKM12mxQqr/xLQq8Cok0jPlTqEzxc+I2MogDYQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+        }
+      },
+      "AWSSDK.SimpleSystemsManagement": {
+        "type": "Direct",
+        "requested": "[3.7.9.2, )",
+        "resolved": "3.7.9.2",
+        "contentHash": "9slNFau3oy8vRFf/hYIPDaH37Y0kcQu1ZH8Jtyhj6Jyj5ndSSRM7HYEGe8vuIxgjl9Sc7lWqdKKQ48sms2CwSQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+        }
+      },
       "FluentAssertions": {
         "type": "Direct",
         "requested": "[5.10.3, )",
