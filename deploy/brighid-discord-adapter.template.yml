@@ -45,11 +45,11 @@ Parameters:
     Type: String
     Description: The encrypted database password
 
-  LambdajectionLayerVersion:
+  LambdajectionVersion:
     Type: String
     Description: ARN of the Lambda Layer containing Lambdajection + its dependencies
 
-  DotnetLayerVersion:
+  DotnetVersion:
     Type: String
     Description: ARN of the Lambda Layer containing .NET
 
@@ -383,8 +383,8 @@ Resources:
       CodeUri: ../bin/ResponseHandler/Release/net6.0/linux-x64/publish/
       MemorySize: 512
       Layers:
-        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:dotnet:${DotnetLayerVersion}
-        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:lambdajection:${LambdajectionLayerVersion}
+        - !Sub "{{resolve:ssm:/dotnet/${DotnetVersion}/layer-arn}}"
+        - !Sub "{{resolve:ssm:/lambdajection/${LambdajectionVersion}/layer-arn}}"
       Policies:
         - AWSLambdaExecute
         - !Ref ResponseHandlerPolicy
