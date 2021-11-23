@@ -4,9 +4,9 @@
     "net6.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.1.46, )",
-        "resolved": "3.7.1.46",
-        "contentHash": "N4YbJSkquLwif50TCQ+c1bb9GuvTBW2JuVhl+pNT7ZedEd4iBlXxUpOIsNcTXwEk3zdKC+E3PYgU86/SH773ig==",
+        "requested": "[3.7.2, )",
+        "resolved": "3.7.2",
+        "contentHash": "7rlV1YmXFCFVRrAb5vxC/FalcAI7+WjZFrPkfjM9GiiGbV2cMXz934xbBzVxWN/HeSkTcnSA5e0vdlSvF9N9Qw==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.5.2, 4.0.0)"
         }
