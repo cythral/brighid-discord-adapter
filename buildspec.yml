@@ -29,7 +29,7 @@ phases:
       - dotnet publish --no-restore -p:DockerImageTag=$image
       - dotnet test --logger trx --no-build
 
-      - ./scripts/create-config-files.sh $GATEWAY_ADAPTER_IMAGE_TAG
+      - ./scripts/create-config-files.sh $image
 
   post_build:
     commands:
