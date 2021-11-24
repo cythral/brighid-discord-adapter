@@ -24,4 +24,18 @@
     <Target Name="Format" DependsOnTargets="Restore;RestoreTools">
         <Exec Command="dotnet format $(MSBuildThisFileDirectory)brighid-discord-adapter.sln --fix-style info" />
     </Target>
+
+    <Target Name="Dockerize" AfterTargets="Publish">
+        <PropertyGroup>
+            <DockerImageTag Condition="'$(DockerImageTag)' == ''">brighid/discord-adapter</DockerImageTag>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <DockerBuildArgs Include="--file $(MSBuildThisFileDirectory)Dockerfile" />
+            <DockerBuildArgs Include="--tag $(DockerImageTag)" />
+            <DockerBuildArgs Include="--build-arg CONFIGURATION=$(Configuration)" />
+        </ItemGroup>
+
+        <Exec Command="docker build @(DockerBuildArgs, ' ') $(MSBuildThisFileDirectory)" />
+    </Target>
 </Project>
