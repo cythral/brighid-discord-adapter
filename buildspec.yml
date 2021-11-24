@@ -24,13 +24,12 @@ phases:
 
   build:
     commands:
-      - export GATEWAY_ADAPTER_IMAGE_TAG=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
+      - export image=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - dotnet restore
-      - dotnet publish --no-restore
+      - dotnet publish --no-restore -p:DockerImageTag=$image
       - dotnet test --logger trx --no-build
 
       - ./scripts/create-config-files.sh $GATEWAY_ADAPTER_IMAGE_TAG
-      - dotnet build -t:Dockerize
 
   post_build:
     commands:

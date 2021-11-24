@@ -13,14 +13,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-  adapter: 
+  adapter:
     image: brighid/discord-adapter
     working_dir: /app
     restart: unless-stopped
     ports:
       - "80"
     volumes:
-      - ./bin/Adapter/Debug/net6.0/linux-musl-x64/publish:/app
+      - ./bin/Adapter/Debug/linux-musl-x64/publish:/app
       - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local
@@ -59,8 +59,8 @@ services:
 
   envoy:
     image: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.0.0-prod
-    profiles: 
+    profiles:
       - prod
 
 volumes:
-  my-db:
+  my-db: null
