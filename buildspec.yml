@@ -19,22 +19,22 @@ phases:
 
   pre_build:
     commands:
+      - export IMAGE=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
       - . ./scripts/codebuild-extras.sh
 
   build:
     commands:
-      - export image=$REPOSITORY_URI:$CODEBUILD_BUILD_NUMBER
       - dotnet restore
-      - dotnet publish --no-restore -p:DockerImageTag=$image
+      - dotnet publish --no-restore -p:DockerImageTag=$IMAGE
       - dotnet test --logger trx --no-build
 
-      - ./scripts/create-config-files.sh $image
+      - ./scripts/create-config-files.sh $IMAGE
 
   post_build:
     commands:
       - ./scripts/package-template.sh
-      - ./scripts/push-docker-images.sh
+      - ./scripts/push-docker-images.sh $IMAGE
 
 artifacts:
   discard-paths: yes
