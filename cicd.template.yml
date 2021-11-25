@@ -82,6 +82,7 @@ Resources:
   DockerRepo:
     Type: AWS::ECR::Repository
     Properties:
+      RepositoryName: brighid/discord-adapter
       ImageScanningConfiguration:
         ScanOnPush: true
       LifecyclePolicy:
