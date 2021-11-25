@@ -5,6 +5,10 @@ Parameters:
     Type: String
     Description: Domain name to use for the Brighid Discord Adapter.
 
+  EnvironmentName:
+    Type: String
+    Description: Name of the environment being deployed to.
+
   Image:
     Type: String
     Description: URI of the Docker Image to pull.
@@ -245,6 +249,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
+            - Name: Environment
+              Value: !Ref EnvironmentName
             - Name: Encrypted__Adapter__Token
               Value: !Ref AdapterToken
             - Name: Requests__QueueUrl

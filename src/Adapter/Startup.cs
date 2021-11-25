@@ -85,7 +85,7 @@ namespace Brighid.Discord.Adapter
             logger.LogInformation("Starting. Environment: {@environment}", environment.EnvironmentName);
             databaseContext.Database.OpenConnection();
 
-            if (environment.IsEnvironment("local"))
+            if (environment.IsEnvironment(Environments.Local))
             {
                 databaseContext.Database.Migrate();
             }
