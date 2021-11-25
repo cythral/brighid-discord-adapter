@@ -10,11 +10,6 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GATEWAY_ADAPTER_IMAGE_TAG Condition="$(GATEWAY_ADAPTER_IMAGE_TAG) == ''">brighid/discord-adapter</GATEWAY_ADAPTER_IMAGE_TAG>
-    <DockerImageTag>$(GATEWAY_ADAPTER_IMAGE_TAG)</DockerImageTag>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Brighid.Commands.Client" Version="0.2.0-beta3" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.3.2" />

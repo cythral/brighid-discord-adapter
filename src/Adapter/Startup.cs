@@ -83,10 +83,11 @@ namespace Brighid.Discord.Adapter
         )
         {
             logger.LogInformation("Starting. Environment: {@environment}", environment.EnvironmentName);
+            databaseContext.Database.OpenConnection();
 
             if (environment.IsEnvironment("local"))
             {
-                databaseContext.Database.MigrateAsync().GetAwaiter().GetResult();
+                databaseContext.Database.Migrate();
             }
 
             app.UseForwardedHeaders();
