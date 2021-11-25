@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
@@ -22,23 +23,36 @@ namespace Brighid.Discord.Adapter
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
+            var environment = Environment.GetEnvironmentVariable("Environment") ?? Environments.Local;
+
             return Host.CreateDefaultBuilder(args)
-            .UseSerilog(dispose: true)
-            .ConfigureHostConfiguration(config =>
-            {
-                config.AddEnvironmentVariables();
-            })
-            .ConfigureWebHostDefaults(builder =>
-            {
-                builder.UseStartup<Startup>();
-                builder.ConfigureKestrel(options =>
+                .UseEnvironment(environment)
+                .UseSerilog(dispose: true)
+                .ConfigureHostConfiguration(config =>
                 {
-                    options.Listen(IPAddress.Any, 80, listenOptions =>
+                    config.AddEnvironmentVariables();
+                })
+                .UseDefaultServiceProvider(options =>
+                {
+#pragma warning disable IDE0078 // Use Pattern Matching
+
+                    var isDevOrLocal = environment == Environments.Local || environment == Environments.Development;
+                    options.ValidateScopes = isDevOrLocal;
+                    options.ValidateOnBuild = isDevOrLocal;
+
+#pragma warning restore IDE0078
+                })
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder.UseStartup<Startup>();
+                    builder.ConfigureKestrel(options =>
                     {
-                        listenOptions.Protocols = HttpProtocols.Http2;
+                        options.Listen(IPAddress.Any, 80, listenOptions =>
+                        {
+                            listenOptions.Protocols = HttpProtocols.Http2;
+                        });
                     });
                 });
-            });
         }
     }
 }
