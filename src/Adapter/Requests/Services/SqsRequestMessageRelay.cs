@@ -10,7 +10,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 
 using Brighid.Discord.Models;
-using Brighid.Discord.Networking;
+using Brighid.Discord.RestClient.Responses;
 using Brighid.Discord.Serialization;
 using Brighid.Discord.Threading;
 
@@ -30,7 +30,8 @@ namespace Brighid.Discord.Adapter.Requests
         private readonly CancellationToken workerCancellationToken;
         private readonly IChannel<RequestMessage> completeQueue;
         private readonly IChannel<RequestMessage> failQueue;
-        private readonly ITcpClientFactory tcpClientFactory;
+        private readonly IResponseService responseService;
+        private readonly IRequestMessageRelayHttpClient httpClient;
         private CancellationTokenSource? source;
 
         /// <summary>
@@ -40,16 +41,18 @@ namespace Brighid.Discord.Adapter.Requests
         /// <param name="completeQueue">Queue to put completed messages in.</param>
         /// <param name="failQueue">Queue to put failed messages in.</param>
         /// <param name="serializer">Service for serialization/deserialization of messages.</param>
-        /// <param name="tcpClientFactory">Factory used to create TCP Clients.</param>
         /// <param name="options">Options to use for requests.</param>
+        /// <param name="responseService">Service used for handling responses.</param>
+        /// <param name="httpClient">HTTP Client to use for responding to requests.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public SqsRequestMessageRelay(
             IAmazonSQS sqs,
             IChannel<RequestMessage> completeQueue,
             IChannel<RequestMessage> failQueue,
             ISerializer serializer,
-            ITcpClientFactory tcpClientFactory,
             IOptions<RequestOptions> options,
+            IResponseService responseService,
+            IRequestMessageRelayHttpClient httpClient,
             ILogger<SqsRequestMessageRelay> logger
         )
         {
@@ -57,8 +60,9 @@ namespace Brighid.Discord.Adapter.Requests
             this.completeQueue = completeQueue;
             this.failQueue = failQueue;
             this.serializer = serializer;
-            this.tcpClientFactory = tcpClientFactory;
             this.options = options.Value;
+            this.responseService = responseService;
+            this.httpClient = httpClient;
             this.logger = logger;
 
             source = new CancellationTokenSource();
@@ -116,13 +120,12 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task Respond(RequestMessage message, HttpStatusCode statusCode, string? body, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             if (message.RequestDetails.ResponseURL == null)
             {
                 return;
             }
 
-            var host = message.RequestDetails.ResponseURL!.Host;
-            var port = message.RequestDetails.ResponseURL!.Port;
             var response = new Response
             {
                 RequestId = message.RequestDetails.Id,
@@ -130,10 +133,13 @@ namespace Brighid.Discord.Adapter.Requests
                 Body = body,
             };
 
-            using var client = await tcpClientFactory.CreateTcpClient(host, port, cancellationToken);
-            var payload = serializer.Serialize(response);
-            await client.Write(payload, cancellationToken);
-            client.Close();
+            if (responseService.Uri == message.RequestDetails.ResponseURL)
+            {
+                responseService.HandleResponse(response);
+                return;
+            }
+
+            await httpClient.Post(message.RequestDetails.ResponseURL, response, cancellationToken);
         }
 
         /// <inheritdoc />

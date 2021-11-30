@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IBucketRepository, DefaultBucketRepository>();
             services.AddSingleton<HttpMessageInvoker, HttpClient>();
             services.AddHostedService<DefaultRequestWorker>();
+            services.UseBrighidIdentityWithHttp2<IRequestMessageRelayHttpClient, DefaultRequestMessageRelayHttpClient>();
         }
     }
 }

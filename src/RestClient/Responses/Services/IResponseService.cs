@@ -3,24 +3,23 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Models;
 
-using Microsoft.Extensions.Hosting;
-
 namespace Brighid.Discord.RestClient.Responses
 {
     /// <summary>
-    /// Server that listens for responses to REST API requests from the queue worker.
+    /// Service that abstracts listening for a response.
     /// </summary>
-    public interface IResponseServer : IHostedService
+    public interface IResponseService
     {
-        /// <summary>
-        /// Gets a value indicating whether the response server is running or not.
-        /// </summary>
-        bool IsRunning { get; }
-
         /// <summary>
         /// Gets the internally-accessible uri the server can be reached at.
         /// </summary>
         Uri Uri { get; }
+
+        /// <summary>
+        /// Handles a response from the REST Queue.
+        /// </summary>
+        /// <param name="response">The response from the rest queue.</param>
+        void HandleResponse(Response response);
 
         /// <summary>
         /// Listens for a response to the given requestID.

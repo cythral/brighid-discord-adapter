@@ -15,6 +15,7 @@ namespace Brighid.Discord.Adapter
     [JsonSerializable(typeof(Models.Message))]
     [JsonSerializable(typeof(Models.EmbedType))]
     [JsonSerializable(typeof(Models.Request))]
+    [JsonSerializable(typeof(Models.Channel))]
     [JsonSerializable(typeof(GatewayMessage))]
     [JsonSerializable(typeof(GatewayMessageWithoutData))]
     [JsonSerializable(typeof(HelloEvent))]
@@ -28,6 +29,7 @@ namespace Brighid.Discord.Adapter
     [JsonSerializable(typeof(InvalidSessionEvent))]
     [JsonSerializable(typeof(CreateMessagePayload))]
     [JsonSerializable(typeof(OAuth2TokenResponse))]
+    [JsonSerializable(typeof(CreateDirectMessageChannelPayload))]
     [JsonSerializable(typeof(IGatewayEvent))]
     public partial class JsonContext : JsonSerializerContext
     {

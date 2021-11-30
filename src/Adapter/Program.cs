@@ -21,9 +21,11 @@ namespace Brighid.Discord.Adapter
             await host.RunAsync();
         }
 
+#pragma warning disable IDE0078 // Use Pattern Matching
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("Environment") ?? Environments.Local;
+            var isDevOrLocal = environment == Environments.Local || environment == Environments.Development;
 
             return Host.CreateDefaultBuilder(args)
                 .UseEnvironment(environment)
@@ -34,13 +36,8 @@ namespace Brighid.Discord.Adapter
                 })
                 .UseDefaultServiceProvider(options =>
                 {
-#pragma warning disable IDE0078 // Use Pattern Matching
-
-                    var isDevOrLocal = environment == Environments.Local || environment == Environments.Development;
                     options.ValidateScopes = isDevOrLocal;
                     options.ValidateOnBuild = isDevOrLocal;
-
-#pragma warning restore IDE0078
                 })
                 .ConfigureWebHostDefaults(builder =>
                 {
@@ -54,5 +51,6 @@ namespace Brighid.Discord.Adapter
                     });
                 });
         }
+#pragma warning restore IDE0078
     }
 }
