@@ -57,10 +57,6 @@ Parameters:
     Type: String
     Description: ARN of the Lambda Layer containing .NET
 
-  RestResponseServerPort:
-    Type: Number
-    Description: Port to use for the Adapter Shell.
-
   ClientId:
     Type: String
     Description: Client ID of the Discord Application.
@@ -155,30 +151,26 @@ Resources:
       NamespaceId: !ImportValue brighid-infrastructure:ServiceRegistry
       Name: discord
 
-  IdentityApplication:
+  DiscordResponderRole:
+    Type: Custom::IdentityRole
+    Properties:
+      ServiceToken: !ImportValue identity-resources:RoleResourceArn
+      Name: DiscordResponder
+
+  DiscordIdentityApplication:
     Type: Custom::IdentityApplication
     Properties:
-      ServiceToken: !ImportValue identity:ApplicationTopicArn
-      Name: brighid-discord-adapter
+      ServiceToken: !ImportValue identity-resources:ApplicationResourceArn
+      Name: BrighidDiscordAdapter
       Roles:
         - Basic
         - Impersonator
+        - !GetAtt DiscordResponderRole.Name
 
   RestQueue:
     Type: AWS::SQS::Queue
     Properties:
       VisibilityTimeout: 60
-
-  RestResponseServerSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      VpcId: !ImportValue cfn-utilities:VpcId
-      GroupDescription: Allows traffic to the Response Server port.
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: !Ref RestResponseServerPort
-          ToPort: !Ref RestResponseServerPort
-          CidrIp: !ImportValue cfn-utilities:Ipv4NetworkCidr
 
   Service:
     Type: AWS::ECS::Service
@@ -194,7 +186,6 @@ Resources:
           SecurityGroups:
             - !ImportValue cfn-utilities:WebSecurityGroupId
             - !ImportValue cfn-utilities:EnvoySecurityGroupId
-            - !GetAtt RestResponseServerSecurityGroup.GroupId
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
       ServiceRegistries:
@@ -230,7 +221,7 @@ Resources:
           - Name: ProxyEgressPort
             Value: "15001"
           - Name: AppPorts
-            Value: !Sub "80,${RestResponseServerPort}"
+            Value: "80"
           - Name: EgressIgnoredIPs
             Value: 169.254.170.2,169.254.169.254
       ContainerDefinitions:
@@ -257,8 +248,6 @@ Resources:
               Value: !Ref RestQueue
             - Name: RestClient__RequestQueueUrl
               Value: !Ref RestQueue
-            - Name: ResponseServer__Port
-              Value: !Ref RestResponseServerPort
             - Name: Gateway__Uri
               Value: !Ref GatewayUri
             - Name: Metrics__Namespace
@@ -268,9 +257,9 @@ Resources:
             - Name: Identity__IdentityServerUri
               Value: !Sub http://${IdentityServerUri}
             - Name: Identity__ClientId
-              Value: !GetAtt IdentityApplication.Id
+              Value: !GetAtt DiscordIdentityApplication.Id
             - Name: Encrypted__Identity__ClientSecret
-              Value: !GetAtt IdentityApplication.EncryptedSecret
+              Value: !GetAtt DiscordIdentityApplication.EncryptedSecret
             - Name: Database__Host
               Value: !Ref DatabaseHost
             - Name: Database__Name

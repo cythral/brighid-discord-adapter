@@ -10,6 +10,7 @@ using Brighid.Discord.Adapter.Database;
 using Destructurama;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,16 +32,26 @@ namespace Brighid.Discord.Adapter
         /// Initializes a new instance of the <see cref="Startup" /> class.
         /// </summary>
         /// <param name="configuration">Configuration to use for the application.</param>
-        public Startup(IConfiguration configuration)
+        /// <param name="environment">Environment to use for the program.</param>
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment environment
+        )
         {
             this.configuration = configuration;
-
-            Log.Logger = new LoggerConfiguration()
+            var loggerBuilder = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}")
-                .CreateLogger();
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}");
+
+            loggerBuilder = environment.EnvironmentName switch
+            {
+                Environments.Local or Environments.Development => loggerBuilder.MinimumLevel.Debug(),
+                _ => loggerBuilder.MinimumLevel.Information(),
+            };
+
+            Log.Logger = loggerBuilder.CreateLogger();
         }
 
         /// <inheritdoc />
@@ -64,7 +75,7 @@ namespace Brighid.Discord.Adapter
             services.ConfigureMessageServices(configuration);
             services.ConfigureMetricServices(configuration);
             services.ConfigureAuthServices(configuration.GetSection("Auth").Bind);
-            services.ConfigureRestClientResponseServices(configuration);
+            services.ConfigureRestClientResponseServices();
             services.ConfigureRestClientServices(configuration);
         }
 

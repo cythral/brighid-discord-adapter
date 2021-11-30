@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,9 +101,17 @@ namespace Brighid.Discord.Adapter.Events
 
             if (@event.Message.Mentions.Any(mention => mention.Id == gateway.BotId))
             {
-                var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
-                var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
-                await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
+                try
+                {
+                    logger.LogInformation("User {@authorId} is not registered, sending invite through direct messages.", @event.Message.Author.Id);
+                    var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
+                    var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
+                    await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
+                }
+                catch (Exception exception)
+                {
+                    logger.LogError("An error occured while attempting to direct message {@authorId}: {@exception}", @event.Message.Author.Id, exception);
+                }
             }
         }
     }

@@ -7,30 +7,36 @@ using Brighid.Discord.Models;
 using Brighid.Discord.RestClient.Responses;
 using Brighid.Discord.Serialization;
 
+using Microsoft.Extensions.Logging;
+
 namespace Brighid.Discord.RestClient.Client
 {
     /// <inheritdoc />
     public class DefaultDiscordRequestHandler : IDiscordRequestHandler
     {
         private readonly ISerializer serializer;
-        private readonly IResponseServer server;
+        private readonly IResponseService responseService;
         private readonly IRequestQueuer queuer;
+        private readonly ILogger<DefaultDiscordRequestHandler> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDiscordRequestHandler"/> class.
         /// </summary>
         /// <param name="serializer">Serializer used to serialize/deserialize data between formats.</param>
-        /// <param name="server">Server that listens for responses to requests.</param>
+        /// <param name="responseService">Service that listens for responses to requests.</param>
         /// <param name="queuer">Service used to queue requests.</param>
+        /// <param name="logger">Logger used for logging info to some destination(s).</param>
         public DefaultDiscordRequestHandler(
             ISerializer serializer,
-            IResponseServer server,
-            IRequestQueuer queuer
+            IResponseService responseService,
+            IRequestQueuer queuer,
+            ILogger<DefaultDiscordRequestHandler> logger
         )
         {
             this.serializer = serializer;
-            this.server = server;
+            this.responseService = responseService;
             this.queuer = queuer;
+            this.logger = logger;
         }
 
         /// <inheritdoc />
@@ -51,11 +57,12 @@ namespace Brighid.Discord.RestClient.Client
                 Parameters = parameters ?? new Dictionary<string, string>(),
                 Headers = headers ?? new Dictionary<string, string>(),
                 RequestBody = serializer.Serialize(request),
-                ResponseURL = server.Uri,
+                ResponseURL = responseService.Uri,
             };
 
+            logger.LogDebug("Performing Discord API request with requestId: {@requestId} and response URL: {@url}", requestId, responseService.Uri);
             await queuer.QueueRequest(payload, cancellationToken);
-            var response = await server.ListenForResponse(requestId, promise);
+            var response = await responseService.ListenForResponse(requestId, promise);
             return serializer.Deserialize<TResponse>(response.Body ?? "{}");
         }
 
@@ -77,6 +84,7 @@ namespace Brighid.Discord.RestClient.Client
                 RequestBody = serializer.Serialize(request),
             };
 
+            logger.LogDebug("Performing Discord API request with requestId: {@requestId}", requestId);
             await queuer.QueueRequest(payload, cancellationToken);
         }
     }

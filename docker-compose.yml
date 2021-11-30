@@ -20,7 +20,7 @@ services:
     ports:
       - "80"
     volumes:
-      - ./bin/Adapter/Debug/linux-musl-x64/publish:/app
+      - ./bin/Adapter/Debug/linux-musl-x64:/app
       - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local
@@ -37,7 +37,9 @@ services:
       Requests__QueueUrl: ${REQUESTS_QUEUE_URL}
       RestClient__RequestQueueUrl: ${REQUESTS_QUEUE_URL}
       Gateway__Uri: ${GATEWAY_URI}
+      Auth__MetadataAddress: http://identity.dev.brigh.id/.well-known/openid-configuration
       Adapter__Token: ${ADAPTER_TOKEN}
+      Adapter__RegistrationUrl: https://identity.dev.brigh.id/account/link/discord
       Metrics__Namespace: ${METRICS_NAMESPACE}
       AWS_REGION: us-east-1
     labels:

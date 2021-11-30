@@ -12,7 +12,7 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Models;
-using Brighid.Discord.Networking;
+using Brighid.Discord.RestClient.Responses;
 using Brighid.Discord.Serialization;
 
 using FluentAssertions;
@@ -543,6 +543,7 @@ namespace Brighid.Discord.Adapter.Requests
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RespondTests
         {
             [Test, Auto]
@@ -575,143 +576,85 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
-            public async Task ShouldCreateATcpClientWithTheCorrectHostAndPort(
+            public async Task ShouldNotPostResponseIfRequestOriginatesFromTheDiscordAdapter(
                 RequestMessage message,
                 HttpStatusCode statusCode,
                 string body,
-                [Frozen, Substitute] ITcpClientFactory clientFactory,
+                [Frozen, Substitute] IResponseService responseService,
+                [Frozen, Substitute] IRequestMessageRelayHttpClient httpClient,
+                [Target] SqsRequestMessageRelay relay,
+                CancellationToken cancellationToken
+            )
+            {
+                responseService.Uri.Returns(message.RequestDetails.ResponseURL);
+
+                await relay.Respond(message, statusCode, body, cancellationToken);
+
+                await httpClient.DidNotReceiveWithAnyArgs().Post(default!, default!, default!);
+            }
+
+            [Test, Auto]
+            public async Task ShouldHandleResponseWithResponseServiceIfRequestOriginatesFromTheDiscordAdapter(
+                RequestMessage message,
+                HttpStatusCode statusCode,
+                string body,
+                [Frozen, Substitute] IResponseService responseService,
+                [Frozen, Substitute] IRequestMessageRelayHttpClient httpClient,
+                [Target] SqsRequestMessageRelay relay,
+                CancellationToken cancellationToken
+            )
+            {
+                responseService.Uri.Returns(message.RequestDetails.ResponseURL);
+
+                await relay.Respond(message, statusCode, body, cancellationToken);
+
+                responseService.Received().HandleResponse(
+                    Is<Response>(response =>
+                        response.RequestId == message.RequestDetails.Id &&
+                        response.Body == body &&
+                        response.StatusCode == statusCode
+                    )
+                );
+            }
+
+            [Test, Auto]
+            public async Task ShouldPostResponseForTheRequestToResponseUrl(
+                RequestMessage message,
+                HttpStatusCode statusCode,
+                string body,
+                [Frozen, Substitute] IRequestMessageRelayHttpClient httpClient,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
-                await clientFactory.Received().CreateTcpClient(
-                    Is(message.RequestDetails.ResponseURL!.Host),
-                    Is(message.RequestDetails.ResponseURL!.Port),
+                await httpClient.Received().Post(
+                    Is(message.RequestDetails.ResponseURL!),
+                    Is<Response>(response =>
+                        response.RequestId == message.RequestDetails.Id &&
+                        response.StatusCode == statusCode &&
+                        response.Body == body
+                    ),
                     Is(cancellationToken)
                 );
             }
 
             [Test, Auto]
-            public async Task ShouldNotCreateATcpClientIfResponseURLNotGiven(
+            public async Task ShouldNotPostIfResponseURLIsNull(
                 RequestMessage message,
                 HttpStatusCode statusCode,
                 string body,
-                [Frozen, Substitute] ITcpClientFactory clientFactory,
+                [Frozen, Substitute] IRequestMessageRelayHttpClient httpClient,
                 [Target] SqsRequestMessageRelay relay,
                 CancellationToken cancellationToken
             )
             {
                 message.RequestDetails.ResponseURL = null;
+
                 await relay.Respond(message, statusCode, body, cancellationToken);
 
-                await clientFactory.DidNotReceive().CreateTcpClient(
-                    Any<string>(),
-                    Any<int>(),
-                    Is(cancellationToken)
-                );
-            }
-
-            [Test, Auto]
-            public async Task ShouldSerializeResponseWithRequestId(
-                Guid requestId,
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                [Frozen, Substitute] ISerializer serializer,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                message.RequestDetails.Id = requestId;
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                serializer.Received().Serialize(
-                    Is<Response>(response => response.RequestId == requestId)
-                );
-            }
-
-            [Test, Auto]
-            public async Task ShouldSerializeResponseWithStatusCode(
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                [Frozen, Substitute] ISerializer serializer,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                serializer.Received().Serialize(
-                    Is<Response>(response => response.StatusCode == statusCode)
-                );
-            }
-
-            [Test, Auto]
-            public async Task ShouldSerializeResponseWithBody(
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                [Frozen, Substitute] ISerializer serializer,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                serializer.Received().Serialize(
-                    Is<Response>(response => response.Body == body)
-                );
-            }
-
-            [Test, Auto]
-            public async Task ShouldWriteSerializedResponseToTcpClient(
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                string response,
-                [Frozen, Substitute] ITcpClient tcpClient,
-                [Frozen, Substitute] ISerializer serializer,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                serializer.Serialize(Any<Response>()).Returns(response);
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                await tcpClient.Received().Write(Is(response), Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldCloseTheTcpClient(
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                [Frozen, Substitute] ITcpClient tcpClient,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                tcpClient.Received().Close();
-            }
-
-            [Test, Auto]
-            public async Task ShouldDisposeTheTcpClient(
-                RequestMessage message,
-                HttpStatusCode statusCode,
-                string body,
-                [Frozen, Substitute] ITcpClient tcpClient,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                await relay.Respond(message, statusCode, body, cancellationToken);
-
-                tcpClient.Received().Dispose();
+                await httpClient.DidNotReceiveWithAnyArgs().Post(default!, default!, default!);
             }
         }
     }

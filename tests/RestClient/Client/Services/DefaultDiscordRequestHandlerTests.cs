@@ -32,7 +32,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -50,7 +50,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -70,7 +70,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -90,7 +90,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -112,7 +112,7 @@ namespace Brighid.Discord.RestClient.Client
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
                 [Frozen, Substitute] ISerializer serializer,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -137,7 +137,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -155,7 +155,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -175,7 +175,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -195,7 +195,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -217,7 +217,7 @@ namespace Brighid.Discord.RestClient.Client
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
                 [Frozen, Substitute] ISerializer serializer,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Frozen, Substitute] IRequestQueuer queuer,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
@@ -238,7 +238,7 @@ namespace Brighid.Discord.RestClient.Client
                 object request,
                 Dictionary<string, string> parameters,
                 Dictionary<string, string> headers,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
             )
@@ -258,7 +258,7 @@ namespace Brighid.Discord.RestClient.Client
                 Dictionary<string, string> headers,
                 [Frozen] Response response,
                 [Frozen, Substitute] ISerializer serializer,
-                [Frozen, Substitute] IResponseServer server,
+                [Frozen, Substitute] IResponseService server,
                 [Target] DefaultDiscordRequestHandler handler,
                 CancellationToken cancellationToken
             )
