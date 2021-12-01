@@ -40,6 +40,7 @@ services:
       Auth__MetadataAddress: http://identity.dev.brigh.id/.well-known/openid-configuration
       Adapter__Token: ${ADAPTER_TOKEN}
       Adapter__RegistrationUrl: https://identity.dev.brigh.id/account/link/discord
+      Adapter__StaticAssetsRepositoryUrl: https://static.dev.brigh.id
       Metrics__Namespace: ${METRICS_NAMESPACE}
       AWS_REGION: us-east-1
     labels:

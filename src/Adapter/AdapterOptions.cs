@@ -39,6 +39,11 @@ namespace Brighid.Discord.Adapter
         public string RegistrationUrl { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets the Static Assets Repository URL - where images are stored.
+        /// </summary>
+        public string StaticAssetsRepositoryUrl { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the OAuth2 User Info Endpoint.
         /// </summary>
         public Uri OAuth2UserInfoEndpoint { get; set; } = new Uri("https://discord.com/api/users/@me");

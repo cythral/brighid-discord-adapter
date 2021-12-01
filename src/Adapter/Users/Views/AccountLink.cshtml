@@ -9,11 +9,14 @@
 @model AccountLinkViewModel
 
 @inject IOptions<IdentityOptions> identityOptions;
+@inject IOptions<AdapterOptions> adapterOptions;
 @inject IStringLocalizer<Strings> localizer;
+
 @{
     var status = Model?.Status ?? AccountLinkStatus.Failed;
     var failed = status != AccountLinkStatus.Success;
     var icon = failed ? "fa-times failed" : "fa-link";
+    var discordIconUrl = $"{adapterOptions.Value.StaticAssetsRepositoryUrl}/9f6f9cd156ce35e2d94c0e62e3eff462.png";
 
     var discordId = Model?.DiscordUsername != null && Model?.DiscordDiscriminator != null
     ? $"{Model.DiscordUsername}#{Model.DiscordDiscriminator}"
@@ -39,7 +42,7 @@
 <div class="container">
     <h1>@ViewData["Title"]</h1>
     <div class="container">
-        <img class="discord-logo" src="https://discord.com/assets/9f6f9cd156ce35e2d94c0e62e3eff462.png" />
+        <img class="discord-logo" src="@discordIconUrl" />
         <i class="fa @icon discord-link"></i>
         <img class="discord-user-avatar" src="@avatarImageUri" />
     </div>
