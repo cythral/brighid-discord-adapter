@@ -1,0 +1,47 @@
+name: Continuous Integration + Deployment
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "*"
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  DOTNET_NOLOGO: "true"
+  CONFIGURATION: Release
+  DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
+  DOTNET_SYSTEM_GLOBALIZATION_PREDEFINED_CULTURES_ONLY: "false"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_SHARED_ROLE }}
+          aws-region: us-east-1
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+
+      - name: Display .NET Info
+        run: dotnet --info
+
+      - name: Build
+        run: |
+          dotnet run \
+            --project cicd/Cicd.BuildDriver/Cicd.BuildDriver.csproj -- \
+            --version ${{ github.run_number }}

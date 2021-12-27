@@ -16,6 +16,7 @@ phases:
     commands:
       - dotnet-install.sh --jsonfile global.json
       - dotnet --info
+      - exit 1
 
   pre_build:
     commands:

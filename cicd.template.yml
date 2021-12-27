@@ -274,3 +274,7 @@ Resources:
           ignore_checks:
             - E3002
             - E3003
+
+Outputs:
+  RepositoryUri:
+    Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DockerRepo}
