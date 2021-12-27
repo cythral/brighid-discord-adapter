@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="ProjectRootDirectory">
+            <_Parameter1>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../'))</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AWSSDK.ECR" Version="3.7.2.6" />
+        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.1.100" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../src/Adapter/Adapter.csproj" ReferenceOutputAssembly="false" Targets="Publish" />
+        <ProjectReference Include="../../src/ResponseHandler/ResponseHandler.csproj" ReferenceOutputAssembly="false" Targets="Publish" />
+    </ItemGroup>
+</Project>
