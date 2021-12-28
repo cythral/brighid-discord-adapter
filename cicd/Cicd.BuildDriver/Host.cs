@@ -50,6 +50,7 @@ namespace Brighid.Discord.Cicd.Driver
         {
             cancellationToken.ThrowIfCancellationRequested();
             Directory.SetCurrentDirectory(ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "cicd/Cicd.Artifacts");
+            Directory.CreateDirectory(ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/Cicd");
             var accountNumber = await GetCurrentAccountNumber(cancellationToken);
 
             await Step("Bootstrapping CDK", async () =>
@@ -161,7 +162,8 @@ namespace Brighid.Discord.Cicd.Driver
                     {
                         ["--template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "template.yml",
                         ["--s3-bucket"] = outputs.BucketName,
-                        ["--output-template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/template.yml",
+                        ["--s3-prefix"] = options.Version,
+                        ["--output-template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/Cicd/template.yml",
                     }
                 );
 
@@ -169,6 +171,31 @@ namespace Brighid.Discord.Cicd.Driver
                     errorMessage: "Could not package CloudFormation template.",
                     cancellationToken: cancellationToken
                 );
+            });
+
+            await Step("Upload Artifacts to S3", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var command = new Command(
+                    command: "aws s3 cp",
+                    options: new Dictionary<string, object>
+                    {
+                        ["--recursive"] = true,
+                    },
+                    arguments: new[]
+                    {
+                        $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/Cicd",
+                        $"s3://{outputs.BucketName}/{options.Version}",
+                    }
+                );
+
+                await command.RunOrThrowError(
+                    errorMessage: "Could not upload artifacts to S3.",
+                    cancellationToken: cancellationToken
+                );
+
+                Console.WriteLine($"::set-output name=artifacts-location::s3://{outputs.BucketName}/{options.Version}");
             });
 
             lifetime.StopApplication();
@@ -225,7 +252,7 @@ namespace Brighid.Discord.Cicd.Driver
                 },
             };
 
-            var destinationFilePath = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/config.{environment}.json";
+            var destinationFilePath = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/Cicd/config.{environment}.json";
             using var destinationFile = File.OpenWrite(destinationFilePath);
             await JsonSerializer.SerializeAsync(destinationFile, config, cancellationToken: cancellationToken);
             Console.WriteLine($"Created config file for {environment} at {destinationFilePath}.");

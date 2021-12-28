@@ -24,6 +24,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifacts-location: ${{ steps.build.outputs.artifacts-location }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -49,7 +51,16 @@ jobs:
         run: dotnet --info
 
       - name: Build
+        id: build
         run: |
           dotnet run \
             --project cicd/Cicd.BuildDriver/Cicd.BuildDriver.csproj -- \
             --version ${{ github.run_number }}
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency: dev
+    environment: Development
+    steps:
+      - run: echo ${{ needs.build.outputs.artifacts-location }}
