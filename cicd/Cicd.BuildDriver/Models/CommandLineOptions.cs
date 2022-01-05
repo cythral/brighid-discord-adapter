@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Brighid.Discord.Cicd.Driver
+namespace Brighid.Discord.Cicd.BuildDriver
 {
     /// <summary>
     /// Options presented on the command line.

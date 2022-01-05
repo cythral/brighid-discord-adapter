@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using Brighid.Discord.Cicd.BuildDriver;
+using Brighid.Discord.Cicd.DeployDriver;
 using Brighid.Discord.Cicd.Utils;
 
 using Microsoft.Extensions.Configuration;
@@ -15,13 +15,15 @@ await Microsoft.Extensions.Hosting.Host
 {
     configure.AddCommandLine(args, new Dictionary<string, string>
     {
-        ["--version"] = "CommandLineOptions:Version",
+        ["--environment"] = "CommandLineOptions:Environment",
+        ["--artifacts-location"] = "CommandLineOptions:ArtifactsLocation",
     });
 })
 .ConfigureServices((context, services) =>
 {
     services.Configure<CommandLineOptions>(context.Configuration.GetSection("CommandLineOptions"));
-    services.AddSingleton<IHost, Brighid.Discord.Cicd.BuildDriver.Host>();
+    services.AddSingleton<IHost, Brighid.Discord.Cicd.DeployDriver.Host>();
+    services.AddSingleton<StackDeployer>();
     services.AddSingleton<EcrUtils>();
 })
 .UseConsoleLifetime()

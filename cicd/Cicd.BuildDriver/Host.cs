@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.ECR;
 using Amazon.SecurityToken;
+
+using Brighid.Discord.Cicd.Utils;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace Brighid.Discord.Cicd.Driver
+namespace Brighid.Discord.Cicd.BuildDriver
 {
     /// <inheritdoc />
     public class Host : IHost
@@ -22,21 +21,25 @@ namespace Brighid.Discord.Cicd.Driver
         private static readonly string IntermediateOutputDirectory = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "obj/Cicd.Driver/";
         private static readonly string ToolkitStack = "cdk-toolkit";
         private static readonly string OutputsFile = IntermediateOutputDirectory + "cdk.outputs.json";
+        private readonly EcrUtils ecrUtils;
         private readonly CommandLineOptions options;
         private readonly IHostApplicationLifetime lifetime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Host" /> class.
         /// </summary>
+        /// <param name="ecrUtils">Utilities for interacting with ECR.</param>
         /// <param name="options">Command line options.</param>
         /// <param name="lifetime">Service that controls the application lifetime.</param>
         /// <param name="serviceProvider">Object that provides access to the program's services.</param>
         public Host(
+            EcrUtils ecrUtils,
             IOptions<CommandLineOptions> options,
             IHostApplicationLifetime lifetime,
             IServiceProvider serviceProvider
         )
         {
+            this.ecrUtils = ecrUtils;
             this.options = options.Value;
             this.lifetime = lifetime;
             Services = serviceProvider;
@@ -50,11 +53,13 @@ namespace Brighid.Discord.Cicd.Driver
         {
             cancellationToken.ThrowIfCancellationRequested();
             Directory.SetCurrentDirectory(ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "cicd/Cicd.Artifacts");
+            Directory.CreateDirectory(ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/Cicd");
             var accountNumber = await GetCurrentAccountNumber(cancellationToken);
 
             await Step("Bootstrapping CDK", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command("cdk bootstrap", new Dictionary<string, object>
                 {
                     ["--toolkit-stack-name"] = ToolkitStack,
@@ -69,6 +74,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Deploying Artifacts Stack", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command("cdk deploy", new Dictionary<string, object>
                 {
                     ["--toolkit-stack-name"] = ToolkitStack,
@@ -87,33 +93,14 @@ namespace Brighid.Discord.Cicd.Driver
 
             await Step("Logging into ECR", async () =>
             {
-                var ecr = new AmazonECRClient();
-                var response = await ecr.GetAuthorizationTokenAsync(new(), cancellationToken);
-                var token = response.AuthorizationData.ElementAt(0);
-
-                var command = new Command(
-                    command: "docker login",
-                    options: new Dictionary<string, object>
-                    {
-                        ["--username"] = "AWS",
-                        ["--password-stdin"] = true,
-                    },
-                    arguments: new[] { outputs.ImageRepositoryUri }
-                );
-
-                var passwordBytes = Convert.FromBase64String(token.AuthorizationToken);
-                var password = Encoding.ASCII.GetString(passwordBytes)[4..];
-
-                await command.RunOrThrowError(
-                    errorMessage: "Failed to login to ECR.",
-                    input: password,
-                    cancellationToken: cancellationToken
-                );
+                cancellationToken.ThrowIfCancellationRequested();
+                await ecrUtils.DockerLogin(outputs.ImageRepositoryUri, cancellationToken);
             });
 
             await Step("Building Docker Image", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command(
                     command: "docker build",
                     options: new Dictionary<string, object>
@@ -133,6 +120,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Pushing Docker Image", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command(
                     command: "docker push",
                     arguments: new[] { tag }
@@ -147,6 +135,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Create Config Files", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 await CreateConfigFile("dev", tag, cancellationToken);
                 await CreateConfigFile("prod", tag, cancellationToken);
             });
@@ -161,7 +150,8 @@ namespace Brighid.Discord.Cicd.Driver
                     {
                         ["--template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "template.yml",
                         ["--s3-bucket"] = outputs.BucketName,
-                        ["--output-template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/template.yml",
+                        ["--s3-prefix"] = options.Version,
+                        ["--output-template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/Cicd/template.yml",
                     }
                 );
 
@@ -170,6 +160,40 @@ namespace Brighid.Discord.Cicd.Driver
                     cancellationToken: cancellationToken
                 );
             });
+
+            await Step("Upload Artifacts to S3", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var command = new Command(
+                    command: "aws s3 cp",
+                    options: new Dictionary<string, object>
+                    {
+                        ["--recursive"] = true,
+                    },
+                    arguments: new[]
+                    {
+                        $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/Cicd",
+                        $"s3://{outputs.BucketName}/{options.Version}",
+                    }
+                );
+
+                await command.RunOrThrowError(
+                    errorMessage: "Could not upload artifacts to S3.",
+                    cancellationToken: cancellationToken
+                );
+            });
+
+            await Step("[Cleanup] Logout of ECR", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var command = new Command("docker logout", arguments: new[] { outputs.ImageRepositoryUri });
+                await command.RunOrThrowError("Could not logout of ECR.");
+            });
+
+            Console.WriteLine();
+            Console.WriteLine($"::set-output name=artifacts-location::s3://{outputs.BucketName}/{options.Version}");
 
             lifetime.StopApplication();
         }
@@ -202,7 +226,7 @@ namespace Brighid.Discord.Cicd.Driver
 
             using var outputsFileStream = File.OpenRead(OutputsFile);
             var contents = await JsonSerializer.DeserializeAsync<Dictionary<string, JsonElement>>(outputsFileStream, cancellationToken: cancellationToken);
-            var outputsText = contents!["ArtifactsStack"].GetRawText();
+            var outputsText = contents!["brighid-discord-adapter-cicd"].GetRawText();
 
             return JsonSerializer.Deserialize<Outputs>(outputsText)!;
         }
@@ -212,6 +236,8 @@ namespace Brighid.Discord.Cicd.Driver
             var parametersFile = File.OpenRead(ParametersDirectory + environment + ".json");
             var parameters = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(parametersFile, cancellationToken: cancellationToken) ?? throw new Exception("Could not read parameters from file.");
             parameters["Image"] = imageTag;
+            parameters["DotnetVersion"] = DotnetSdkVersionAttribute.ThisAssemblyDotnetSdkVersion;
+            parameters["LambdajectionVersion"] = LambdajectionVersionAttribute.ThisAssemblyLambdajectionVersion;
 
             var config = new Config
             {
@@ -225,7 +251,7 @@ namespace Brighid.Discord.Cicd.Driver
                 },
             };
 
-            var destinationFilePath = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/config.{environment}.json";
+            var destinationFilePath = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/Cicd/config.{environment}.json";
             using var destinationFile = File.OpenWrite(destinationFilePath);
             await JsonSerializer.SerializeAsync(destinationFile, config, cancellationToken: cancellationToken);
             Console.WriteLine($"Created config file for {environment} at {destinationFilePath}.");

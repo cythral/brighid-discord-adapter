@@ -1,6 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.ECR;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.S3;
 
 using Constructs;
@@ -25,6 +26,21 @@ namespace Brighid.Discord.Adapter.Artifacts
         {
             AddRepository();
             AddBucket();
+            AddDns();
+        }
+
+        private static CfnRecordSetGroup.RecordSetProperty CreateDnsAliasRecord(string domainName, string type)
+        {
+            return new CfnRecordSetGroup.RecordSetProperty
+            {
+                Name = domainName,
+                Type = type,
+                AliasTarget = new CfnRecordSetGroup.AliasTargetProperty
+                {
+                    HostedZoneId = Fn.ImportValue("cfn-gateway:LoadBalancerCanonicalHostedZoneId"),
+                    DnsName = Fn.ImportValue("cfn-gateway:LoadBalancerDnsName"),
+                },
+            };
         }
 
         private void AddBucket()
@@ -40,7 +56,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                 {
                     new AccountPrincipal(Fn.Ref("AWS::AccountId")),
                     new ArnPrincipal(Fn.ImportValue("cfn-metadata:DevAgentRoleArn")),
-                    new ArnPrincipal(Fn.ImportValue("cfn-metadata:DevAgentRoleArn")),
+                    new ArnPrincipal(Fn.ImportValue("cfn-metadata:ProdAgentRoleArn")),
                 },
             }));
 
@@ -55,6 +71,7 @@ namespace Brighid.Discord.Adapter.Artifacts
         {
             var repository = new Repository(this, "ImageRepository", new RepositoryProps
             {
+                RepositoryName = "brighid/discord-adapter",
                 ImageScanOnPush = true,
                 LifecycleRules = new[]
                 {
@@ -84,7 +101,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                 },
             });
 
-            var policyStatement = new PolicyStatement(new PolicyStatementProps
+            repository.AddToResourcePolicy(new PolicyStatement(new PolicyStatementProps
             {
                 Effect = Effect.ALLOW,
                 Actions = new[]
@@ -94,6 +111,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                     "ecr:BatchGetImage",
                     "ecr:BatchCheckLayerAvailability",
                     "ecr:ListImages",
+                    "ecr:PutImage", // For re-tagging images only
                 },
                 Principals = new[]
                 {
@@ -101,15 +119,37 @@ namespace Brighid.Discord.Adapter.Artifacts
                     new AccountPrincipal(Fn.ImportValue("cfn-metadata:DevAccountId")),
                     new AccountPrincipal(Fn.ImportValue("cfn-metadata:ProdAccountId")),
                 },
-            });
+            }));
 
             repository.ApplyRemovalPolicy(RemovalPolicy.DESTROY);
-            repository.AddToResourcePolicy(policyStatement);
 
             _ = new CfnOutput(this, "ImageRepositoryUri", new CfnOutputProps
             {
                 Value = repository.RepositoryUri,
                 Description = "URI of the container image repository for Brighid Discord Adapter.",
+            });
+        }
+
+        private void AddDns()
+        {
+            _ = new CfnRecordSetGroup(this, "DevDnsRecords", new CfnRecordSetGroupProps
+            {
+                HostedZoneId = Fn.ImportValue("cfn-dns:HostedZoneId"),
+                RecordSets = new[]
+                {
+                    CreateDnsAliasRecord("discord.dev.brigh.id", "A"),
+                    CreateDnsAliasRecord("discord.dev.brigh.id", "AAAA"),
+                },
+            });
+
+            _ = new CfnRecordSetGroup(this, "ProdDnsRecords", new CfnRecordSetGroupProps
+            {
+                HostedZoneId = Fn.ImportValue("cfn-dns:HostedZoneId"),
+                RecordSets = new[]
+                {
+                    CreateDnsAliasRecord("discord.brigh.id", "A"),
+                    CreateDnsAliasRecord("discord.brigh.id", "AAAA"),
+                },
             });
         }
     }

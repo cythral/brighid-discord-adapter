@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Brighid.Discord.Cicd.BuildDriver
+namespace Brighid.Discord.Cicd.DeployDriver
 {
     /// <summary>
     /// Represents a template deployment config file.

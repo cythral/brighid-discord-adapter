@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Brighid.Discord.Cicd.Driver
+namespace Brighid.Discord.Cicd.Utils
 {
     /// <summary>
     /// Represents a command to be run.
