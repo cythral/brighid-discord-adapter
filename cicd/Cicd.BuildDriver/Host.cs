@@ -226,7 +226,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
 
             using var outputsFileStream = File.OpenRead(OutputsFile);
             var contents = await JsonSerializer.DeserializeAsync<Dictionary<string, JsonElement>>(outputsFileStream, cancellationToken: cancellationToken);
-            var outputsText = contents!["ArtifactsStack"].GetRawText();
+            var outputsText = contents!["brighid-discord-adapter-cicd"].GetRawText();
 
             return JsonSerializer.Deserialize<Outputs>(outputsText)!;
         }
