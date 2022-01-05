@@ -40,7 +40,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                 {
                     new AccountPrincipal(Fn.Ref("AWS::AccountId")),
                     new ArnPrincipal(Fn.ImportValue("cfn-metadata:DevAgentRoleArn")),
-                    new ArnPrincipal(Fn.ImportValue("cfn-metadata:DevAgentRoleArn")),
+                    new ArnPrincipal(Fn.ImportValue("cfn-metadata:ProdAgentRoleArn")),
                 },
             }));
 
