@@ -84,7 +84,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                 },
             });
 
-            var policyStatement = new PolicyStatement(new PolicyStatementProps
+            repository.AddToResourcePolicy(new PolicyStatement(new PolicyStatementProps
             {
                 Effect = Effect.ALLOW,
                 Actions = new[]
@@ -94,6 +94,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                     "ecr:BatchGetImage",
                     "ecr:BatchCheckLayerAvailability",
                     "ecr:ListImages",
+                    "ecr:PutImage", // For re-tagging images only
                 },
                 Principals = new[]
                 {
@@ -101,10 +102,9 @@ namespace Brighid.Discord.Adapter.Artifacts
                     new AccountPrincipal(Fn.ImportValue("cfn-metadata:DevAccountId")),
                     new AccountPrincipal(Fn.ImportValue("cfn-metadata:ProdAccountId")),
                 },
-            });
+            }));
 
             repository.ApplyRemovalPolicy(RemovalPolicy.DESTROY);
-            repository.AddToResourcePolicy(policyStatement);
 
             _ = new CfnOutput(this, "ImageRepositoryUri", new CfnOutputProps
             {

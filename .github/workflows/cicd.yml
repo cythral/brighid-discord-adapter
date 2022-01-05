@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifacts-location: ${{ steps.build.outputs.artifacts-location }}
-      image: ${{ steps.build.outputs.image }}
     steps:
       - uses: actions/checkout@v2
         with:
