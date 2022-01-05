@@ -23,7 +23,7 @@
     </Target>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.1.100" />
+        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.1.102" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     </ItemGroup>
 
