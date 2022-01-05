@@ -55,6 +55,7 @@ namespace Brighid.Discord.Adapter.Artifacts
         {
             var repository = new Repository(this, "ImageRepository", new RepositoryProps
             {
+                RepositoryName = "brighid/discord-adapter",
                 ImageScanOnPush = true,
                 LifecycleRules = new[]
                 {
