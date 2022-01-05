@@ -23,7 +23,6 @@
     </Target>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.ECR" Version="3.7.2.6" />
         <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.1.100" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     </ItemGroup>
@@ -31,5 +30,6 @@
     <ItemGroup>
         <ProjectReference Include="../../src/Adapter/Adapter.csproj" ReferenceOutputAssembly="false" Targets="Publish" />
         <ProjectReference Include="../../src/ResponseHandler/ResponseHandler.csproj" Targets="Publish" />
+        <ProjectReference Include="../Cicd.Utils/Cicd.Utils.csproj" />
     </ItemGroup>
 </Project>

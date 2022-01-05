@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.ECR;
 using Amazon.SecurityToken;
+
+using Brighid.Discord.Cicd.Utils;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -22,21 +21,25 @@ namespace Brighid.Discord.Cicd.BuildDriver
         private static readonly string IntermediateOutputDirectory = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "obj/Cicd.Driver/";
         private static readonly string ToolkitStack = "cdk-toolkit";
         private static readonly string OutputsFile = IntermediateOutputDirectory + "cdk.outputs.json";
+        private readonly EcrUtils ecrUtils;
         private readonly CommandLineOptions options;
         private readonly IHostApplicationLifetime lifetime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Host" /> class.
         /// </summary>
+        /// <param name="ecrUtils">Utilities for interacting with ECR.</param>
         /// <param name="options">Command line options.</param>
         /// <param name="lifetime">Service that controls the application lifetime.</param>
         /// <param name="serviceProvider">Object that provides access to the program's services.</param>
         public Host(
+            EcrUtils ecrUtils,
             IOptions<CommandLineOptions> options,
             IHostApplicationLifetime lifetime,
             IServiceProvider serviceProvider
         )
         {
+            this.ecrUtils = ecrUtils;
             this.options = options.Value;
             this.lifetime = lifetime;
             Services = serviceProvider;
@@ -91,29 +94,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
             await Step("Logging into ECR", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                var ecr = new AmazonECRClient();
-                var response = await ecr.GetAuthorizationTokenAsync(new(), cancellationToken);
-                var token = response.AuthorizationData.ElementAt(0);
-
-                var command = new Command(
-                    command: "docker login",
-                    options: new Dictionary<string, object>
-                    {
-                        ["--username"] = "AWS",
-                        ["--password-stdin"] = true,
-                    },
-                    arguments: new[] { outputs.ImageRepositoryUri }
-                );
-
-                var passwordBytes = Convert.FromBase64String(token.AuthorizationToken);
-                var password = Encoding.ASCII.GetString(passwordBytes)[4..];
-
-                await command.RunOrThrowError(
-                    errorMessage: "Failed to login to ECR.",
-                    input: password,
-                    cancellationToken: cancellationToken
-                );
+                await ecrUtils.DockerLogin(outputs.ImageRepositoryUri, cancellationToken);
             });
 
             await Step("Building Docker Image", async () =>
@@ -201,9 +182,19 @@ namespace Brighid.Discord.Cicd.BuildDriver
                     errorMessage: "Could not upload artifacts to S3.",
                     cancellationToken: cancellationToken
                 );
-
-                Console.WriteLine($"::set-output name=artifacts-location::s3://{outputs.BucketName}/{options.Version}");
             });
+
+            await Step("[Cleanup] Logout of ECR", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var command = new Command("docker logout", arguments: new[] { outputs.ImageRepositoryUri });
+                await command.RunOrThrowError("Could not logout of ECR.");
+            });
+
+            Console.WriteLine();
+            Console.WriteLine($"::set-output name=artifacts-location::s3://{outputs.BucketName}/{options.Version}");
+            Console.WriteLine($"::set-output name=image::{tag}");
 
             lifetime.StopApplication();
         }

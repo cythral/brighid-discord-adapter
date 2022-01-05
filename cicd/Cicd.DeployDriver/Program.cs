@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using Brighid.Discord.Cicd.DeployDriver;
+using Brighid.Discord.Cicd.Utils;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ await Microsoft.Extensions.Hosting.Host
     services.Configure<CommandLineOptions>(context.Configuration.GetSection("CommandLineOptions"));
     services.AddSingleton<IHost, Brighid.Discord.Cicd.DeployDriver.Host>();
     services.AddSingleton<StackDeployer>();
+    services.AddSingleton<EcrUtils>();
 })
 .UseConsoleLifetime()
 .Build()

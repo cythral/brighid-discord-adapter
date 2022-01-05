@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 
+using Brighid.Discord.Cicd.Utils;
+
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -15,6 +17,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
     public class Host : IHost
     {
         private readonly StackDeployer deployer;
+        private readonly EcrUtils ecrUtils;
         private readonly CommandLineOptions options;
         private readonly IHostApplicationLifetime lifetime;
 
@@ -22,17 +25,20 @@ namespace Brighid.Discord.Cicd.DeployDriver
         /// Initializes a new instance of the <see cref="Host" /> class.
         /// </summary>
         /// <param name="deployer">Service for deploying cloudformation stacks.</param>
+        /// <param name="ecrUtils">Utilities for interacting with ECR.</param>
         /// <param name="options">Command line options.</param>
         /// <param name="lifetime">Service that controls the application lifetime.</param>
         /// <param name="serviceProvider">Object that provides access to the program's services.</param>
         public Host(
             StackDeployer deployer,
+            EcrUtils ecrUtils,
             IOptions<CommandLineOptions> options,
             IHostApplicationLifetime lifetime,
             IServiceProvider serviceProvider
         )
         {
             this.deployer = deployer;
+            this.ecrUtils = ecrUtils;
             this.options = options.Value;
             this.lifetime = lifetime;
             Services = serviceProvider;
@@ -46,6 +52,8 @@ namespace Brighid.Discord.Cicd.DeployDriver
         {
             cancellationToken.ThrowIfCancellationRequested();
             Config? config = null;
+            var repository = options.Image!.Split(':')[0];
+            var environmentTag = repository + ':' + options.Environment;
 
             await Step($"Pull {options.Environment} config", async () =>
             {
@@ -79,6 +87,44 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 };
 
                 await deployer.Deploy(context, cancellationToken);
+            });
+
+            await Step("Login to ECR", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await ecrUtils.DockerLogin(repository, cancellationToken);
+            });
+
+            await Step("[Tag Image] Pulling Existing Image", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var pullCommand = new Command("docker pull", arguments: new[] { options.Image! });
+                await pullCommand.RunOrThrowError("Could not pull image from ECR.");
+            });
+
+            await Step("[Tag Image] Retag Image", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var tagCommand = new Command("docker tag", arguments: new[] { options.Image, environmentTag });
+                await tagCommand.RunOrThrowError("Could not retag image with environment.");
+            });
+
+            await Step("[Tag Image] Push Retagged Image", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var pushCommand = new Command("docker push", arguments: new[] { environmentTag });
+                await pushCommand.RunOrThrowError("Could not push retagged image.");
+            });
+
+            await Step("[Cleanup] Logout of ECR", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var command = new Command("docker logout", arguments: new[] { repository });
+                await command.RunOrThrowError("Could not logout of ECR.");
             });
 
             lifetime.StopApplication();
