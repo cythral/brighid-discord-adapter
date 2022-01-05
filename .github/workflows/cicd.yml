@@ -63,4 +63,25 @@ jobs:
     concurrency: dev
     environment: Development
     steps:
-      - run: echo ${{ needs.build.outputs.artifacts-location }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_DEV_ROLE }}
+          aws-region: us-east-1
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+
+      - name: Display .NET Info
+        run: dotnet --info
+
+      - name: Deploy to Dev
+        run: |
+          dotnet run \
+            --project cicd/Cicd.DeployDriver/Cicd.DeployDriver.csproj -- \
+            --artifacts-location ${{ needs.build.outputs.artifacts-location }} \
+            --environment dev

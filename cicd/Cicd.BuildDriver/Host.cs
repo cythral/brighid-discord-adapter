@@ -13,7 +13,7 @@ using Amazon.SecurityToken;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace Brighid.Discord.Cicd.Driver
+namespace Brighid.Discord.Cicd.BuildDriver
 {
     /// <inheritdoc />
     public class Host : IHost
@@ -56,6 +56,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Bootstrapping CDK", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command("cdk bootstrap", new Dictionary<string, object>
                 {
                     ["--toolkit-stack-name"] = ToolkitStack,
@@ -70,6 +71,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Deploying Artifacts Stack", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command("cdk deploy", new Dictionary<string, object>
                 {
                     ["--toolkit-stack-name"] = ToolkitStack,
@@ -88,6 +90,8 @@ namespace Brighid.Discord.Cicd.Driver
 
             await Step("Logging into ECR", async () =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var ecr = new AmazonECRClient();
                 var response = await ecr.GetAuthorizationTokenAsync(new(), cancellationToken);
                 var token = response.AuthorizationData.ElementAt(0);
@@ -115,6 +119,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Building Docker Image", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command(
                     command: "docker build",
                     options: new Dictionary<string, object>
@@ -134,6 +139,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Pushing Docker Image", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var command = new Command(
                     command: "docker push",
                     arguments: new[] { tag }
@@ -148,6 +154,7 @@ namespace Brighid.Discord.Cicd.Driver
             await Step("Create Config Files", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 await CreateConfigFile("dev", tag, cancellationToken);
                 await CreateConfigFile("prod", tag, cancellationToken);
             });
@@ -239,6 +246,8 @@ namespace Brighid.Discord.Cicd.Driver
             var parametersFile = File.OpenRead(ParametersDirectory + environment + ".json");
             var parameters = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(parametersFile, cancellationToken: cancellationToken) ?? throw new Exception("Could not read parameters from file.");
             parameters["Image"] = imageTag;
+            parameters["DotnetVersion"] = DotnetSdkVersionAttribute.ThisAssemblyDotnetSdkVersion;
+            parameters["LambdajectionVersion"] = LambdajectionVersionAttribute.ThisAssemblyLambdajectionVersion;
 
             var config = new Config
             {

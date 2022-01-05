@@ -1,4 +1,4 @@
-namespace Brighid.Discord.Cicd.Driver
+namespace Brighid.Discord.Cicd.BuildDriver
 {
     /// <summary>
     /// CloudFormation outputs of the Artifacts Stack.
