@@ -63,6 +63,14 @@
         "resolved": "3.7.5.9",
         "contentHash": "5QtBpshurXr8CmpHZ+9zr9EILBpTbOtTjZz8RsASEwnvhQsxhvfTTD0O7qtJE/5FXa4XJPs9n286n0BCmeX4WQ=="
       },
+      "AWSSDK.ECR": {
+        "type": "Transitive",
+        "resolved": "3.7.2.7",
+        "contentHash": "xMeQcS1LTp9QhZDGPq3WCbTbiDcK3EGVXDSbP+FdUvSo2VIuHBaOz0Rv1ycdZtKVJaejLMvtF7d9yOTU6wkNwg==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.5.9, 4.0.0)"
+        }
+      },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -339,7 +347,10 @@
         }
       },
       "cicd.utils": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "AWSSDK.ECR": "3.7.2.7"
+        }
       }
     }
   }
