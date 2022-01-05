@@ -52,8 +52,6 @@ namespace Brighid.Discord.Cicd.DeployDriver
         {
             cancellationToken.ThrowIfCancellationRequested();
             Config? config = null;
-            var repository = options.Image!.Split(':')[0];
-            var environmentTag = repository + ':' + options.Environment;
 
             await Step($"Pull {options.Environment} config", async () =>
             {
@@ -72,6 +70,10 @@ namespace Brighid.Discord.Cicd.DeployDriver
 
                 Console.WriteLine("Loaded configuration from S3.");
             });
+
+            var image = config!.Parameters!["Image"]!;
+            var repository = image.Split(':')[0];
+            var environmentTag = repository + ':' + options.Environment;
 
             await Step($"Deploy template to {options.Environment}", async () =>
             {
@@ -99,7 +101,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var pullCommand = new Command("docker pull", arguments: new[] { options.Image! });
+                var pullCommand = new Command("docker pull", arguments: new[] { image });
                 await pullCommand.RunOrThrowError("Could not pull image from ECR.");
             });
 
@@ -107,7 +109,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var tagCommand = new Command("docker tag", arguments: new[] { options.Image, environmentTag });
+                var tagCommand = new Command("docker tag", arguments: new[] { image, environmentTag });
                 await tagCommand.RunOrThrowError("Could not retag image with environment.");
             });
 

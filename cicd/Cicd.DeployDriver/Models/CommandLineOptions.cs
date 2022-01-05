@@ -16,10 +16,5 @@ namespace Brighid.Discord.Cicd.DeployDriver
         /// Gets or sets the location where artifacts are stored.
         /// </summary>
         public Uri? ArtifactsLocation { get; set; }
-
-        /// <summary>
-        /// Gets or sets the image being deployed.
-        /// </summary>
-        public string? Image { get; set; }
     }
 }
