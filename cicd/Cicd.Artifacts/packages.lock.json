@@ -4,11 +4,11 @@
     "net6.0": {
       "Amazon.CDK.Lib": {
         "type": "Direct",
-        "requested": "[2.3.0, )",
-        "resolved": "2.3.0",
-        "contentHash": "1Bhf034FWtAhoOPOrDVEDyUZOdZqFsqN7v8DOBS1EJUuhxI3KW5cgMwutpMtPG9fkJv99iuwGrhw5KrNRr6h+A==",
+        "requested": "[2.4.0, )",
+        "resolved": "2.4.0",
+        "contentHash": "zAp+3tK2dPRtnAANCDl6gCQo2n9tq/O6CzIS8JUBJ85TFT88RbQE8Nuome+jNMwblZirebPDWlG3zZ+gx7RRmA==",
         "dependencies": {
-          "Amazon.JSII.Runtime": "[1.47.0, 2.0.0)",
+          "Amazon.JSII.Runtime": "[1.50.0, 2.0.0)",
           "Constructs": "[10.0.0, 11.0.0)"
         }
       },
