@@ -1,7 +1,7 @@
 name: Approval Notification
 on:
   deployment_status:
-    states: [pending]
+    types: [pending]
 
 jobs:
   notify:
