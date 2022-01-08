@@ -1,8 +1,0 @@
-name: Approval Notification
-on: deployment_status
-jobs:
-  notify:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.state == 'pending' }}
-    steps:
-      - run: echo Hello World
