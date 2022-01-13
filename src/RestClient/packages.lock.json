@@ -4,11 +4,11 @@
     "net6.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.2.11, )",
-        "resolved": "3.7.2.11",
-        "contentHash": "7cNTudoLCIuNUdKQJ9VfC0KiLimJMKFJeBwsGeljuopcnyzG8Twz3PHZbigS4z0io5zcXmVGolmpW94rGQvu9w==",
+        "requested": "[3.7.2.12, )",
+        "resolved": "3.7.2.12",
+        "contentHash": "a/kNJRxqvgJ/zsLNBJHZFmp4HVfCZVpihsIrui7CzN7cYUM+OqD6LURXYBb9SqT4o/7/Ri/4d1aVnaL59BIGXA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.5.13, 4.0.0)"
+          "AWSSDK.Core": "[3.7.5.14, 4.0.0)"
         }
       },
       "Microsoft.AspNetCore.Mvc": {
@@ -82,8 +82,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.5.13",
-        "contentHash": "1n1mDWG+2BIx4Tr75w3Lf0DK9fibmVVWxSI6kFTagXhOy3Y6gVJ1KtLfM0ykzZ9JwjsZYo0lBLMOAfOS4vsFng=="
+        "resolved": "3.7.5.14",
+        "contentHash": "q9x+37skQrA7KVzmN1TtGv7/olijT6OzR5xQ1UeK8csCPf9GEusia2uZ/TzqWHpjQegeBMBVWfCtFWTigzs4VA=="
       },
       "Microsoft.AspNetCore.Antiforgery": {
         "type": "Transitive",
