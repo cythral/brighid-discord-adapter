@@ -12,12 +12,14 @@ using Brighid.Discord.Cicd.Utils;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
+using YamlDotNet.Serialization;
+
 namespace Brighid.Discord.Cicd.BuildDriver
 {
     /// <inheritdoc />
     public class Host : IHost
     {
-        private static readonly string ParametersDirectory = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "cicd/Parameters/";
+        private static readonly string ConfigFile = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "cicd/config.yml";
         private static readonly string IntermediateOutputDirectory = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "obj/Cicd.Driver/";
         private static readonly string ToolkitStack = "cdk-toolkit";
         private static readonly string OutputsFile = IntermediateOutputDirectory + "cdk.outputs.json";
@@ -132,7 +134,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
                 );
             });
 
-            await Step("Create Config Files", async () =>
+            await Step("Create Environment Config Files", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -148,7 +150,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
                     command: "aws cloudformation package",
                     options: new Dictionary<string, object>
                     {
-                        ["--template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "template.yml",
+                        ["--template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "cicd/template.yml",
                         ["--s3-bucket"] = outputs.BucketName,
                         ["--s3-prefix"] = options.Version,
                         ["--output-template-file"] = ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory + "bin/Cicd/template.yml",
@@ -233,27 +235,41 @@ namespace Brighid.Discord.Cicd.BuildDriver
 
         private static async Task CreateConfigFile(string environment, string imageTag, CancellationToken cancellationToken)
         {
-            var parametersFile = File.OpenRead(ParametersDirectory + environment + ".json");
-            var parameters = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(parametersFile, cancellationToken: cancellationToken) ?? throw new Exception("Could not read parameters from file.");
-            parameters["Image"] = imageTag;
-            parameters["DotnetVersion"] = DotnetSdkVersionAttribute.ThisAssemblyDotnetSdkVersion;
-            parameters["LambdajectionVersion"] = LambdajectionVersionAttribute.ThisAssemblyLambdajectionVersion;
+            using var configFile = File.OpenRead(ConfigFile);
+            using var configReader = new StreamReader(configFile);
 
-            var config = new Config
+            var deserializer = new DeserializerBuilder().Build();
+            var config = deserializer.Deserialize<Config>(configReader);
+            var parameters = new Dictionary<string, string>
             {
-                Parameters = parameters,
-                Tags = new Dictionary<string, string>
+                ["Image"] = imageTag,
+                ["DotnetVersion"] = DotnetSdkVersionAttribute.ThisAssemblyDotnetSdkVersion,
+                ["LambdajectionVersion"] = LambdajectionVersionAttribute.ThisAssemblyLambdajectionVersion,
+            };
+
+            foreach (var (parameterName, parameterDefinition) in config.Parameters)
+            {
+                var parameterValue = environment switch
                 {
-                    ["Name"] = "Brighid Discord Adapter",
-                    ["Owner"] = "Cythral",
-                    ["Contact:Name"] = "Talen Fisher",
-                    ["Contact:Email"] = "talen.fisher@cythral.com",
-                },
+                    "dev" => parameterDefinition.Dev,
+                    "prod" => parameterDefinition.Prod,
+                    _ => throw new NotSupportedException(),
+                };
+
+                parameters.Add(parameterName, parameterValue);
+            }
+
+            var environmentConfig = new EnvironmentConfig
+            {
+                Tags = config.Tags,
+                Parameters = parameters,
             };
 
             var destinationFilePath = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}bin/Cicd/config.{environment}.json";
             using var destinationFile = File.OpenWrite(destinationFilePath);
-            await JsonSerializer.SerializeAsync(destinationFile, config, cancellationToken: cancellationToken);
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            await JsonSerializer.SerializeAsync(destinationFile, environmentConfig, options, cancellationToken);
             Console.WriteLine($"Created config file for {environment} at {destinationFilePath}.");
         }
 

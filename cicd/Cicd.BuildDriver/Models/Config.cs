@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Brighid.Discord.Cicd.BuildDriver
+namespace Brighid.Discord.Cicd.Utils
 {
     /// <summary>
     /// Represents a template deployment config file.
@@ -8,13 +8,13 @@ namespace Brighid.Discord.Cicd.BuildDriver
     public class Config
     {
         /// <summary>
-        /// Gets or sets the config file parameters.
-        /// </summary>
-        public Dictionary<string, string>? Parameters { get; set; }
-
-        /// <summary>
         /// Gets or sets the config file tags.
         /// </summary>
-        public Dictionary<string, string>? Tags { get; set; }
+        public Dictionary<string, string> Tags { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the config file parameters.
+        /// </summary>
+        public Dictionary<string, Parameter> Parameters { get; set; } = new();
     }
 }
