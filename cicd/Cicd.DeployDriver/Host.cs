@@ -51,7 +51,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Config? config = null;
+            EnvironmentConfig? config = null;
 
             await Step($"Pull {options.Environment} config", async () =>
             {
@@ -66,7 +66,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 };
 
                 var response = await s3.GetObjectAsync(request, cancellationToken);
-                config = await JsonSerializer.DeserializeAsync<Config>(response.ResponseStream, cancellationToken: cancellationToken);
+                config = await JsonSerializer.DeserializeAsync<EnvironmentConfig>(response.ResponseStream, cancellationToken: cancellationToken);
 
                 Console.WriteLine("Loaded configuration from S3.");
             });
