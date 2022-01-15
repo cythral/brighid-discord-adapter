@@ -4,11 +4,11 @@
     "net6.0": {
       "AWSSDK.SecurityToken": {
         "type": "Direct",
-        "requested": "[3.7.1.106, )",
-        "resolved": "3.7.1.106",
-        "contentHash": "mIWnQss/HlrmfzYS22U1SiX8JQv4D2WgZxX3XCCANmH0J/R5lnY/L5HInxsEbNHBRkUmT2ZZPbB/loU/NHxlpg==",
+        "requested": "[3.7.1.107, )",
+        "resolved": "3.7.1.107",
+        "contentHash": "EelBJR6YvzmtCrudKlcECMgWxw1maxvlDK2RX7Bno9nkXlz+5rorgHbgImGz7IpWJ/0juBdkFKYd/CcmTtAlcQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.5.14, 4.0.0)"
+          "AWSSDK.Core": "[3.7.5.15, 4.0.0)"
         }
       },
       "Microsoft.Extensions.Hosting": {
@@ -77,23 +77,23 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.5.14",
-        "contentHash": "q9x+37skQrA7KVzmN1TtGv7/olijT6OzR5xQ1UeK8csCPf9GEusia2uZ/TzqWHpjQegeBMBVWfCtFWTigzs4VA=="
+        "resolved": "3.7.5.15",
+        "contentHash": "uQFWmiXhz706tt3ziAIbUmhDkuxdK5v318pdx/i4Jjl/S3dvSMNgEhd5NjZlf5/N1vuq8kVAKOyil8DdJpmVNw=="
       },
       "AWSSDK.ECR": {
         "type": "Transitive",
-        "resolved": "3.7.2.12",
-        "contentHash": "GiIUpy7AsLG4UyFdYstvx6uZ0fVsa57+gtZq1ccVKDZG2/ouT/CfohKFiOTWHL2kiO0xIL5xxGQcrMpCiTZvbw==",
+        "resolved": "3.7.2.13",
+        "contentHash": "TNZk95NK74FzVF0xlJ41t0d6B7VolGMzQ7gUN1QbzxCHuDIk3JU7PqqI82ZYIFZwFtWuslWVrAyQwIvRVSMfPQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.5.14, 4.0.0)"
+          "AWSSDK.Core": "[3.7.5.15, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.2.12",
-        "contentHash": "a/kNJRxqvgJ/zsLNBJHZFmp4HVfCZVpihsIrui7CzN7cYUM+OqD6LURXYBb9SqT4o/7/Ri/4d1aVnaL59BIGXA==",
+        "resolved": "3.7.2.13",
+        "contentHash": "hetfnATtCHJqsy6eR/RXCxYZ4MQZgWcNAhbyxZ9lOkjr834tcz7KguFOSg42lqqLpNrgNfZNON2uzZKinul2Wg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.5.14, 4.0.0)"
+          "AWSSDK.Core": "[3.7.5.15, 4.0.0)"
         }
       },
       "Humanizer.Core": {
@@ -1561,7 +1561,7 @@
       "cicd.utils": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.ECR": "3.7.2.12"
+          "AWSSDK.ECR": "3.7.2.13"
         }
       },
       "models": {
@@ -1573,7 +1573,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.2.12",
+          "AWSSDK.SQS": "3.7.2.13",
           "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.9.0",
           "Lambdajection.Layer": "0.9.0",
