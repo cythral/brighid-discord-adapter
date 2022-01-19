@@ -97,6 +97,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await ecrUtils.DockerLogin(outputs.ImageRepositoryUri, cancellationToken);
+                await ecrUtils.PublicDockerLogin(cancellationToken);
             });
 
             await Step("Building Docker Image", async () =>
@@ -104,32 +105,20 @@ namespace Brighid.Discord.Cicd.BuildDriver
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var command = new Command(
-                    command: "docker build",
+                    command: "docker buildx build",
                     options: new Dictionary<string, object>
                     {
                         ["--tag"] = tag,
                         ["--file"] = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}Dockerfile",
+                        ["--cache-from"] = "type=gha,scope=brighid-discord-adapter",
+                        ["--cache-to"] = "type=gha,scope=brighid-discord-adapter",
+                        ["--push"] = true,
                     },
                     arguments: new[] { ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory }
                 );
 
                 await command.RunOrThrowError(
                     errorMessage: "Failed to build Docker Image.",
-                    cancellationToken: cancellationToken
-                );
-            });
-
-            await Step("Pushing Docker Image", async () =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var command = new Command(
-                    command: "docker push",
-                    arguments: new[] { tag }
-                );
-
-                await command.RunOrThrowError(
-                    errorMessage: "Failed to push Docker Image.",
                     cancellationToken: cancellationToken
                 );
             });
@@ -190,8 +179,11 @@ namespace Brighid.Discord.Cicd.BuildDriver
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var command = new Command("docker logout", arguments: new[] { outputs.ImageRepositoryUri });
-                await command.RunOrThrowError("Could not logout of ECR.");
+                var ecrLogoutCommand = new Command("docker logout", arguments: new[] { outputs.ImageRepositoryUri });
+                await ecrLogoutCommand.RunOrThrowError("Could not logout of ECR.");
+
+                var publicEcrLogoutCommand = new Command("docker logout", arguments: new[] { "public.ecr.aws" });
+                await publicEcrLogoutCommand.RunOrThrowError("Could not logout of ECR.");
             });
 
             Console.WriteLine();
