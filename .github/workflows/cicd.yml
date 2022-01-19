@@ -60,8 +60,15 @@ jobs:
         id: build
         run: |
           dotnet run \
+            --verbosity minimal \
             --project cicd/Cicd.BuildDriver/Cicd.BuildDriver.csproj -- \
             --version ${{ github.run_number }}
+
+      - name: Test
+        run: |
+          dotnet test \
+            --logger trx \
+            --no-build
 
   deploy-dev:
     runs-on: ubuntu-latest
