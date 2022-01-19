@@ -11,6 +11,15 @@
           "AWSSDK.Core": "[3.7.6, 4.0.0)"
         }
       },
+      "AWSSDK.ECRPublic": {
+        "type": "Direct",
+        "requested": "[3.7.0.117, )",
+        "resolved": "3.7.0.117",
+        "contentHash": "muDvktGcZp9lIfheoNFkkWsBKyManbm9qn2fr0bY0MJjjZB7en/u5xI79BrNUBXc6B2piRmY0kTT1mPXCJ+xrQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.6, 4.0.0)"
+        }
+      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.354, )",
