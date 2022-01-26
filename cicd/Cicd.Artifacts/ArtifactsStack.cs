@@ -80,7 +80,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                         Description = "Protect prod-tagged images.",
                         RulePriority = 1,
                         TagStatus = TagStatus.TAGGED,
-                        TagPrefixList = new[] { "prod" },
+                        TagPrefixList = new[] { "production" },
                         MaxImageCount = 1,
                     },
                     new EcrLifecycleRule
@@ -88,7 +88,7 @@ namespace Brighid.Discord.Adapter.Artifacts
                         Description = "Protect dev-tagged images.",
                         RulePriority = 2,
                         TagStatus = TagStatus.TAGGED,
-                        TagPrefixList = new[] { "dev" },
+                        TagPrefixList = new[] { "development" },
                         MaxImageCount = 1,
                     },
                     new EcrLifecycleRule

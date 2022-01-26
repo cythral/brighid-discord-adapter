@@ -73,7 +73,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
 
             var image = config!.Parameters!["Image"]!;
             var repository = image.Split(':')[0];
-            var environmentTag = repository + ':' + options.Environment;
+            var environmentTag = repository + ':' + options.Environment!.ToLower();
 
             await Step($"Deploy template to {options.Environment}", async () =>
             {

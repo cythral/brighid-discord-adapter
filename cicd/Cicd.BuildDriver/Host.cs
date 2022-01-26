@@ -127,8 +127,8 @@ namespace Brighid.Discord.Cicd.BuildDriver
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await CreateConfigFile("dev", tag, cancellationToken);
-                await CreateConfigFile("prod", tag, cancellationToken);
+                await CreateConfigFile("Development", tag, cancellationToken);
+                await CreateConfigFile("Production", tag, cancellationToken);
             });
 
             await Step("Package Template", async () =>
@@ -243,8 +243,8 @@ namespace Brighid.Discord.Cicd.BuildDriver
             {
                 var parameterValue = environment switch
                 {
-                    "dev" => parameterDefinition.Dev,
-                    "prod" => parameterDefinition.Prod,
+                    "Development" => parameterDefinition.Development,
+                    "Production" => parameterDefinition.Production,
                     _ => throw new NotSupportedException(),
                 };
 
