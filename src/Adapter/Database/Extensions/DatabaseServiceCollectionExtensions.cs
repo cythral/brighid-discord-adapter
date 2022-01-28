@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+using Brighid.Discord.Adapter;
 using Brighid.Discord.Adapter.Database;
 
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         public static void ConfigureDatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var databaseOptions = configuration.GetSection("Database").Get<DatabaseOptions>();
+            var databaseOptions = configuration.GetSection("Database").Get<DatabaseOptions>() ?? new();
             services.AddDbContext<DatabaseContext>(options =>
             {
                 var conn = $"Server={databaseOptions.Host};";
@@ -29,13 +30,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 conn += $"User={databaseOptions.User};";
                 conn += $"Password=\"{databaseOptions.Password}\";";
                 conn += "GuidFormat=Binary16;";
-                conn += "DefaultCommandTimeout=0";
+                conn += "DefaultCommandTimeout=0;";
+                conn += "UseCompression=true";
 
-                options
-                .UseMySql(
-                    conn,
-                    new MySqlServerVersion(new Version(5, 7, 7))
-                );
+                var version = Program.AutoDetectDatabaseVersion
+                    ? ServerVersion.AutoDetect(conn)
+                    : new MySqlServerVersion(new Version(5, 7, 0));
+
+                options.UseMySql(conn, version);
             });
 
             services.AddSingleton<ITransactionFactory, DefaultTransactionFactory>();

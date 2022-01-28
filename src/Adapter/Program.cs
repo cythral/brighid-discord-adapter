@@ -15,8 +15,11 @@ namespace Brighid.Discord.Adapter
 {
     public class Program
     {
+        public static bool AutoDetectDatabaseVersion { get; private set; } = false;
+
         public static async Task Main(string[] args)
         {
+            AutoDetectDatabaseVersion = true;
             using var host = CreateHostBuilder(args).Build();
             await host.RunAsync();
         }
