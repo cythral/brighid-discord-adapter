@@ -173,11 +173,11 @@
       },
       "Brighid.Commands.Client": {
         "type": "Transitive",
-        "resolved": "0.2.0-beta4",
-        "contentHash": "G4qJZLYSXHgPxRpv28R4Y1DKAcHceVSEXoetqY20X3O6w9QHibeFWhMxI85MIBhIAZ0qtRT5Ey7RUDTRqy+Irg==",
+        "resolved": "0.2.0-beta5",
+        "contentHash": "JAfRH/Vnx0WhclcRbQgy/UVPufQRCFFReHCWuMcaiRkaniKRNcaLA4zKsjNKWTWadAfeYQe4xxrErD0Y7djJ6Q==",
         "dependencies": {
           "Brighid.Identity.Client": "0.4.0",
-          "Microsoft.Extensions.Caching.Memory": "6.0.0",
+          "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.Configuration": "6.0.0",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Http": "6.0.0",
@@ -898,8 +898,8 @@
       },
       "Microsoft.Extensions.Caching.Memory": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "Ve3BlCzhAlVp5IgO3+8dacAhZk1A0GlIlFNkAcfR2TfAibLKWIt5DhVJZfu4YtW+XZ89OjYf/agMcgjDtPxdGA==",
+        "resolved": "6.0.1",
+        "contentHash": "B4y+Cev05eMcjf1na0v9gza6GUtahXbtY1JCypIgx3B4Ea/KAgsWyXEmW4q6zMbmTMtKzmPVk09rvFJirvMwTg==",
         "dependencies": {
           "Microsoft.Extensions.Caching.Abstractions": "6.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
@@ -2297,7 +2297,7 @@
         "dependencies": {
           "AWSSDK.CloudWatch": "3.7.3.20",
           "AWSSDK.SimpleNotificationService": "3.7.3.21",
-          "Brighid.Commands.Client": "0.2.0-beta4",
+          "Brighid.Commands.Client": "0.2.0-beta5",
           "Brighid.Discord.Core": "1.0.0",
           "Destructurama.Attributed": "3.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.1",
