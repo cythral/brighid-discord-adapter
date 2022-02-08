@@ -1893,8 +1893,11 @@
       },
       "System.Linq.Async": {
         "type": "Transitive",
-        "resolved": "5.1.0",
-        "contentHash": "TkDTElj3vvizUnhS4mj0oZW8kX6KOBcsUkj79w/q6IUI7nsW+bXmWZfixknClug/IA+8vTWcArXSjIxn9hIWxQ=="
+        "resolved": "6.0.1",
+        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+        }
       },
       "System.Linq.Async.Queryable": {
         "type": "Transitive",
@@ -2313,7 +2316,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Logging": "6.0.0",
-          "System.Linq.Async": "5.1.0"
+          "System.Linq.Async": "6.0.1"
         }
       },
       "cicd.utils": {
