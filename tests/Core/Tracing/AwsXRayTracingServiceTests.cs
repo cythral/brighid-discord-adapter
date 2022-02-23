@@ -25,17 +25,15 @@ namespace Brighid.Discord.Tracing
             [Test, Auto]
             public void ShouldReturnTheCurrentTraceHeader(
                 string id,
-                string parent,
-                string header,
                 [Frozen, Substitute] ITracingIdService tracingIdService,
                 [Target] AwsXRayTracingService service
             )
             {
                 tracingIdService.CreateId().Returns(id);
-                tracingIdService.GetIdFromHeader(Any<string>()).Returns(parent);
+                tracingIdService.GetIdFromHeader(Any<string?>()).Returns(null as string);
 
                 service.StartTrace();
-                service.Header.Should().Be($"Root={id}; Parent={parent}; Sampled=1");
+                service.Header.Should().Be($"Root={id}; Sampled=1");
             }
 
             [Test, Auto]
@@ -72,29 +70,6 @@ namespace Brighid.Discord.Tracing
                     name: Is(AwsXRayTracingService.ServiceName),
                     traceId: Is(traceId),
                     parentId: Is(null as string),
-                    samplingResponse: Is<SamplingResponse>(response => response.SampleDecision == SampleDecision.Sampled)
-                );
-            }
-
-            [Test, Auto]
-            public void ShouldStartSegmentWithParentIdWhenGiven(
-                string header,
-                string parentId,
-                string traceId,
-                [Frozen, Substitute] ITracingIdService tracingIdService,
-                [Frozen, Substitute] IAWSXRayRecorder recorder,
-                [Target] AwsXRayTracingService service
-            )
-            {
-                tracingIdService.CreateId().Returns(traceId);
-                tracingIdService.GetIdFromHeader(Is(header)).Returns(parentId);
-
-                service.StartTrace(header);
-
-                recorder.Received().BeginSegment(
-                    name: Is(AwsXRayTracingService.ServiceName),
-                    traceId: Is(traceId),
-                    parentId: Is(parentId),
                     samplingResponse: Is<SamplingResponse>(response => response.SampleDecision == SampleDecision.Sampled)
                 );
             }
