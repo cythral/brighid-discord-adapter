@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Amazon.ECR;
+using Amazon.ECR.Model;
 using Amazon.ECRPublic;
 
 namespace Brighid.Discord.Cicd.Utils
@@ -49,6 +50,31 @@ namespace Brighid.Discord.Cicd.Utils
             var password = Encoding.ASCII.GetString(passwordBytes)[4..];
 
             await Login("public.ecr.aws", password, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retags an image.
+        /// </summary>
+        /// <param name="repository">The image repository.</param>
+        /// <param name="oldTag">The existing tag of the image to retag.</param>
+        /// <param name="newTag">Tag to retag the image with.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        public async Task RetagImage(string repository, string oldTag, string newTag, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var oldTagId = new ImageIdentifier { ImageTag = oldTag };
+            var getImageRequest = new BatchGetImageRequest { RepositoryName = repository, ImageIds = new List<ImageIdentifier> { oldTagId } };
+            var imageInfo = await ecr.BatchGetImageAsync(getImageRequest, cancellationToken);
+            var putImageRequest = new PutImageRequest
+            {
+                ImageManifest = imageInfo.Images[0].ImageManifest,
+                RepositoryName = repository,
+                ImageTag = newTag,
+            };
+
+            await ecr.PutImageAsync(putImageRequest, cancellationToken);
         }
 
         private static async Task Login(string repository, string password, CancellationToken cancellationToken)

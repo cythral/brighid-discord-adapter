@@ -72,8 +72,9 @@ namespace Brighid.Discord.Cicd.DeployDriver
             });
 
             var image = config!.Parameters!["Image"]!;
-            var repository = image.Split(':')[0];
-            var environmentTag = repository + ':' + options.Environment!.ToLower();
+            var imageParts = image.Split(':');
+            var repository = imageParts[0];
+            var version = imageParts[1];
 
             await Step($"Deploy template to {options.Environment}", async () =>
             {
@@ -91,42 +92,16 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 await deployer.Deploy(context, cancellationToken);
             });
 
-            await Step("Login to ECR", async () =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await ecrUtils.DockerLogin(repository, cancellationToken);
-            });
-
-            await Step("[Tag Image] Pulling Existing Image", async () =>
+            await Step("Retag Image", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var pullCommand = new Command("docker pull", arguments: new[] { image });
-                await pullCommand.RunOrThrowError("Could not pull image from ECR.");
-            });
-
-            await Step("[Tag Image] Retag Image", async () =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var tagCommand = new Command("docker tag", arguments: new[] { image, environmentTag });
-                await tagCommand.RunOrThrowError("Could not retag image with environment.");
-            });
-
-            await Step("[Tag Image] Push Retagged Image", async () =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var pushCommand = new Command("docker push", arguments: new[] { environmentTag });
-                await pushCommand.RunOrThrowError("Could not push retagged image.");
-            });
-
-            await Step("[Cleanup] Logout of ECR", async () =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var command = new Command("docker logout", arguments: new[] { repository });
-                await command.RunOrThrowError("Could not logout of ECR.");
+                await ecrUtils.RetagImage(
+                    repository,
+                    version,
+                    options.Environment!.ToLower(),
+                    cancellationToken
+                );
             });
 
             lifetime.StopApplication();
