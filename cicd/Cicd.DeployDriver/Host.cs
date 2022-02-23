@@ -71,7 +71,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 Console.WriteLine("Loaded configuration from S3.");
             });
 
-            var image = new Uri(config!.Parameters!["Image"]!);
+            var image = new Uri("https://" + config!.Parameters!["Image"]!);
             var registryId = image.Host[0..image.Host.IndexOf('.')];
             var imageParts = image.AbsolutePath[1..].Split(':');
             var repository = imageParts[0];
