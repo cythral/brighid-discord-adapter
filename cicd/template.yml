@@ -239,8 +239,6 @@ Resources:
           DependsOn:
             - ContainerName: envoy
               Condition: HEALTHY
-          Links:
-            - xray
           PortMappings:
             - ContainerPort: 80
           LogConfiguration:
