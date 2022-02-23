@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using Amazon.CloudWatch;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
 using Brighid.Discord.Adapter.Database;
+using Brighid.Discord.Tracing;
 
 using Destructurama;
 
@@ -59,6 +61,8 @@ namespace Brighid.Discord.Adapter
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureTracingServices();
+
             ConfigureAwsServices(services);
             ConfigureMiscServices(services);
             ConfigureBrighidServices(services);
@@ -85,11 +89,13 @@ namespace Brighid.Discord.Adapter
         /// </summary>
         /// <param name="app">The application being configured.</param>
         /// <param name="environment">Environment used for the adapter.</param>
+        /// <param name="tracing">Service used for managing application traces.</param>
         /// <param name="databaseContext">Context used to interact with the database.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public void Configure(
             IApplicationBuilder app,
             IHostEnvironment environment,
+            ITracingService tracing,
             DatabaseContext databaseContext,
             ILogger<Startup> logger
         )
@@ -99,6 +105,7 @@ namespace Brighid.Discord.Adapter
 
             if (environment.IsEnvironment(Environments.Local))
             {
+                using var trace = tracing.StartTrace();
                 databaseContext.Database.Migrate();
             }
 
@@ -127,15 +134,18 @@ namespace Brighid.Discord.Adapter
         private static void ConfigureAwsServices(IServiceCollection services)
         {
             services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
+            AWSSDKHandler.RegisterXRay<IAmazonSimpleNotificationService>();
+
             services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
+            AWSSDKHandler.RegisterXRay<IAmazonCloudWatch>();
+
             services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
         }
 
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         private void ConfigureBrighidServices(IServiceCollection services)
         {
-            services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
-            services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
+            services.ConfigureBrighidIdentity<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddBrighidCommands(configuration.GetSection("Commands").Bind);
         }
 

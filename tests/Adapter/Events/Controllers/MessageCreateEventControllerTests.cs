@@ -12,6 +12,7 @@ using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models;
 using Brighid.Discord.RestClient.Client;
+using Brighid.Discord.Tracing;
 
 using FluentAssertions;
 
@@ -30,6 +31,7 @@ namespace Brighid.Discord.Adapter.Events
     public class MessageCreateEventControllerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -47,6 +49,38 @@ namespace Brighid.Discord.Adapter.Events
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
                 await emitter.DidNotReceive().Emit(Any<Message>(), Any<Snowflake>(), Any<CancellationToken>());
+            }
+
+            [Test, Auto]
+            public async Task ShouldStartAndStopATraceWithMessageAndEventAnnotations(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                Snowflake messageId,
+                [Frozen, Substitute] ITracingService tracing,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Id = messageId, Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+                var remoteUserId = new UserId(Guid.NewGuid(), true);
+
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
+
+                await controller.Handle(@event, cancellationToken);
+
+                Received.InOrder(() =>
+                {
+                    tracing.Received().StartTrace();
+                    tracing.Received().AddAnnotation(Is("event"), Is("incoming-message"));
+                    tracing.Received().AddAnnotation(Is("messageId"), Is(messageId.ToString()));
+                    tracing.Received().EndTrace();
+                });
             }
 
             [Test, Auto]

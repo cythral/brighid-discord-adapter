@@ -5,7 +5,7 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Users;
-using Brighid.Identity.Client;
+using Brighid.Identity.Client.Utils;
 
 using FluentAssertions;
 
@@ -36,29 +36,29 @@ namespace Brighid.Discord.Adapter.Management
 
             [Test, Auto]
             public void ShouldInvalidateTheIdentityToken(
-                [Frozen, Substitute] ITokenStore tokenStore,
+                [Frozen, Substitute] ICacheUtils cacheUtils,
                 [Target] CacheController controller
             )
             {
                 controller.ClearAll();
 
-                tokenStore.Received().InvalidateToken();
+                cacheUtils.Received().InvalidatePrimaryToken();
             }
 
             [Test, Auto]
             public void ShouldInvalidateAllUserTokens(
-                [Frozen, Substitute] IUserTokenStore userTokenStore,
+                [Frozen, Substitute] ICacheUtils cacheUtils,
                 [Target] CacheController controller
             )
             {
                 controller.ClearAll();
 
-                userTokenStore.Received().InvalidateAllUserTokens();
+                cacheUtils.Received().InvalidateAllUserTokens();
             }
 
             [Test, Auto]
             public void ShouldReturnOk(
-                [Frozen, Substitute] IUserTokenStore userTokenStore,
+                [Frozen, Substitute] ICacheUtils cacheUtils,
                 [Target] CacheController controller
             )
             {
@@ -87,13 +87,13 @@ namespace Brighid.Discord.Adapter.Management
             [Test, Auto]
             public void ShouldRemoveAnyUserTokensForTheGivenIdentityId(
                 Guid identityId,
-                [Frozen, Substitute] IUserTokenStore userTokenStore,
+                [Frozen, Substitute] ICacheUtils cacheUtils,
                 [Target] CacheController controller
             )
             {
                 controller.ClearUserSpecificCache(identityId);
 
-                userTokenStore.Received().InvalidateTokensForUser(Is(identityId.ToString()));
+                cacheUtils.Received().InvalidateTokensForUser(Is(identityId.ToString()));
             }
 
             [Test, Auto]

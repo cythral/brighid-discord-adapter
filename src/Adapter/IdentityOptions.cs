@@ -1,5 +1,6 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
+
+using Brighid.Identity.Client;
 
 namespace Brighid.Discord.Adapter
 {
@@ -7,11 +8,7 @@ namespace Brighid.Discord.Adapter
     /// Options for the identity server.
     /// </summary>
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
-    public class IdentityOptions
+    public class IdentityOptions : IdentityConfig
     {
-        /// <summary>
-        /// Gets or sets the Identity Server URI.
-        /// </summary>
-        public Uri IdentityServerUri { get; set; } = new Uri("https://identity.brigh.id");
     }
 }

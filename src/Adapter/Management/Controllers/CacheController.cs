@@ -1,7 +1,7 @@
 using System;
 
 using Brighid.Discord.Adapter.Users;
-using Brighid.Identity.Client;
+using Brighid.Identity.Client.Utils;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,27 +19,23 @@ namespace Brighid.Discord.Adapter.Management
     public class CacheController : Controller
     {
         private readonly IUserIdCache userIdCache;
-        private readonly ITokenStore tokenStore;
-        private readonly IUserTokenStore userTokenStore;
+        private readonly ICacheUtils cacheUtils;
         private readonly ILogger<CacheController> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CacheController" /> class.
         /// </summary>
         /// <param name="userIdCache">Cache to control user IDs.</param>
-        /// <param name="tokenStore">Store for Identity Bearer Tokens.</param>
-        /// <param name="userTokenStore">Store for Identity User/Impersonate Bearer Tokens.</param>
+        /// <param name="cacheUtils">Utilities for working with the identity cache.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public CacheController(
             IUserIdCache userIdCache,
-            ITokenStore tokenStore,
-            IUserTokenStore userTokenStore,
+            ICacheUtils cacheUtils,
             ILogger<CacheController> logger
         )
         {
             this.userIdCache = userIdCache;
-            this.tokenStore = tokenStore;
-            this.userTokenStore = userTokenStore;
+            this.cacheUtils = cacheUtils;
             this.logger = logger;
         }
 
@@ -51,8 +47,8 @@ namespace Brighid.Discord.Adapter.Management
         public StatusCodeResult ClearAll()
         {
             userIdCache.Clear();
-            tokenStore.InvalidateToken();
-            userTokenStore.InvalidateAllUserTokens();
+            cacheUtils.InvalidatePrimaryToken();
+            cacheUtils.InvalidateAllUserTokens();
             logger.LogInformation("Cleared all internal caches.");
 
             return Ok();
@@ -67,7 +63,7 @@ namespace Brighid.Discord.Adapter.Management
         public StatusCodeResult ClearUserSpecificCache(Guid identityId)
         {
             userIdCache.RemoveByIdentityId(identityId);
-            userTokenStore.InvalidateTokensForUser(identityId.ToString());
+            cacheUtils.InvalidateTokensForUser(identityId.ToString());
             logger.LogInformation("Cleared user-specific cache for: {@id}", identityId);
 
             return Ok();
