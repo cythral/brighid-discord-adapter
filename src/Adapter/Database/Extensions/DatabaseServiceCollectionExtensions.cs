@@ -37,7 +37,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     ? ServerVersion.AutoDetect(conn)
                     : new MySqlServerVersion(new Version(5, 7, 0));
 
-                options.UseMySql(conn, version);
+                options
+                .UseMySql(conn, version)
+                .AddXRayInterceptor(true);
             });
 
             services.AddSingleton<ITransactionFactory, DefaultTransactionFactory>();

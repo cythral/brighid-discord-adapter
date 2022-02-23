@@ -39,5 +39,11 @@ namespace Brighid.Discord.Models
         {
             return snowflake.Value.ToString();
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return this;
+        }
     }
 }

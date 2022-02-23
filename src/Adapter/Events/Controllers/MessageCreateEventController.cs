@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.RestClient.Client;
+using Brighid.Discord.Tracing;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -22,6 +24,7 @@ namespace Brighid.Discord.Adapter.Events
     [EventController(typeof(MessageCreateEvent))]
     public class MessageCreateEventController : IEventController<MessageCreateEvent>
     {
+        private readonly ITracingService tracingService;
         private readonly IUserService userService;
         private readonly IMessageEmitter emitter;
         private readonly IDiscordUserClient discordUserClient;
@@ -36,6 +39,7 @@ namespace Brighid.Discord.Adapter.Events
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageCreateEventController" /> class.
         /// </summary>
+        /// <param name="tracingService">Service for doing traces.</param>
         /// <param name="userService">Service to manage users with.</param>
         /// <param name="emitter">Emitter to emit messages to.</param>
         /// <param name="discordUserClient">Client used to send User API requests to Discord.</param>
@@ -47,6 +51,7 @@ namespace Brighid.Discord.Adapter.Events
         /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public MessageCreateEventController(
+            ITracingService tracingService,
             IUserService userService,
             IMessageEmitter emitter,
             IDiscordUserClient discordUserClient,
@@ -59,6 +64,7 @@ namespace Brighid.Discord.Adapter.Events
             ILogger<MessageCreateEventController> logger
         )
         {
+            this.tracingService = tracingService;
             this.userService = userService;
             this.emitter = emitter;
             this.discordUserClient = discordUserClient;
@@ -74,44 +80,62 @@ namespace Brighid.Discord.Adapter.Events
         /// <inheritdoc />
         public async Task Handle(MessageCreateEvent @event, CancellationToken cancellationToken)
         {
-            using var scope = logger.BeginScope("{@Event}", nameof(MessageCreateEvent));
             cancellationToken.ThrowIfCancellationRequested();
+            using var scope = logger.BeginScope("{@Event}", nameof(MessageCreateEvent));
+            using var trace = tracingService.StartTrace();
+
+            tracingService.AddAnnotation("event", "incoming-message");
+            tracingService.AddAnnotation("messageId", @event.Message.Id);
             _ = reporter.Report(default(MessageCreateEventMetric), cancellationToken);
 
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
-                var userId = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
-                var userIdString = userId.Id.ToString();
-
-                if (userId.Enabled)
-                {
-                    logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
-                    _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
-
-                    var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
-                    logger.LogInformation("Got result: {@result}", result);
-                    if (result?.ReplyImmediately == true)
-                    {
-                        await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
-                    }
-                }
-
+                await HandleMessageFromRegisteredUser(@event, cancellationToken);
                 return;
             }
 
             if (@event.Message.Mentions.Any(mention => mention.Id == gateway.BotId))
             {
-                try
+                await PerformWelcome(@event, cancellationToken);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var userId = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
+            var userIdString = userId.Id.ToString();
+
+            if (userId.Enabled)
+            {
+                logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
+                _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+
+                var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
+                logger.LogInformation("Got result: {@result}", result);
+                if (result?.ReplyImmediately == true)
                 {
-                    logger.LogInformation("User {@authorId} is not registered, sending invite through direct messages.", @event.Message.Author.Id);
-                    var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
-                    var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
-                    await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
+                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
                 }
-                catch (Exception exception)
-                {
-                    logger.LogError("An error occured while attempting to direct message {@authorId}: {@exception}", @event.Message.Author.Id, exception);
-                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task PerformWelcome(MessageCreateEvent @event, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            try
+            {
+                logger.LogInformation("User {@authorId} is not registered, sending invite through direct messages.", @event.Message.Author.Id);
+                var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
+                var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
+                await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                logger.LogError("An error occured while attempting to direct message {@authorId}: {@exception}", @event.Message.Author.Id, exception);
             }
         }
     }

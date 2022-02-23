@@ -81,6 +81,10 @@ Parameters:
     Type: String
     Description: Image to use for the Envoy Sidecar.
 
+  XrayImage:
+    Type: String
+    Description: Image to use for the X-Ray Sidecar.
+
   MeshNodeName:
     Type: String
     Description: Name to use for the node in the App Mesh.
@@ -244,6 +248,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
+            - Name: AWS_XRAY_DAEMON_ADDRESS
+              Value: xray:2000
             - Name: Environment
               Value: !Ref EnvironmentName
             - Name: Encrypted__Adapter__Token
@@ -320,6 +326,17 @@ Resources:
               Value: !Sub
                 - mesh/brighid-mesh@${SharedAccountId}/virtualNode/${MeshNode.VirtualNodeName}
                 - SharedAccountId: !ImportValue cfn-metadata:SharedAccountId
+        - Name: xray
+          Image: !Ref XrayImage
+          PortMappings:
+            - ContainerPort: 2000
+              Protocol: udp
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: brighid
 
   TaskRole:
     Type: AWS::IAM::Role
@@ -328,6 +345,7 @@ Resources:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
         - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
       AssumeRolePolicyDocument:
         Version: 2012-10-17

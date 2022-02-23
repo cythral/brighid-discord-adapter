@@ -43,6 +43,8 @@ services:
       Adapter__StaticAssetsRepositoryUrl: https://static.dev.brigh.id
       Metrics__Namespace: ${METRICS_NAMESPACE}
       AWS_REGION: us-east-1
+      AWS_XRAY_DAEMON_ADDRESS: xray:2000
+      AWS_XRAY_TRACING_NAME: Discord
     labels:
       - traefik.enable=true
       - traefik.http.routers.adapter.rule=Host(`localhost`)
@@ -60,10 +62,13 @@ services:
     volumes:
       - my-db:/var/lib/mysql
 
-  envoy:
-    image: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.0.0-prod
-    profiles:
-      - prod
+  xray:
+    image: public.ecr.aws/xray/aws-xray-daemon:latest
+    command: -o
+    volumes:
+      - ~/.aws:/home/xray/.aws
+    environment:
+      AWS_REGION: us-east-1
 
 volumes:
   my-db: null

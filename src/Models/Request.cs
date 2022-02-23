@@ -15,7 +15,9 @@ namespace Brighid.Discord.Models
         /// Initializes a new <see cref="Request" /> class.
         /// </summary>
         /// <param name="endpoint">The endpoint to use for the request.</param>
-        public Request(Endpoint endpoint)
+        public Request(
+            Endpoint endpoint
+        )
         {
             Endpoint = endpoint;
         }
@@ -25,6 +27,12 @@ namespace Brighid.Discord.Models
         /// </summary>
         [JsonPropertyName("id")]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Gets or sets the trace header for this request.
+        /// </summary>
+        [JsonPropertyName("t")]
+        public string? TraceHeader { get; set; }
 
         /// <summary>
         /// Gets or sets the path template to build the URL from.

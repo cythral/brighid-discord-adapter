@@ -8,6 +8,7 @@ using AutoFixture.NUnit3;
 using Brighid.Discord.Adapter.Database;
 using Brighid.Discord.DependencyInjection;
 using Brighid.Discord.Threading;
+using Brighid.Discord.Tracing;
 
 using FluentAssertions;
 
@@ -22,6 +23,7 @@ namespace Brighid.Discord.Adapter.Requests
     public class DefaultRequestWorkerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class StartAsyncTests
         {
             [Test, Auto]
@@ -63,6 +65,7 @@ namespace Brighid.Discord.Adapter.Requests
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StopAsyncTests
         {
             [Test, Auto]
@@ -104,6 +107,7 @@ namespace Brighid.Discord.Adapter.Requests
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RunTests
         {
             [Test, Auto]
@@ -138,6 +142,26 @@ namespace Brighid.Discord.Adapter.Requests
                 await worker.Run(cancellationToken);
 
                 transactionFactory.Received().CreateTransaction();
+            }
+
+            [Test, Auto]
+            public async Task ShouldStartAndStopATraceWithMessageTraceHeader(
+                RequestMessage message,
+                [Frozen] IRequestMessageRelay relay,
+                [Frozen] ITracingService tracing,
+                [Target] DefaultRequestWorker worker,
+                CancellationToken cancellationToken
+            )
+            {
+                relay.Receive(Any<CancellationToken>()).Returns(new[] { message });
+                await worker.Run(cancellationToken);
+
+                Received.InOrder(() =>
+                {
+                    tracing.Received().StartTrace(Is(message.RequestDetails.TraceHeader));
+                    tracing.Received().AddAnnotation(Is("event"), Is("rest-call"));
+                    tracing.Received().EndTrace();
+                });
             }
 
             [Test, Auto]

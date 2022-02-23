@@ -73,6 +73,10 @@ Parameters:
     Development: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.1.1-prod
     Production: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:v1.19.1.1-prod
 
+  XrayImage:
+    Development: public.ecr.aws/xray/aws-xray-daemon:3.3.3
+    Production: public.ecr.aws/xray/aws-xray-daemon:3.3.3
+
   MeshNodeName:
     Development: discord-dev
     Production: discord-prod

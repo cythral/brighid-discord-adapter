@@ -9,6 +9,7 @@ using AutoFixture.NUnit3;
 using Brighid.Discord.Models;
 using Brighid.Discord.RestClient.Responses;
 using Brighid.Discord.Serialization;
+using Brighid.Discord.Tracing;
 
 using FluentAssertions;
 
@@ -23,6 +24,7 @@ namespace Brighid.Discord.RestClient.Client
     public class DefaultDiscordRequestHandlerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -61,6 +63,29 @@ namespace Brighid.Discord.RestClient.Client
                 await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
                 var receivedRequest = TestUtils.GetArg<Request>(queuer, nameof(IRequestQueuer.QueueRequest), 0);
                 receivedRequest.Endpoint.Should().Be(endpoint);
+            }
+
+            [Test, Auto]
+            public async Task ShouldQueueARequestWithTheTraceHeader(
+                Snowflake recipientId,
+                Endpoint endpoint,
+                object request,
+                string traceHeader,
+                Dictionary<string, string> parameters,
+                Dictionary<string, string> headers,
+                [Frozen, Substitute] ITracingService tracing,
+                [Frozen, Substitute] IResponseService server,
+                [Frozen, Substitute] IRequestQueuer queuer,
+                [Target] DefaultDiscordRequestHandler handler,
+                CancellationToken cancellationToken
+            )
+            {
+                tracing.Header.Returns(traceHeader);
+                await handler.Handle(endpoint, request, parameters, headers, cancellationToken);
+
+                await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
+                var receivedRequest = TestUtils.GetArg<Request>(queuer, nameof(IRequestQueuer.QueueRequest), 0);
+                receivedRequest.TraceHeader.Should().Be(traceHeader);
             }
 
             [Test, Auto]
@@ -128,6 +153,7 @@ namespace Brighid.Discord.RestClient.Client
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class HandleAndWaitTests
         {
             [Test, Auto]
@@ -186,6 +212,30 @@ namespace Brighid.Discord.RestClient.Client
                 await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
                 var receivedRequest = TestUtils.GetArg<Request>(queuer, nameof(IRequestQueuer.QueueRequest), 0);
                 receivedRequest.Parameters.Should().BeEquivalentTo(parameters);
+            }
+
+            [Test, Auto]
+            public async Task ShouldQueueARequestWithTheTraceHeader(
+                Snowflake recipientId,
+                Endpoint endpoint,
+                object request,
+                string traceHeader,
+                Dictionary<string, string> parameters,
+                Dictionary<string, string> headers,
+                [Frozen, Substitute] ITracingService tracing,
+                [Frozen, Substitute] IResponseService server,
+                [Frozen, Substitute] IRequestQueuer queuer,
+                [Target] DefaultDiscordRequestHandler handler,
+                CancellationToken cancellationToken
+            )
+            {
+                tracing.Header.Returns(traceHeader);
+
+                await handler.Handle<object, object>(endpoint, request, parameters, headers, cancellationToken);
+
+                await queuer.Received().QueueRequest(Any<Request>(), Is(cancellationToken));
+                var receivedRequest = TestUtils.GetArg<Request>(queuer, nameof(IRequestQueuer.QueueRequest), 0);
+                receivedRequest.TraceHeader.Should().Be(traceHeader);
             }
 
             [Test, Auto]
