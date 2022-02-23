@@ -71,8 +71,9 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 Console.WriteLine("Loaded configuration from S3.");
             });
 
-            var image = config!.Parameters!["Image"]!;
-            var imageParts = image.Split(':');
+            var image = new Uri(config!.Parameters!["Image"]!);
+            var registryId = image.Host[0..image.Host.IndexOf('.')];
+            var imageParts = image.AbsolutePath[1..].Split(':');
             var repository = imageParts[0];
             var version = imageParts[1];
 
@@ -97,6 +98,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
                 cancellationToken.ThrowIfCancellationRequested();
 
                 await ecrUtils.RetagImage(
+                    registryId,
                     repository,
                     version,
                     options.Environment!.ToLower(),

@@ -55,12 +55,13 @@ namespace Brighid.Discord.Cicd.Utils
         /// <summary>
         /// Retags an image.
         /// </summary>
+        /// <param name="registry">The registry where the repository is located.</param>
         /// <param name="repository">The image repository.</param>
         /// <param name="oldTag">The existing tag of the image to retag.</param>
         /// <param name="newTag">Tag to retag the image with.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        public async Task RetagImage(string repository, string oldTag, string newTag, CancellationToken cancellationToken)
+        public async Task RetagImage(string registry, string repository, string oldTag, string newTag, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -70,6 +71,7 @@ namespace Brighid.Discord.Cicd.Utils
             var putImageRequest = new PutImageRequest
             {
                 ImageManifest = imageInfo.Images[0].ImageManifest,
+                RegistryId = registry,
                 RepositoryName = repository,
                 ImageTag = newTag,
             };
