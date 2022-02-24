@@ -65,18 +65,24 @@ namespace Brighid.Discord.Cicd.Utils
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var oldTagId = new ImageIdentifier { ImageTag = oldTag };
-            var getImageRequest = new BatchGetImageRequest { RegistryId = registry, RepositoryName = repository, ImageIds = new List<ImageIdentifier> { oldTagId } };
-            var imageInfo = await ecr.BatchGetImageAsync(getImageRequest, cancellationToken);
-            var putImageRequest = new PutImageRequest
+            try
             {
-                ImageManifest = imageInfo.Images[0].ImageManifest,
-                RegistryId = registry,
-                RepositoryName = repository,
-                ImageTag = newTag,
-            };
+                var oldTagId = new ImageIdentifier { ImageTag = oldTag };
+                var getImageRequest = new BatchGetImageRequest { RegistryId = registry, RepositoryName = repository, ImageIds = new List<ImageIdentifier> { oldTagId } };
+                var imageInfo = await ecr.BatchGetImageAsync(getImageRequest, cancellationToken);
+                var putImageRequest = new PutImageRequest
+                {
+                    ImageManifest = imageInfo.Images[0].ImageManifest,
+                    RegistryId = registry,
+                    RepositoryName = repository,
+                    ImageTag = newTag,
+                };
 
-            await ecr.PutImageAsync(putImageRequest, cancellationToken);
+                await ecr.PutImageAsync(putImageRequest, cancellationToken);
+            }
+            catch (ImageAlreadyExistsException)
+            {
+            }
         }
 
         private static async Task Login(string repository, string password, CancellationToken cancellationToken)
