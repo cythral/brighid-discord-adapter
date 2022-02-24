@@ -1,5 +1,6 @@
 using System;
 
+using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Identity.Client.Utils;
 
@@ -20,6 +21,7 @@ namespace Brighid.Discord.Adapter.Management
     {
         private readonly IUserIdCache userIdCache;
         private readonly ICacheUtils cacheUtils;
+        private readonly IBrighidCommandsCache commandsCache;
         private readonly ILogger<CacheController> logger;
 
         /// <summary>
@@ -27,15 +29,18 @@ namespace Brighid.Discord.Adapter.Management
         /// </summary>
         /// <param name="userIdCache">Cache to control user IDs.</param>
         /// <param name="cacheUtils">Utilities for working with the identity cache.</param>
+        /// <param name="commandsCache">Service for managing the Brighid Commands cache.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public CacheController(
             IUserIdCache userIdCache,
             ICacheUtils cacheUtils,
+            IBrighidCommandsCache commandsCache,
             ILogger<CacheController> logger
         )
         {
             this.userIdCache = userIdCache;
             this.cacheUtils = cacheUtils;
+            this.commandsCache = commandsCache;
             this.logger = logger;
         }
 
@@ -49,7 +54,22 @@ namespace Brighid.Discord.Adapter.Management
             userIdCache.Clear();
             cacheUtils.InvalidatePrimaryToken();
             cacheUtils.InvalidateAllUserTokens();
+            commandsCache.ClearAllParameters();
             logger.LogInformation("Cleared all internal caches.");
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Clear all caches related to a specific command.
+        /// </summary>
+        /// <param name="name">The name of the command to clear cache for.</param>
+        /// <returns>OK if successful.</returns>
+        [HttpDelete("commands/{name}")]
+        public StatusCodeResult ClearCommandSpecificCache(string name)
+        {
+            commandsCache.ClearParameters(name);
+            logger.LogInformation("Cleared command-specific cache for: {@name}", name);
 
             return Ok();
         }

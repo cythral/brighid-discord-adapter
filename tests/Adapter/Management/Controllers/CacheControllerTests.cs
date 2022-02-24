@@ -4,6 +4,7 @@ using System.Net;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Identity.Client.Utils;
 
@@ -57,12 +58,51 @@ namespace Brighid.Discord.Adapter.Management
             }
 
             [Test, Auto]
+            public void ShouldClearTheCommandsCache(
+                [Frozen, Substitute] IBrighidCommandsCache commandsCache,
+                [Target] CacheController controller
+            )
+            {
+                controller.ClearAll();
+
+                commandsCache.Received().ClearAllParameters();
+            }
+
+            [Test, Auto]
             public void ShouldReturnOk(
                 [Frozen, Substitute] ICacheUtils cacheUtils,
                 [Target] CacheController controller
             )
             {
                 var result = controller.ClearAll();
+
+                result.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            }
+        }
+
+        [TestFixture]
+        [Category("Unit")]
+        public class ClearCommandSpecificCacheTests
+        {
+            [Test, Auto]
+            public void ShouldClearCommandParameters(
+                string name,
+                [Frozen, Substitute] IBrighidCommandsCache commandsCache,
+                [Target] CacheController controller
+            )
+            {
+                controller.ClearCommandSpecificCache(name);
+
+                commandsCache.Received().ClearParameters(Is(name));
+            }
+
+            [Test, Auto]
+            public void ShouldReturnOk(
+                string name,
+                [Target] CacheController controller
+            )
+            {
+                var result = controller.ClearCommandSpecificCache(name);
 
                 result.StatusCode.Should().Be((int)HttpStatusCode.OK);
             }
@@ -81,7 +121,7 @@ namespace Brighid.Discord.Adapter.Management
             {
                 controller.ClearUserSpecificCache(identityId);
 
-                userIdCache.Received().RemoveByIdentityId(identityId);
+                userIdCache.Received().RemoveByIdentityId(Is(identityId));
             }
 
             [Test, Auto]

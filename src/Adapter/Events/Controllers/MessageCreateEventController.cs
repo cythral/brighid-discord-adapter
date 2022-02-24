@@ -104,16 +104,23 @@ namespace Brighid.Discord.Adapter.Events
         private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var userId = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
-            var userIdString = userId.Id.ToString();
+            var user = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
+            var userId = user.Id.ToString();
 
-            if (userId.Enabled)
+            if (user.Enabled)
             {
                 logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
                 _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
 
-                var result = await commandsService.ParseAndExecuteCommandAsUser(@event.Message.Content, userIdString, cancellationToken);
+                var result = await commandsService.ParseAndExecuteCommandAsUser(
+                    message: @event.Message.Content,
+                    userId: userId,
+                    sourceSystemId: @event.Message.ChannelId,
+                    cancellationToken: cancellationToken
+                );
+
                 logger.LogInformation("Got result: {@result}", result);
+
                 if (result?.ReplyImmediately == true)
                 {
                     await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);

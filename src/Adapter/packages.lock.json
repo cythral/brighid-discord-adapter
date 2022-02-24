@@ -22,31 +22,17 @@
       },
       "Brighid.Commands.Client": {
         "type": "Direct",
-        "requested": "[0.2.0-beta5, )",
-        "resolved": "0.2.0-beta5",
-        "contentHash": "JAfRH/Vnx0WhclcRbQgy/UVPufQRCFFReHCWuMcaiRkaniKRNcaLA4zKsjNKWTWadAfeYQe4xxrErD0Y7djJ6Q==",
+        "requested": "[0.2.0-beta6, )",
+        "resolved": "0.2.0-beta6",
+        "contentHash": "3MgyJ3l0MRoEwNHSwkLKdVnsotNWxxcyC4L1aMWmptfiICwJjJs/CLnVfnj0VDZj0Ikaxncs1o7rtCEgVx6tqA==",
         "dependencies": {
-          "Brighid.Identity.Client": "0.4.0",
+          "Brighid.Identity.Client": "0.5.0",
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.Configuration": "6.0.0",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Http": "6.0.0",
           "Microsoft.Extensions.Options": "6.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0"
-        }
-      },
-      "Brighid.Identity.Client": {
-        "type": "Direct",
-        "requested": "[0.5.0, )",
-        "resolved": "0.5.0",
-        "contentHash": "s7/rGSmBpZy6/NFqngma89/Py+TDS2sKDbjd0gE09a+dch1659qQjIMFGE4lvl+r/HEwBjVNWEiGY4aWAO49jQ==",
-        "dependencies": {
-          "Microsoft.Extensions.Caching.Memory": "6.0.1",
-          "Microsoft.Extensions.Configuration": "6.0.0",
-          "Microsoft.Extensions.DependencyInjection": "6.0.0",
-          "Microsoft.Extensions.Options": "6.0.0",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0",
-          "System.IdentityModel.Tokens.Jwt": "6.16.0"
         }
       },
       "Destructurama.Attributed": {
@@ -247,6 +233,19 @@
         "contentHash": "FRqvIuMLCqxrYAN84CyfCXmFWAhN7RbYs6O7Ungs7+d2yVSp8xApbGkXsUQugdS0u02CMqIFI2CMuYLkAUaafw==",
         "dependencies": {
           "AWSXRayRecorder.Core": "2.10.1"
+        }
+      },
+      "Brighid.Identity.Client": {
+        "type": "Transitive",
+        "resolved": "0.5.0",
+        "contentHash": "s7/rGSmBpZy6/NFqngma89/Py+TDS2sKDbjd0gE09a+dch1659qQjIMFGE4lvl+r/HEwBjVNWEiGY4aWAO49jQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Caching.Memory": "6.0.1",
+          "Microsoft.Extensions.Configuration": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0",
+          "System.IdentityModel.Tokens.Jwt": "6.16.0"
         }
       },
       "Humanizer.Core": {
