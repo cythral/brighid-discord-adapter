@@ -158,7 +158,7 @@ namespace Brighid.Discord.Adapter.Events
                 Received.InOrder(async () =>
                 {
                     await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
-                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(cancellationToken));
+                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(channelId.ToString()), Is(cancellationToken));
                 });
             }
 
@@ -193,6 +193,7 @@ namespace Brighid.Discord.Adapter.Events
                     await commandsClient.Received().ParseAndExecuteCommandAsUser(
                         Is(@event.Message.Content),
                         Is(identityUserId.Id.ToString()),
+                        Is(channelId.ToString()),
                         Is(cancellationToken)
                     );
                     await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
