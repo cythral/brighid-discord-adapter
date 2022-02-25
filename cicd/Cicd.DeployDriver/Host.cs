@@ -16,7 +16,8 @@ namespace Brighid.Discord.Cicd.DeployDriver
     /// <inheritdoc />
     public class Host : IHost
     {
-        private readonly StackDeployer deployer;
+        private readonly StackDeployer stackDeployer;
+        private readonly EcsDeployer ecsDeployer;
         private readonly EcrUtils ecrUtils;
         private readonly CommandLineOptions options;
         private readonly IHostApplicationLifetime lifetime;
@@ -24,20 +25,23 @@ namespace Brighid.Discord.Cicd.DeployDriver
         /// <summary>
         /// Initializes a new instance of the <see cref="Host" /> class.
         /// </summary>
-        /// <param name="deployer">Service for deploying cloudformation stacks.</param>
+        /// <param name="stackDeployer">Service for deploying cloudformation stacks.</param>
+        /// <param name="ecsDeployer">Service for deploying ECS services.</param>
         /// <param name="ecrUtils">Utilities for interacting with ECR.</param>
         /// <param name="options">Command line options.</param>
         /// <param name="lifetime">Service that controls the application lifetime.</param>
         /// <param name="serviceProvider">Object that provides access to the program's services.</param>
         public Host(
-            StackDeployer deployer,
+            StackDeployer stackDeployer,
+            EcsDeployer ecsDeployer,
             EcrUtils ecrUtils,
             IOptions<CommandLineOptions> options,
             IHostApplicationLifetime lifetime,
             IServiceProvider serviceProvider
         )
         {
-            this.deployer = deployer;
+            this.stackDeployer = stackDeployer;
+            this.ecsDeployer = ecsDeployer;
             this.ecrUtils = ecrUtils;
             this.options = options.Value;
             this.lifetime = lifetime;
@@ -77,6 +81,22 @@ namespace Brighid.Discord.Cicd.DeployDriver
             var repository = imageParts[0];
             var version = imageParts[1];
 
+            await Step("Deploy identity service", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var request = new EcsDeployContext { ClusterName = "brighid", ServiceName = "identity" };
+                await ecsDeployer.Deploy(request, cancellationToken);
+            });
+
+            await Step("Deploy commands service", async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var request = new EcsDeployContext { ClusterName = "brighid", ServiceName = "commands" };
+                await ecsDeployer.Deploy(request, cancellationToken);
+            });
+
             await Step($"Deploy template to {options.Environment}", async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -90,7 +110,7 @@ namespace Brighid.Discord.Cicd.DeployDriver
                     Tags = config?.Tags ?? new(),
                 };
 
-                await deployer.Deploy(context, cancellationToken);
+                await stackDeployer.Deploy(context, cancellationToken);
             });
 
             await Step("Retag Image", async () =>

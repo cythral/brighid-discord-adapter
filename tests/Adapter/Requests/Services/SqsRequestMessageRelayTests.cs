@@ -114,44 +114,6 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto, Timeout(2000), Retry(3)]
-            [Ignore("Method is not deterministic")]
-            public async Task ShouldBatchMultipleCallsIntoASingleDelete(
-                RequestMessage message1,
-                RequestMessage message2,
-                HttpStatusCode statusCode,
-                [Frozen] RequestOptions options,
-                [Frozen, Substitute] IAmazonSQS sqs,
-                [Target] SqsRequestMessageRelay relay,
-                CancellationToken cancellationToken
-            )
-            {
-                var task1 = relay.Complete(message1, statusCode, null, cancellationToken);
-                var task2 = relay.Complete(message2, statusCode, null, cancellationToken);
-
-                await Task.WhenAll(task1, task2);
-
-                await sqs.Received().DeleteMessageBatchAsync(
-                    Any<DeleteMessageBatchRequest>(),
-                    Any<CancellationToken>()
-                );
-
-                var batchRequest = (from call in sqs.ReceivedCalls()
-                                    let arg = (DeleteMessageBatchRequest)call.GetArguments()[0]
-                                    where arg.Entries.Any()
-                                    select arg).First();
-
-                batchRequest.QueueUrl.Should().Be(options.QueueUrl.ToString());
-                batchRequest.Entries.Should().Contain(entry =>
-                    entry.Id == message1.RequestDetails.Id.ToString() &&
-                    entry.ReceiptHandle == message1.ReceiptHandle
-                );
-                batchRequest.Entries.Should().Contain(entry =>
-                    entry.Id == message2.RequestDetails.Id.ToString() &&
-                    entry.ReceiptHandle == message2.ReceiptHandle
-                );
-            }
-
-            [Test, Auto, Timeout(2000), Retry(3)]
             public async Task ShouldNotDeleteMessagesThatHaveBeenCanceled(
                 RequestMessage message1,
                 RequestMessage message2,
