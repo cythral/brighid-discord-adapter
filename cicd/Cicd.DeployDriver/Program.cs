@@ -24,6 +24,7 @@ await Microsoft.Extensions.Hosting.Host
     services.Configure<CommandLineOptions>(context.Configuration.GetSection("CommandLineOptions"));
     services.AddSingleton<IHost, Brighid.Discord.Cicd.DeployDriver.Host>();
     services.AddSingleton<StackDeployer>();
+    services.AddSingleton<EcsDeployer>();
     services.AddSingleton<EcrUtils>();
 })
 .UseConsoleLifetime()
