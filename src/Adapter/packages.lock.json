@@ -4,20 +4,20 @@
     "net6.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.3.33, )",
-        "resolved": "3.7.3.33",
-        "contentHash": "9cIribxksLqEh1v+YcCRXxhrrnl32hWUXrerzN6wPZDYYv+CDGPBUGtUKydq/th1f0w9YMEqdoK0Cbl+Lhexiw==",
+        "requested": "[3.7.3.34, )",
+        "resolved": "3.7.3.34",
+        "contentHash": "3he4hjZPQzWun51QtCZuC49yCT0XVH0f3DqQ6XsXL1HXF3MyxieSZUoc7VBbeBHhlbEdrJ8S2DbPzFG0INf3DA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.8.8, 4.0.0)"
+          "AWSSDK.Core": "[3.7.8.9, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Direct",
-        "requested": "[3.7.3.34, )",
-        "resolved": "3.7.3.34",
-        "contentHash": "EskCh74a9h+QQPWAE7L30FREXI2YGzfH13KlJkxVA+1UjeW+cRxfuNKHQCF6B017jZ2rNE82S5W7Tv04P1ha0g==",
+        "requested": "[3.7.3.35, )",
+        "resolved": "3.7.3.35",
+        "contentHash": "RaIatkLmenY8YT10GVHR9wXqlVYlM8Te/eDWexgWlWi/LtCntJzDCFnT9/Js2fkuV/1N0nWp3T4EY6rMB98/Rw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.8.8, 4.0.0)"
+          "AWSSDK.Core": "[3.7.8.9, 4.0.0)"
         }
       },
       "Brighid.Commands.Client": {
@@ -156,15 +156,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.8.8",
-        "contentHash": "db62HSnbbr6SeIY9bPKPwYZ8vV+VTUzLFoWbtFkx7TWl5RnIQ5dqd8ROloQuOtx8riQ9kG24xfp1ZU0PiWArog=="
+        "resolved": "3.7.8.9",
+        "contentHash": "z6QrtbaOulwSKhWqcBtSmOUk6FAMtSR9EuclukS9qIovqIxjfKGjJB1K+01dXiiyGn34OhIPf+JxBETu5WPAFw=="
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.2.31",
-        "contentHash": "XWYvwqNQLa6ZHoh7p5uslLmmrEtPM52AfUnJwqSjy2JqV85Lmcq6a+p/Vrl+tTvqemxioK9dfpzEU83soXVLew==",
+        "resolved": "3.7.2.32",
+        "contentHash": "mFInFfeXWw0kWAh9P+T7QoBLhRtTZfUBODNvJ3caHLQGCodMBksZCtqzo0uSMWCDhE6yI+OfRFtRi4cJggy67Q==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.8.8, 4.0.0)"
+          "AWSSDK.Core": "[3.7.8.9, 4.0.0)"
         }
       },
       "AWSXRayRecorder": {
@@ -2395,7 +2395,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.2.31",
+          "AWSSDK.SQS": "3.7.2.32",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.AspNetCore.Mvc": "2.2.0",
           "Microsoft.Extensions.Hosting": "6.0.1",
