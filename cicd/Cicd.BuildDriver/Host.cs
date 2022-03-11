@@ -109,6 +109,7 @@ namespace Brighid.Discord.Cicd.BuildDriver
                     options: new Dictionary<string, object>
                     {
                         ["--tag"] = tag,
+                        ["--platform"] = "linux/arm64",
                         ["--file"] = $"{ProjectRootDirectoryAttribute.ThisAssemblyProjectRootDirectory}Dockerfile",
                         ["--cache-from"] = "type=gha,scope=brighid-discord-adapter",
                         ["--cache-to"] = "type=gha,scope=brighid-discord-adapter",

@@ -31,11 +31,13 @@
         </PropertyGroup>
 
         <ItemGroup>
+            <DockerBuildArgs Include="--platform linux/arm64" />
             <DockerBuildArgs Include="--file $(MSBuildThisFileDirectory)Dockerfile" />
             <DockerBuildArgs Include="--tag $(DockerImageTag)" />
             <DockerBuildArgs Include="--build-arg CONFIGURATION=$(Configuration)" />
+            <DockerBuildArgs Include="--load" />
         </ItemGroup>
 
-        <Exec Command="docker build @(DockerBuildArgs, ' ') $(MSBuildThisFileDirectory)" />
+        <Exec Command="docker buildx build @(DockerBuildArgs, ' ') $(MSBuildThisFileDirectory)" />
     </Target>
 </Project>

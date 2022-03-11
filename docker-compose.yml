@@ -17,10 +17,11 @@ services:
     image: brighid/discord-adapter
     working_dir: /app
     restart: unless-stopped
+    platform: linux/arm64
     ports:
       - "80"
     volumes:
-      - ./bin/Adapter/Debug/linux-musl-x64:/app
+      - ./bin/Adapter/Debug/linux-musl-arm64:/app
       - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local
