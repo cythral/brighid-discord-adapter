@@ -4,9 +4,9 @@
     "net6.0": {
       "AWSSDK.CloudWatch": {
         "type": "Direct",
-        "requested": "[3.7.3.46, )",
-        "resolved": "3.7.3.46",
-        "contentHash": "9gNv8LSFwmgrYEci/cMMb66hPyKALALJ71nfRrYTS5dAha/h1PAy2R6DanDENbw/TbiPqosGZhruOBIWG9vNIw==",
+        "requested": "[3.7.4, )",
+        "resolved": "3.7.4",
+        "contentHash": "Ma0LUAl5eokZPrgrtyKdC1/JZDMncAYLh2bR4SwJcsjL8jvFucyeDHUVkq7J2TkjruXMTA4YMwFe213THRJDug==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.10.7, 4.0.0)"
         }
