@@ -6,6 +6,6 @@
 
     <ItemGroup>
         <PackageReference Include="Amazon.CDK.Lib" Version="2.20.0" />
-        <PackageReference Include="Constructs" Version="10.0.112" />
+        <PackageReference Include="Constructs" Version="10.0.113" />
     </ItemGroup>
 </Project>
