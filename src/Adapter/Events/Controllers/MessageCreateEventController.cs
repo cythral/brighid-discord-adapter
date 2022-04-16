@@ -90,7 +90,7 @@ namespace Brighid.Discord.Adapter.Events
 
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
-                await HandleMessageFromRegisteredUser(@event, cancellationToken);
+                await HandleMessageFromRegisteredUser(@event, trace, cancellationToken);
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace Brighid.Discord.Adapter.Events
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, CancellationToken cancellationToken)
+        private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, TraceContext trace, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
@@ -123,7 +123,13 @@ namespace Brighid.Discord.Adapter.Events
 
                 if (result?.ReplyImmediately == true)
                 {
-                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
+                    var response = result.Response;
+                    if (user.Debug)
+                    {
+                        response += $"\n\n**Debug Info:**```Trace Header: {trace.Header}```";
+                    }
+
+                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, response, cancellationToken);
                 }
             }
         }
