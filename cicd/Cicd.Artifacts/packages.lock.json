@@ -14,9 +14,9 @@
       },
       "Constructs": {
         "type": "Direct",
-        "requested": "[10.0.123, )",
-        "resolved": "10.0.123",
-        "contentHash": "u88iE+H9Lh3a0hgK9vuxSSnSLWUqJxgQruSc36nPaj3CH1sjDbh11qd9tEirQvTgt21ADJzFafwCtZPfbp5cqQ==",
+        "requested": "[10.0.124, )",
+        "resolved": "10.0.124",
+        "contentHash": "0CL8Y8e10lLwCMTjQ51Ilsu/UTf58ObCGvt1xYjsps52CsedbIe5CTwkH0PW31NLqBRGoqPmz2EPoAKxMB6s6A==",
         "dependencies": {
           "Amazon.JSII.Runtime": "[1.57.0, 2.0.0)"
         }
