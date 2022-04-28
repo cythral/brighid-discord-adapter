@@ -9,6 +9,7 @@ using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
+using Brighid.Discord.Models.Payloads;
 using Brighid.Discord.RestClient.Client;
 using Brighid.Discord.Tracing;
 
@@ -90,7 +91,7 @@ namespace Brighid.Discord.Adapter.Events
 
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
-                await HandleMessageFromRegisteredUser(@event, cancellationToken);
+                await HandleMessageFromRegisteredUser(@event, trace, cancellationToken);
                 return;
             }
 
@@ -101,30 +102,54 @@ namespace Brighid.Discord.Adapter.Events
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, CancellationToken cancellationToken)
+        private static Models.Embed? GetDebugEmbed(UserId userId, TraceContext trace)
+        {
+            return !userId.Debug
+                ? null
+                : new Models.Embed
+                {
+                    Title = "Debug Info",
+                    Color = 5763719,
+                    Fields = new[]
+                    {
+                        new Models.EmbedField { Name = "TraceId", Value = trace.Header },
+                    },
+                };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task HandleMessageFromRegisteredUser(MessageCreateEvent @event, TraceContext trace, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
             var userId = user.Id.ToString();
 
-            if (user.Enabled)
+            if (!user.Enabled)
             {
-                logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
-                _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+                return;
+            }
 
-                var result = await commandsService.ParseAndExecuteCommandAsUser(
-                    message: @event.Message.Content,
-                    userId: userId,
-                    sourceSystemId: @event.Message.ChannelId,
-                    cancellationToken: cancellationToken
-                );
+            logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
+            _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
 
-                logger.LogInformation("Got result: {@result}", result);
+            var result = await commandsService.ParseAndExecuteCommandAsUser(
+                message: @event.Message.Content,
+                userId: userId,
+                sourceSystemId: @event.Message.ChannelId,
+                cancellationToken: cancellationToken
+            );
 
-                if (result?.ReplyImmediately == true)
+            logger.LogInformation("Got result: {@result}", result);
+
+            if (result?.ReplyImmediately == true)
+            {
+                var createMessagePayload = new CreateMessagePayload
                 {
-                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, result.Response, cancellationToken);
-                }
+                    Content = result.Response,
+                    Embed = GetDebugEmbed(user, trace),
+                };
+
+                await discordChannelClient.CreateMessage(@event.Message.ChannelId, createMessagePayload, cancellationToken);
             }
         }
 
@@ -138,7 +163,8 @@ namespace Brighid.Discord.Adapter.Events
                 logger.LogInformation("User {@authorId} is not registered, sending invite through direct messages.", @event.Message.Author.Id);
                 var dmChannel = await discordUserClient.CreateDirectMessageChannel(@event.Message.Author.Id, cancellationToken);
                 var message = (string)strings["RegistrationGreeting", adapterOptions.RegistrationUrl]!;
-                await discordChannelClient.CreateMessage(dmChannel.Id, message, cancellationToken);
+                var payload = new CreateMessagePayload { Content = message };
+                await discordChannelClient.CreateMessage(dmChannel.Id, payload, cancellationToken);
             }
             catch (Exception exception)
             {

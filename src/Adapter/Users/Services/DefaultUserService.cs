@@ -160,7 +160,7 @@ namespace Brighid.Discord.Adapter.Users
                         select login;
 
             var queryResult = query.First();
-            return new UserId(user.Id, queryResult.Enabled);
+            return new UserId(user.Id, user.Flags.HasFlag(UserFlags.Debug), queryResult.Enabled);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Brighid.Discord.Adapter.Users
     public class DefaultUserServiceTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class ExchangeOAuth2CodeForTokenTests
         {
             [Test, Auto]
@@ -148,6 +149,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class GetDiscordUserInfoTests
         {
             [Test, Auto]
@@ -173,6 +175,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class LinkDiscordIdToUser
         {
             [Test, Auto]
@@ -214,6 +217,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class GetUserIdFromIdentityTokenTests
         {
             [Test, Auto]
@@ -230,6 +234,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class IsUserRegisteredTests
         {
             [Test, Auto]
@@ -325,6 +330,7 @@ namespace Brighid.Discord.Adapter.Users
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class GetIdentityServiceUserIdTests
         {
             [Test, Auto]
@@ -338,13 +344,34 @@ namespace Brighid.Discord.Adapter.Users
             {
                 var login = new UserLogin { LoginProvider = "discord", Enabled = true };
                 identityUser.Logins.Add(login);
+                identityUser.Flags = UserFlags.None;
 
                 var result = await service.GetIdentityServiceUserId(user, cancellationToken);
 
                 result.Id.Should().Be(identityUser.Id);
+                result.Debug.Should().BeFalse();
                 result.Enabled.Should().BeTrue();
 
                 await loginProvidersClient.Received().GetUserByLoginProviderKey(Is("discord"), Is(user.Id.Value.ToString()), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldSetDebugOnTheUserIdIfUserHasDebugFlag(
+                Models.User user,
+                [Frozen] Identity.Client.User identityUser,
+                [Frozen, Substitute] ILoginProvidersClient loginProvidersClient,
+                [Target] DefaultUserService service,
+                CancellationToken cancellationToken
+            )
+            {
+                var login = new UserLogin { LoginProvider = "discord", Enabled = true };
+                identityUser.Logins.Add(login);
+                identityUser.Flags = UserFlags.Debug;
+
+                var result = await service.GetIdentityServiceUserId(user, cancellationToken);
+
+                result.Id.Should().Be(identityUser.Id);
+                result.Debug.Should().BeTrue();
             }
 
             [Test, Auto]

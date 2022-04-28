@@ -24,17 +24,17 @@ namespace Brighid.Discord.RestClient.Client
             [Test, Auto]
             public async Task ShouldCreateAMessageInTheCorrectChannel(
                 Snowflake channelId,
-                string message,
+                CreateMessagePayload payload,
                 [Frozen, Substitute] IDiscordRequestHandler handler,
                 [Target] DefaultDiscordChannelClient client,
                 CancellationToken cancellationToken
             )
             {
-                await client.CreateMessage(channelId, message, cancellationToken);
+                await client.CreateMessage(channelId, payload, cancellationToken);
 
                 await handler.Received().Handle(
                     endpoint: Is((Endpoint)ChannelEndpoint.CreateMessage),
-                    request: Is<CreateMessagePayload>(payload => payload.Content == message),
+                    request: Is(payload),
                     parameters: Is<Dictionary<string, string>>(parameters => parameters["channel.id"] == channelId),
                     headers: Is((Dictionary<string, string>?)null),
                     cancellationToken: Is(cancellationToken)
