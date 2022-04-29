@@ -65,6 +65,7 @@ internal class AutoAttribute : AutoDataAttribute
             return result;
         });
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
+        fixture.Customize(new SupportMutableValueTypesCustomization());
         fixture.Customizations.Add(new OptionsRelay());
         fixture.Customizations.Add(new TypeOmitter<IDictionary<string, JsonElement>>());
         fixture.Customizations.Add(new TypeOmitter<JsonConverter>());

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models;
+using Brighid.Discord.Models.Payloads;
 using Brighid.Discord.RestClient.Client;
 using Brighid.Discord.Tracing;
 
@@ -67,7 +69,7 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Id = messageId, Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
-                var remoteUserId = new UserId(Guid.NewGuid(), true);
+                var remoteUserId = new UserId(Guid.NewGuid(), false, true);
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
@@ -97,7 +99,7 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
-                var remoteUserId = new UserId(Guid.NewGuid(), true);
+                var remoteUserId = new UserId(Guid.NewGuid(), false, true);
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
@@ -122,7 +124,7 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
-                var remoteUserId = new UserId(Guid.NewGuid(), false);
+                var remoteUserId = new UserId(Guid.NewGuid(), false, false);
 
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(remoteUserId);
@@ -145,7 +147,7 @@ namespace Brighid.Discord.Adapter.Events
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                var identityUserId = new UserId(Guid.NewGuid(), true);
+                var identityUserId = new UserId(Guid.NewGuid(), false, true);
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
@@ -180,7 +182,7 @@ namespace Brighid.Discord.Adapter.Events
                 var author = new User { Id = userId };
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
-                var identityUserId = new UserId(Guid.NewGuid(), true);
+                var identityUserId = new UserId(Guid.NewGuid(), false, true);
 
                 executeCommandResponse.ReplyImmediately = true;
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
@@ -196,7 +198,7 @@ namespace Brighid.Discord.Adapter.Events
                         Is(channelId.ToString()),
                         Is(cancellationToken)
                     );
-                    await channelClient.Received().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
+                    await channelClient.Received().CreateMessage(Is(channelId), Is<CreateMessagePayload>(payload => payload.Content == executeCommandResponse.Response), Is(cancellationToken));
                 });
             }
 
@@ -226,7 +228,78 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                await channelClient.DidNotReceive().CreateMessage(Is(channelId), Is(executeCommandResponse.Response), Is(cancellationToken));
+                await channelClient.DidNotReceive().CreateMessage(Is(channelId), Is<CreateMessagePayload>(payload => payload.Content == executeCommandResponse.Response), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotReplyWithDebugEmbedIfUserDoesntHaveDebugModeEnabled(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                [Frozen] Command command,
+                [Frozen] ExecuteCommandResponse executeCommandResponse,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+                var identityUserId = new UserId(Guid.NewGuid(), false, true);
+
+                executeCommandResponse.ReplyImmediately = true;
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await channelClient.Received().CreateMessage(
+                    Is(channelId),
+                    Is<CreateMessagePayload>(payload =>
+                        payload.Embed == null
+                    ),
+                    Is(cancellationToken)
+                );
+            }
+
+            [Test, Auto]
+            public async Task ShouldReplyWithTraceIdIfUserHasDebugModeEnabled(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                [Frozen] Command command,
+                [Frozen] TraceContext traceContext,
+                [Frozen] ExecuteCommandResponse executeCommandResponse,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+                var identityUserId = new UserId(Guid.NewGuid(), true, true);
+
+                executeCommandResponse.ReplyImmediately = true;
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await channelClient.Received().CreateMessage(
+                    Is(channelId),
+                    Is<CreateMessagePayload>(payload =>
+                        payload.Embed!.Value.Fields.Any(field => field.Name == "TraceId" && field.Value == traceContext.Header)
+                    ),
+                    Is(cancellationToken)
+                );
             }
 
             [Test, Auto]
@@ -281,7 +354,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.Received().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.Received().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
+                await channelClient.Received().CreateMessage(Is(channel.Id), Is<CreateMessagePayload>(payload => payload.Content == strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -312,7 +385,7 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await userClient.DidNotReceive().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
-                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<string>(strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
+                await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<CreateMessagePayload>(payload => payload.Content == strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
             }
 
             [Test, Auto]

@@ -24,9 +24,8 @@ namespace Brighid.Discord.RestClient.Client
         }
 
         /// <inheritdoc />
-        public async Task CreateMessage(Snowflake channelId, string message, CancellationToken cancellationToken = default)
+        public async Task CreateMessage(Snowflake channelId, CreateMessagePayload request, CancellationToken cancellationToken = default)
         {
-            var request = new CreateMessagePayload { Content = message };
             await handler.Handle(
                 endpoint: ChannelEndpoint.CreateMessage,
                 request: request,

@@ -36,7 +36,7 @@ namespace Brighid.Discord.Models
         /// Gets or sets the timestamp of embed content.
         /// </summary>
         [JsonPropertyName("timestamp")]
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the color code of the embed.
