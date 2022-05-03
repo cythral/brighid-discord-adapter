@@ -13,8 +13,8 @@
   <ItemGroup>
     <PackageReference Include="Brighid.Identity.Client" Version="0.6.0-beta1" />
     <PackageReference Include="Brighid.Commands.Client" Version="0.2.0-beta6" />
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.4.5" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.52" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.4.6" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.53" />
     <PackageReference Include="Destructurama.Attributed" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
