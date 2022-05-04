@@ -81,7 +81,9 @@ jobs:
 
   deploy-dev:
     uses: cythral/brighid-discord-adapter/.github/workflows/deploy.yml@master
-    needs: build
+    needs: 
+      - build
+      - start-dev-db
     with:
       environment: Development
       artifacts-location: ${{ needs.build.outputs.artifacts-location }}
