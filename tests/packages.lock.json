@@ -400,6 +400,15 @@
           "Amazon.Lambda.RuntimeSupport": "1.6.0"
         }
       },
+      "Lambdajection.Sns": {
+        "type": "Transitive",
+        "resolved": "0.9.2",
+        "contentHash": "3S9zWuYp693nK9vcEluokSVYFKvMzE8D/yLh3Co43MtACffpqSw1ZO07g28fhcokAEqmPS/32Ivu8B/YAMGTxQ==",
+        "dependencies": {
+          "Lambdajection.Core": "0.9.2",
+          "Lambdajection.Framework": "0.9.2"
+        }
+      },
       "Microsoft.AspNetCore.Antiforgery": {
         "type": "Transitive",
         "resolved": "2.2.0",
@@ -2658,6 +2667,15 @@
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Logging": "6.0.0",
           "System.Linq.Async": "6.0.1"
+        }
+      },
+      "cacheexpirer": {
+        "type": "Project",
+        "dependencies": {
+          "Lambdajection": "0.9.2",
+          "Lambdajection.Layer": "0.9.2",
+          "Lambdajection.Runtime": "0.9.2",
+          "Lambdajection.Sns": "0.9.2"
         }
       },
       "models": {

@@ -410,6 +410,13 @@ Resources:
       Policies:
         - AWSLambdaExecute
         - !Ref ResponseHandlerPolicy
+      Events:
+        Sns:
+          Type: SNS
+          Properties:
+            Topic: !ImportValue brighid-infrastructure:ResponseTopicArn
+            FilterPolicy:
+              Brighid.SourceSystem: [discord]
       Environment:
         Variables:
           ResponseHandler__QueueUrl: !Ref RestQueue
@@ -426,22 +433,50 @@ Resources:
               - sqs:SendMessageBatch
             Resource: !GetAtt RestQueue.Arn
 
-  ResponseHandlerSubscription:
-    Type: AWS::SNS::Subscription
+  CacheExpirer:
+    Type: AWS::Serverless::Function
     Properties:
-      Protocol: lambda
-      Endpoint: !GetAtt ResponseHandler.Arn
-      TopicArn: !ImportValue brighid-infrastructure:ResponseTopicArn
-      FilterPolicy:
-        Brighid.SourceSystem: [discord]
+      Handler: CacheExpirer::Brighid.Discord.CacheExpirer.Handler::Run
+      Runtime: provided.al2
+      Timeout: 30
+      CodeUri: ../bin/CacheExpirer/Release/linux-x64/publish/
+      MemorySize: 512
+      Layers:
+        - !Sub "{{resolve:ssm:/dotnet/${DotnetVersion}/layer-arn}}"
+        - !Sub "{{resolve:ssm:/lambdajection/${LambdajectionVersion}/layer-arn}}"
+      Policies:
+        - AWSLambdaExecute
+        - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
+      Events:
+        Sns:
+          Type: SNS
+          Properties:
+            Topic: !ImportValue brighid-infrastructure:CacheExpirationTopic
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref CacheExpirerSecurityGroup
+        SubnetIds: !Split [",", !ImportValue cfn-utilities:PrivateSubnetIds]
+      Environment:
+        Variables:
+          Expirer__AdapterUrl: !Sub http://${DomainName}
+          Identity__IdentityServerUri: !Sub http://${IdentityServerUri}
+          Identity__ClientId: !GetAtt CacheExpirerIdentityApplication.Id
+          Identity__ClientSecret: !GetAtt CacheExpirerIdentityApplication.EncryptedSecret
 
-  ResponseHandlerPermission:
-    Type: AWS::Lambda::Permission
+  CacheExpirerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt ResponseHandler.Arn
-      Principal: sns.amazonaws.com
-      SourceArn: !ImportValue brighid-infrastructure:ResponseTopicArn
+      GroupDescription: Security Group for Brighid Discord Cache Expirer
+      VpcId: !ImportValue cfn-utilities:VpcId
+
+  CacheExpirerIdentityApplication:
+    Type: Custom::IdentityApplication
+    Properties:
+      ServiceToken: !ImportValue identity-resources:ApplicationResourceArn
+      Name: BrighidDiscordCacheExpirer
+      Roles:
+        - Basic
+        - CacheManager
 
   AccountLinkStartUrl:
     Type: AWS::SSM::Parameter
