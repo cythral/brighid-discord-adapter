@@ -31,6 +31,7 @@
     <ItemGroup>
         <ProjectReference Include="../../src/Adapter/Adapter.csproj" ReferenceOutputAssembly="false" Targets="Publish" />
         <ProjectReference Include="../../src/ResponseHandler/ResponseHandler.csproj" Targets="Publish" />
+        <ProjectReference Include="../../src/CacheExpirer/CacheExpirer.csproj" Targets="Publish" />
         <ProjectReference Include="../../tests/Tests.csproj" />
         <ProjectReference Include="../Cicd.Utils/Cicd.Utils.csproj" />
     </ItemGroup>
