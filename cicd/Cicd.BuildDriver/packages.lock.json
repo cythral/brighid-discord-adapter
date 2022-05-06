@@ -131,6 +131,14 @@
           "AWSSDK.Core": "[3.7.11, 4.0.0)"
         }
       },
+      "AWSSDK.KeyManagementService": {
+        "type": "Transitive",
+        "resolved": "3.7.2.63",
+        "contentHash": "PfUXSOMSAN4iTfZZ79gsAjZNZPIKs0odbZK/0BzV3yE6PgR3vGIu5/fpWORXZKtZpDFpewLRkvIILnUmeGOmUg==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.6.1, 4.0.0)"
+        }
+      },
       "AWSSDK.Lambda": {
         "type": "Transitive",
         "resolved": "3.7.4.27",
@@ -342,6 +350,15 @@
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Logging": "6.0.0",
           "Microsoft.Extensions.Logging.Console": "6.0.0"
+        }
+      },
+      "Lambdajection.Encryption": {
+        "type": "Transitive",
+        "resolved": "0.9.2",
+        "contentHash": "UYNvH0KweJMtqy0LV9HOHhZjNfNLjIgmLbD0uGxkxEXKgkzEsCyR4IWgr6ijaLEm8FWjyFhU/RF89nlfSll1HA==",
+        "dependencies": {
+          "AWSSDK.KeyManagementService": "3.7.2.63",
+          "Lambdajection.Framework": "0.9.2"
         }
       },
       "Lambdajection.Framework": {
@@ -2677,7 +2694,9 @@
       "cacheexpirer": {
         "type": "Project",
         "dependencies": {
+          "Brighid.Identity.Client": "0.5.0",
           "Lambdajection": "0.9.2",
+          "Lambdajection.Encryption": "0.9.2",
           "Lambdajection.Layer": "0.9.2",
           "Lambdajection.Runtime": "0.9.2",
           "Lambdajection.Sns": "0.9.2"
