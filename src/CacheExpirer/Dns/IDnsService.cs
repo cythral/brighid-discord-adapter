@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -8,6 +7,6 @@ namespace Brighid.Discord.CacheExpirer
 {
     public interface IDnsService
     {
-        Task<IEnumerable<IPAddress>> GetIPAddresses(Uri host, CancellationToken cancellationToken);
+        Task<IEnumerable<IPAddress>> GetIPAddresses(string host, CancellationToken cancellationToken);
     }
 }
