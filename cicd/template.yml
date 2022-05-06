@@ -458,7 +458,7 @@ Resources:
         SubnetIds: !Split [",", !ImportValue cfn-utilities:PrivateSubnetIds]
       Environment:
         Variables:
-          Expirer__AdapterUrl: !Sub http://${DomainName}
+          Expirer__AdapterUrl: !Ref DomainName
           Identity__IdentityServerUri: !Sub http://${IdentityServerUri}
           Identity__ClientId: !GetAtt CacheExpirerIdentityApplication.Id
           Identity__ClientSecret: !GetAtt CacheExpirerIdentityApplication.EncryptedSecret

@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace Brighid.Discord.CacheExpirer
             {
                 request.Message.Type = CacheExpirationType.User;
                 request.Message.Id = userId;
-                dns.GetIPAddresses(Any<Uri>(), Any<CancellationToken>()).Returns(new[] { ip1, ip2 });
+                dns.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { ip1, ip2 });
 
                 await handler.Handle(request, cancellationToken);
 
@@ -61,7 +60,7 @@ namespace Brighid.Discord.CacheExpirer
             {
                 request.Message.Type = CacheExpirationType.Command;
                 request.Message.Id = command;
-                dns.GetIPAddresses(Any<Uri>(), Any<CancellationToken>()).Returns(new[] { ip1, ip2 });
+                dns.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { ip1, ip2 });
 
                 await handler.Handle(request, cancellationToken);
 
