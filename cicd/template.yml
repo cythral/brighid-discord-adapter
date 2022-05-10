@@ -476,7 +476,13 @@ Resources:
       Name: BrighidDiscordCacheExpirer
       Roles:
         - Basic
-        - CacheManager
+        - !GetAtt DiscordResponderRole.Name
+
+  CacheExpirerIdentityRole:
+    Type: Custom::IdentityRole
+    Properties:
+      ServiceToken: !ImportValue identity-resources:RoleResourceArn
+      Name: DiscordCacheManager
 
   AccountLinkStartUrl:
     Type: AWS::SSM::Parameter
