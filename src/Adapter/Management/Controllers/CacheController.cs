@@ -16,7 +16,7 @@ namespace Brighid.Discord.Adapter.Management
     /// Controls internal caches.
     /// </summary>
     [Route("/cache")]
-    [Authorize(Roles = "CacheManager")]
+    [Authorize(Roles = "DiscordCacheManager")]
     public class CacheController : Controller
     {
         private readonly IUserIdCache userIdCache;
