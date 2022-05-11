@@ -402,7 +402,7 @@ Resources:
       Handler: ResponseHandler::Brighid.Discord.Adapter.ResponseHandler.Handler::Run
       Runtime: provided.al2
       Timeout: 30
-      CodeUri: ../bin/ResponseHandler/Release/linux-x64/publish/
+      CodeUri: ../bin/ResponseHandler/Release/linux-arm64/publish/
       MemorySize: 512
       Architectures:
         - arm64
