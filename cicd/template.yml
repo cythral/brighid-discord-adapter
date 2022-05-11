@@ -476,7 +476,7 @@ Resources:
       Name: BrighidDiscordCacheExpirer
       Roles:
         - Basic
-        - !GetAtt DiscordResponderRole.Name
+        - !GetAtt DiscordCacheManager.Name
 
   CacheExpirerIdentityRole:
     Type: Custom::IdentityRole
