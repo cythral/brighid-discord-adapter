@@ -402,8 +402,10 @@ Resources:
       Handler: ResponseHandler::Brighid.Discord.Adapter.ResponseHandler.Handler::Run
       Runtime: provided.al2
       Timeout: 30
-      CodeUri: ../bin/ResponseHandler/Release/linux-x64/publish/
+      CodeUri: ../bin/ResponseHandler/Release/linux-arm64/publish/
       MemorySize: 512
+      Architectures:
+        - arm64
       Layers:
         - !Sub "{{resolve:ssm:/dotnet/${DotnetVersion}/layer-arn}}"
         - !Sub "{{resolve:ssm:/lambdajection/${LambdajectionVersion}/layer-arn}}"
@@ -439,8 +441,10 @@ Resources:
       Handler: CacheExpirer::Brighid.Discord.CacheExpirer.Handler::Run
       Runtime: provided.al2
       Timeout: 30
-      CodeUri: ../bin/CacheExpirer/Release/linux-x64/publish/
+      CodeUri: ../bin/CacheExpirer/Release/linux-arm64/publish/
       MemorySize: 512
+      Architectures:
+        - arm64
       Layers:
         - !Sub "{{resolve:ssm:/dotnet/${DotnetVersion}/layer-arn}}"
         - !Sub "{{resolve:ssm:/lambdajection/${LambdajectionVersion}/layer-arn}}"

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+        <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
         <SelfContained>true</SelfContained>
         <PublishReadyToRun>true</PublishReadyToRun>
         <NoWarn>SA1400;SA1600;SA1205;SA1204;SA1601;SA1201;SA1210;SA1518;SA1633;SA1208;CS1591</NoWarn>
@@ -10,10 +10,10 @@
 
     <ItemGroup>
         <PackageReference Include="Brighid.Identity.Client" Version="0.5.0" />
-        <PackageReference Include="Lambdajection" Version="0.9.2" />
-        <PackageReference Include="Lambdajection.Encryption" Version="0.9.2" />
-        <PackageReference Include="Lambdajection.Runtime" Version="0.9.2" />
-        <PackageReference Include="Lambdajection.Layer" Version="0.9.2" />
-        <PackageReference Include="Lambdajection.Sns" Version="0.9.2" />
+        <PackageReference Include="Lambdajection" Version="0.10.0-beta1" />
+        <PackageReference Include="Lambdajection.Encryption" Version="0.10.0-beta1" />
+        <PackageReference Include="Lambdajection.Runtime" Version="0.10.0-beta1" />
+        <PackageReference Include="Lambdajection.Layer" Version="0.10.0-beta1" />
+        <PackageReference Include="Lambdajection.Sns" Version="0.10.0-beta1" />
     </ItemGroup>
 </Project>
