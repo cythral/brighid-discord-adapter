@@ -462,6 +462,7 @@ Resources:
         SubnetIds: !Split [",", !ImportValue cfn-utilities:PrivateSubnetIds]
       Environment:
         Variables:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
           Expirer__AdapterUrl: !Ref DomainName
           Identity__IdentityServerUri: !Sub http://${IdentityServerUri}
           Identity__ClientId: !GetAtt CacheExpirerIdentityApplication.Id
