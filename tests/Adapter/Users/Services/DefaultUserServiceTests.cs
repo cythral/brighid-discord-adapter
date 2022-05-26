@@ -344,7 +344,7 @@ namespace Brighid.Discord.Adapter.Users
             {
                 var login = new UserLogin { LoginProvider = "discord", Enabled = true };
                 identityUser.Logins.Add(login);
-                identityUser.Flags = UserFlags.None;
+                identityUser.Flags = (long)UserFlags.None;
 
                 var result = await service.GetIdentityServiceUserId(user, cancellationToken);
 
@@ -366,7 +366,7 @@ namespace Brighid.Discord.Adapter.Users
             {
                 var login = new UserLogin { LoginProvider = "discord", Enabled = true };
                 identityUser.Logins.Add(login);
-                identityUser.Flags = UserFlags.Debug;
+                identityUser.Flags = (long)UserFlags.Debug;
 
                 var result = await service.GetIdentityServiceUserId(user, cancellationToken);
 
