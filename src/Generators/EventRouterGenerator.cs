@@ -25,6 +25,7 @@ namespace Brighid.Discord.Generators
             "System.Threading.Tasks",
             "Brighid.Discord.Adapter.Events",
             "Brighid.Discord.Adapter.Messages",
+            "Microsoft.Extensions.Logging",
             "Microsoft.Extensions.DependencyInjection",
         };
 
@@ -60,7 +61,13 @@ namespace Brighid.Discord.Generators
                          where attr.AttributeClass != null && TypeUtils.IsSymbolEqualToType(attr.AttributeClass, typeof(EventControllerAttribute))
                          select (node, attr);
 
-            var members = new MemberDeclarationSyntax[] { GenerateServiceProviderField(), GenerateConstructor(), GenerateParseMember(events) };
+            var members = new MemberDeclarationSyntax[]
+            {
+                GenerateField("IServiceProvider", "serviceProvider"),
+                GenerateField("ILogger<GeneratedEventRouter>", "logger"),
+                GenerateConstructor(),
+                GenerateParseMember(events),
+            };
             var classDeclaration = ClassDeclaration("GeneratedEventRouter")
                 .WithModifiers(TokenList(Token(PublicKeyword), Token(PartialKeyword)))
                 .WithMembers(List(members));
@@ -79,11 +86,16 @@ namespace Brighid.Discord.Generators
             context.AddSource("GeneratedEventRouter", generatedBody + "\n");
         }
 
-        public static MemberDeclarationSyntax GenerateServiceProviderField()
+        public static MemberDeclarationSyntax GenerateField(string type, string identifier)
         {
-            var variableDeclarators = new[] { VariableDeclarator(Identifier("serviceProvider")) };
-            var variableDeclaration = VariableDeclaration(ParseTypeName("IServiceProvider"), SeparatedList(variableDeclarators));
+            var variableDeclarators = new[] { VariableDeclarator(Identifier(identifier)) };
+            var variableDeclaration = VariableDeclaration(ParseTypeName(type), SeparatedList(variableDeclarators));
             return FieldDeclaration(List<AttributeListSyntax>(), TokenList(Token(PrivateKeyword), Token(ReadOnlyKeyword)), variableDeclaration);
+        }
+
+        public static ParameterSyntax GenerateParameter(string type, string identifier)
+        {
+            return Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName(type), Identifier(identifier), default);
         }
 
         public static MemberDeclarationSyntax GenerateConstructor()
@@ -91,9 +103,15 @@ namespace Brighid.Discord.Generators
             static IEnumerable<StatementSyntax> GenerateBody()
             {
                 yield return ParseStatement("this.serviceProvider = serviceProvider;");
+                yield return ParseStatement("this.logger = logger;");
             }
 
-            var parameters = new ParameterSyntax[] { Parameter(List<AttributeListSyntax>(), TokenList(), ParseTypeName("IServiceProvider"), Identifier("serviceProvider"), default) };
+            var parameters = new ParameterSyntax[]
+            {
+                GenerateParameter("IServiceProvider", "serviceProvider"),
+                GenerateParameter("ILogger<GeneratedEventRouter>", "logger"),
+            };
+
             return ConstructorDeclaration("GeneratedEventRouter")
                 .WithModifiers(TokenList(Token(PublicKeyword)))
                 .WithParameterList(ParameterList(SeparatedList(parameters)))
@@ -129,8 +147,22 @@ namespace Brighid.Discord.Generators
 
                 yield return ParseStatement("cancellationToken.ThrowIfCancellationRequested();");
                 yield return ParseStatement("using var scope = serviceProvider.CreateScope();");
-                yield return LocalDeclarationStatement(variableDeclaration);
-                yield return ParseStatement("await task;");
+                yield return TryStatement(
+                    Block(new[]
+                    {
+                        LocalDeclarationStatement(variableDeclaration),
+                        ParseStatement("await task;"),
+                    }),
+                    List(new[]
+                    {
+                        CatchClause(
+                            CatchDeclaration(ParseTypeName("Exception"), Identifier("exception")),
+                            null,
+                            Block(new[] { ParseStatement(@"logger.LogError(exception, ""Route Controller threw an exception"");") })
+                        ),
+                    }),
+                    FinallyClause()
+                );
             }
 
             return MethodDeclaration(ParseTypeName($"Task"), "Route")
