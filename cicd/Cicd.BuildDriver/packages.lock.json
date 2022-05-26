@@ -261,8 +261,8 @@
       },
       "Brighid.Identity.Client": {
         "type": "Transitive",
-        "resolved": "0.6.0-beta4",
-        "contentHash": "yj/x6hc2Gilx6GPCHdZDLpw45JAGkY9+73ptxopIxZArt7nSBFAzANp9yVIyDdtAXk3TkANlw8tCdCSEIr8orA==",
+        "resolved": "0.6.0",
+        "contentHash": "jC91TbcdW3yAR2Xfxt0Tg/aLEl5m69VZ5OnL9GFtaHNqtYP762i9LZGbocgozfC0Xa3d6mfjc5IcDyIr8qlUdg==",
         "dependencies": {
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.Configuration": "6.0.1",
@@ -2672,7 +2672,7 @@
           "AWSSDK.SimpleNotificationService": "3.7.3.63",
           "Brighid.Commands.Client": "0.2.0",
           "Brighid.Discord.Core": "1.0.0",
-          "Brighid.Identity.Client": "0.6.0-beta4",
+          "Brighid.Identity.Client": "0.6.0",
           "Destructurama.Attributed": "3.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.5",
           "Microsoft.EntityFrameworkCore": "6.0.5",
@@ -2697,7 +2697,7 @@
       "cacheexpirer": {
         "type": "Project",
         "dependencies": {
-          "Brighid.Identity.Client": "0.5.0",
+          "Brighid.Identity.Client": "0.6.0",
           "Lambdajection": "0.10.0-beta1",
           "Lambdajection.Encryption": "0.10.0-beta1",
           "Lambdajection.Layer": "0.10.0-beta1",
