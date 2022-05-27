@@ -50,7 +50,7 @@ namespace Brighid.Discord.Tracing
                 Sampled = sampled,
             };
 
-            context.Value = new TraceContext(this, traceHeader.ToString());
+            context.Value = new TraceContext(this, traceHeader.ToString(), traceHeader.RootTraceId);
             recorder.BeginSegment(
                 name: ServiceName,
                 traceId: traceId,

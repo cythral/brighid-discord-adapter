@@ -296,7 +296,7 @@ namespace Brighid.Discord.Adapter.Events
                 await channelClient.Received().CreateMessage(
                     Is(channelId),
                     Is<CreateMessagePayload>(payload =>
-                        payload.Embed!.Value.Fields.Any(field => field.Name == "TraceId" && field.Value == traceContext.Header)
+                        payload.Embed!.Value.Fields.Any(field => field.Name == "TraceId" && field.Value == traceContext.Id)
                     ),
                     Is(cancellationToken)
                 );

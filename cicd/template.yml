@@ -250,6 +250,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
+              awslogs-datetime-format: \[%Y-%m-%d %H:%M:%SZ\]
           Environment:
             - Name: AWS_XRAY_DAEMON_ADDRESS
               Value: xray:2000
