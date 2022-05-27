@@ -133,11 +133,16 @@ namespace Brighid.Discord.Adapter
 
         private static void ConfigureAwsServices(IServiceCollection services)
         {
-            services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
-            AWSSDKHandler.RegisterXRay<IAmazonSimpleNotificationService>();
+            static void RegisterAwsService<TInterface, TImplementation>(IServiceCollection services)
+                where TInterface : class
+                where TImplementation : class, TInterface
+            {
+                services.AddSingleton<TInterface, TImplementation>();
+                AWSSDKHandler.RegisterXRay<TInterface>();
+            }
 
-            services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
-            AWSSDKHandler.RegisterXRay<IAmazonCloudWatch>();
+            RegisterAwsService<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>(services);
+            RegisterAwsService<IAmazonCloudWatch, AmazonCloudWatchClient>(services);
 
             services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
         }

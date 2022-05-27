@@ -69,6 +69,7 @@ namespace Brighid.Discord.Adapter.Events
                 {
                     Token = adapterOptions.Token,
                     Intents = Intent.Guilds | Intent.GuildMessages | Intent.DirectMessages,
+                    Shard = new[] { 0, 1 },
                     ConnectionProperties = new()
                     {
                         OperatingSystem = Environment.OSVersion.Platform.ToString(),
