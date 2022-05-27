@@ -12,13 +12,16 @@ namespace Brighid.Discord.Tracing
         /// </summary>
         /// <param name="service">Service that created this context.</param>
         /// <param name="header">The tracing header to use to track a request.</param>
+        /// <param name="id">The trace identifier.</param>
         public TraceContext(
             ITracingService service,
-            string header
+            string header,
+            string id
         )
         {
             Service = service;
             Header = header;
+            Id = id;
         }
 
         /// <summary>
@@ -30,6 +33,11 @@ namespace Brighid.Discord.Tracing
         /// Gets or sets the trace header.
         /// </summary>
         public string Header { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trace ID.
+        /// </summary>
+        public string Id { get; set; }
 
         /// <inheritdoc/>
         public void Dispose()

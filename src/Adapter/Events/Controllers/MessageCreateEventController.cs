@@ -82,8 +82,8 @@ namespace Brighid.Discord.Adapter.Events
         public async Task Handle(MessageCreateEvent @event, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            using var scope = logger.BeginScope("{@Event}", nameof(MessageCreateEvent));
             using var trace = tracingService.StartTrace();
+            using var scope = logger.BeginScope("{@Event} {@TraceId}", nameof(MessageCreateEvent), trace.Id);
 
             tracingService.AddAnnotation("event", "incoming-message");
             tracingService.AddAnnotation("messageId", @event.Message.Id);
@@ -112,7 +112,7 @@ namespace Brighid.Discord.Adapter.Events
                     Color = 5763719,
                     Fields = new[]
                     {
-                        new Models.EmbedField { Name = "TraceId", Value = trace.Header },
+                        new Models.EmbedField { Name = "TraceId", Value = trace.Id },
                     },
                 };
         }

@@ -46,7 +46,7 @@ namespace Brighid.Discord.Adapter
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}");
+                .WriteTo.Console(outputTemplate: "[{Timestamp:u}] [{Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}");
 
             loggerBuilder = environment.EnvironmentName switch
             {
