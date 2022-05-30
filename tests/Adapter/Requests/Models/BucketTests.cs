@@ -62,9 +62,8 @@ namespace Brighid.Discord.Adapter.Requests
                 var bucket = new Bucket
                 {
                     ApiCategory = 'c',
+                    Endpoints = (ulong)(ChannelEndpoint.CreateMessage | ChannelEndpoint.DeleteMessage),
                 };
-
-                bucket.Endpoints = (ulong)(ChannelEndpoint.CreateMessage | ChannelEndpoint.DeleteMessage);
 
                 bucket.RemoveEndpoint(ChannelEndpoint.CreateMessage);
                 bucket.HasEndpoint(ChannelEndpoint.CreateMessage).Should().BeFalse();
