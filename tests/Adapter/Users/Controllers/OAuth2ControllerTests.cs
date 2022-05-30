@@ -201,7 +201,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.DiscordUserId.Should().Be(discordUser.Id);
         }
 
@@ -228,7 +228,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.DiscordAvatarHash.Should().Be(discordUser.Avatar);
         }
 
@@ -255,7 +255,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.DiscordUsername.Should().Be(discordUser.Name);
         }
 
@@ -282,7 +282,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.DiscordDiscriminator.Should().Be(discordUser.Discriminator);
         }
 
@@ -309,7 +309,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.Status.Should().Be(AccountLinkStatus.Success);
         }
 
@@ -362,7 +362,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.Status.Should().Be(AccountLinkStatus.Failed);
         }
 
@@ -418,7 +418,7 @@ namespace Brighid.Discord.Adapter.Users
             var result = await controller.Callback(code) as ViewResult;
 
             result.Should().NotBeNull();
-            var model = (AccountLinkViewModel)(result!.Model!);
+            var model = (AccountLinkViewModel)result!.Model!;
             model.Status.Should().Be(AccountLinkStatus.AlreadyLinked);
         }
 
