@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.Lambda.SNSEvents;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 
@@ -13,6 +11,8 @@ using Brighid.Discord.Models;
 using Brighid.Discord.Serialization;
 
 using FluentAssertions;
+
+using Lambdajection.Sns;
 
 using NSubstitute;
 
@@ -26,37 +26,33 @@ namespace Brighid.Discord.Adapter.ResponseHandler
     {
         [Test, Auto]
         public async Task ShouldThrowIfCancelled(
-            SNSEvent snsEvent,
+            SnsMessage<string> message,
             [Target] Handler handler
         )
         {
             var cancellationToken = new CancellationToken(true);
-            Func<Task> func = () => handler.Handle(snsEvent, cancellationToken);
+            Func<Task> func = () => handler.Handle(message, cancellationToken);
 
             await func.Should().ThrowAsync<OperationCanceledException>();
         }
 
         [Test, Auto]
         public async Task ShouldNotThrowIfNotCancelled(
-            SNSEvent snsEvent,
+            SnsMessage<string> message,
             [Target] Handler handler,
             CancellationToken cancellationToken
         )
         {
-            Func<Task> func = () => handler.Handle(snsEvent, cancellationToken);
+            Func<Task> func = () => handler.Handle(message, cancellationToken);
 
             await func.Should().NotThrowAsync<OperationCanceledException>();
         }
 
         [Test, Auto]
         public async Task ShouldPublishMessagesWithBodyToSQS(
-            string serializedRequest1,
-            string serializedRequest2,
-            SNSEvent snsEvent,
-            SNSEvent.SNSRecord record1,
-            SNSEvent.SNSRecord record2,
-            Request request1,
-            Request request2,
+            string serializedRequest,
+            SnsMessage<string> snsEvent,
+            [Frozen] Request request,
             [Frozen] ISerializer serializer,
             [Frozen] IAmazonSQS sqs,
             [Frozen] ISnsRecordMapper mapper,
@@ -64,52 +60,38 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             CancellationToken cancellationToken
         )
         {
-            snsEvent.Records = new List<SNSEvent.SNSRecord> { record1, record2 };
-
-            mapper.MapToRequest(Is(record1)).Returns(request1);
-            mapper.MapToRequest(Is(record2)).Returns(request2);
-
-            serializer.Serialize(Is(request1)).Returns(serializedRequest1);
-            serializer.Serialize(Is(request2)).Returns(serializedRequest2);
+            serializer.Serialize(Is(request)).Returns(serializedRequest);
 
             await handler.Handle(snsEvent, cancellationToken);
 
             await sqs.Received().SendMessageBatchAsync(Any<SendMessageBatchRequest>(), Is(cancellationToken));
-            var request = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
+            var received = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
 
-            request.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest1);
-            request.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest2);
+            received.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest);
         }
 
         [Test, Auto]
         public async Task ShouldPublishMessagesWithIdsToSQS(
-            SNSEvent snsEvent,
-            SNSEvent.SNSRecord record1,
-            SNSEvent.SNSRecord record2,
-            Request request1,
-            Request request2,
+            SnsMessage<string> snsEvent,
+            [Frozen] Request request,
             [Frozen] IAmazonSQS sqs,
             [Frozen] ISnsRecordMapper mapper,
             [Target] Handler handler,
             CancellationToken cancellationToken
         )
         {
-            snsEvent.Records = new List<SNSEvent.SNSRecord> { record1, record2 };
-
-            mapper.MapToRequest(Is(record1)).Returns(request1);
-            mapper.MapToRequest(Is(record2)).Returns(request2);
+            mapper.MapToRequest(Is(snsEvent)).Returns(request);
 
             await handler.Handle(snsEvent, cancellationToken);
 
             await sqs.Received().SendMessageBatchAsync(Any<SendMessageBatchRequest>(), Is(cancellationToken));
-            var request = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
-            request.Entries.Should().Contain(entry => entry.Id == request1.Id.ToString());
-            request.Entries.Should().Contain(entry => entry.Id == request2.Id.ToString());
+            var received = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
+            received.Entries.Should().Contain(entry => entry.Id == request.Id.ToString());
         }
 
         [Test, Auto]
         public async Task ShouldPublishMessagesWithQueueUrlToSQS(
-            SNSEvent snsEvent,
+            SnsMessage<string> snsEvent,
             [Frozen] Options options,
             [Frozen] IAmazonSQS sqs,
             [Frozen] ISnsRecordMapper mapper,

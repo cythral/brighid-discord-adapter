@@ -1,6 +1,6 @@
-using Amazon.Lambda.SNSEvents;
-
 using Brighid.Discord.Models;
+
+using Lambdajection.Sns;
 
 namespace Brighid.Discord.Adapter.ResponseHandler
 {
@@ -9,6 +9,6 @@ namespace Brighid.Discord.Adapter.ResponseHandler
     /// </summary>
     public interface ISnsRecordMapper
     {
-        Request MapToRequest(SNSEvent.SNSRecord record);
+        Request MapToRequest(SnsMessage<string> record);
     }
 }

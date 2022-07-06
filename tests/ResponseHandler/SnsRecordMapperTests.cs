@@ -1,5 +1,3 @@
-using Amazon.Lambda.SNSEvents;
-
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Models;
@@ -7,6 +5,8 @@ using Brighid.Discord.Models.Payloads;
 using Brighid.Discord.Serialization;
 
 using FluentAssertions;
+
+using Lambdajection.Sns;
 
 using NSubstitute;
 
@@ -24,11 +24,11 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             [Test, Auto]
             public void ShouldSetEndpointToChannelCreateMessage(
                 string channelId,
-                SNSEvent.SNSRecord record,
+                SnsMessage<string> record,
                 [Target] SnsRecordMapper mapper
             )
             {
-                record.Sns.MessageAttributes["Brighid.SourceId"] = new SNSEvent.MessageAttribute { Type = "String", Value = channelId };
+                record.MessageAttributes["Brighid.SourceId"] = new SnsMessageAttribute("String", channelId);
 
                 var result = mapper.MapToRequest(record);
                 result.Endpoint.Category.Should().Be('c');
@@ -38,11 +38,11 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             [Test, Auto]
             public void ShouldSetChannelIdParameter(
                 string channelId,
-                SNSEvent.SNSRecord record,
+                SnsMessage<string> record,
                 [Target] SnsRecordMapper mapper
             )
             {
-                record.Sns.MessageAttributes["Brighid.SourceId"] = new SNSEvent.MessageAttribute { Type = "String", Value = channelId };
+                record.MessageAttributes["Brighid.SourceId"] = new SnsMessageAttribute("String", channelId);
 
                 var result = mapper.MapToRequest(record);
                 result.Parameters["channel.id"].Should().Be(channelId);
@@ -52,15 +52,15 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             public void ShouldSetBody(
                 string channelId,
                 string expectedBody,
-                SNSEvent.SNSRecord record,
+                SnsMessage<string> record,
                 [Frozen] ISerializer serializer,
                 [Target] SnsRecordMapper mapper
             )
             {
                 serializer.Serialize(Any<CreateMessagePayload>()).Returns(expectedBody);
 
-                record.Sns.Message = expectedBody;
-                record.Sns.MessageAttributes["Brighid.SourceId"] = new SNSEvent.MessageAttribute { Type = "String", Value = channelId };
+                record.Message = expectedBody;
+                record.MessageAttributes["Brighid.SourceId"] = new SnsMessageAttribute("String", channelId);
 
                 var result = mapper.MapToRequest(record);
                 result.RequestBody.Should().Be(expectedBody);

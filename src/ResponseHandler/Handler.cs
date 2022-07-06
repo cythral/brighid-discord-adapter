@@ -1,21 +1,20 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.Lambda.SNSEvents;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 
 using Brighid.Discord.Serialization;
 
 using Lambdajection.Attributes;
+using Lambdajection.Sns;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.Adapter.ResponseHandler
 {
-    [Lambda(typeof(Startup))]
+    [SnsEventHandler(typeof(Startup))]
     public partial class Handler
     {
         private readonly IAmazonSQS sqs;
@@ -39,28 +38,28 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             this.logger = logger;
         }
 
-        public async Task<bool> Handle(SNSEvent @event, CancellationToken cancellationToken = default)
+        public async Task<string> Handle(SnsMessage<string> @event, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var entries = from record in @event.Records
-                          let mappedRequest = mapper.MapToRequest(record)
-                          let message = serializer.Serialize(mappedRequest)
-                          select new SendMessageBatchRequestEntry
-                          {
-                              Id = mappedRequest.Id.ToString(),
-                              MessageBody = message,
-                          };
-
+            var mappedRequest = mapper.MapToRequest(@event);
+            var message = serializer.Serialize(mappedRequest);
             var request = new SendMessageBatchRequest
             {
                 QueueUrl = options.QueueUrl.ToString(),
-                Entries = entries.ToList(),
+                Entries = new()
+                {
+                    new SendMessageBatchRequestEntry
+                    {
+                        Id = mappedRequest.Id.ToString(),
+                        MessageBody = message,
+                    },
+                },
             };
 
             logger.LogInformation("Sending sqs:SendMessageBatch with request: {@request}", request);
             var response = await sqs.SendMessageBatchAsync(request, cancellationToken);
             logger.LogInformation("Received sqs:SendMessageBatch response: {@response}", response);
-            return true;
+            return "OK";
         }
     }
 }
