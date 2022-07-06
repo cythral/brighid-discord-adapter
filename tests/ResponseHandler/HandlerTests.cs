@@ -50,8 +50,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
 
         [Test, Auto]
         public async Task ShouldPublishMessagesWithBodyToSQS(
-            string serializedRequest1,
-            string serializedRequest2,
+            string serializedRequest,
             SnsMessage<string> snsEvent,
             [Frozen] Request request,
             [Frozen] ISerializer serializer,
@@ -61,15 +60,14 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             CancellationToken cancellationToken
         )
         {
-            serializer.Serialize(Is(request)).Returns(serializedRequest1);
+            serializer.Serialize(Is(request)).Returns(serializedRequest);
 
             await handler.Handle(snsEvent, cancellationToken);
 
             await sqs.Received().SendMessageBatchAsync(Any<SendMessageBatchRequest>(), Is(cancellationToken));
             var received = TestUtils.GetArg<SendMessageBatchRequest>(sqs, nameof(IAmazonSQS.SendMessageBatchAsync), 0);
 
-            received.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest1);
-            received.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest2);
+            received.Entries.Should().Contain(entry => entry.MessageBody == serializedRequest);
         }
 
         [Test, Auto]
