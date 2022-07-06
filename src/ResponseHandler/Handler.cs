@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.Adapter.ResponseHandler
 {
-    [Lambda(typeof(Startup))]
+    [SnsEventHandler(typeof(Startup))]
     public partial class Handler
     {
         private readonly IAmazonSQS sqs;
