@@ -2,12 +2,6 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
-      "Amazon.Lambda.SNSEvents": {
-        "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "NzEV+hsQygpukxwuyN4gyOINYhFGOilc6uSuHIeTRiOncz+dvtw100UbeBxObCMuAbofL9U4yidKV/rObnpInQ=="
-      },
       "AWSSDK.SQS": {
         "type": "Direct",
         "requested": "[3.7.2.74, )",
@@ -43,6 +37,16 @@
         "contentHash": "Lk+f64cOk2YrjfNs73hueHEpkt5BVbUWPCQG4NH260Qs+NbbMXYinPdi7NFBxDrrwbjq2xXZEgOfYaE3G3Ih3g==",
         "dependencies": {
           "Amazon.Lambda.RuntimeSupport": "1.8.0"
+        }
+      },
+      "Lambdajection.Sns": {
+        "type": "Direct",
+        "requested": "[0.10.0-beta1, )",
+        "resolved": "0.10.0-beta1",
+        "contentHash": "2qByr5JJSsDmNwl8d9kdxc/GRvO8V/CwaM+3gvjHZn4dBINwXl7YyRjB9grA9fznduT19xmlcAojF42nX90MoQ==",
+        "dependencies": {
+          "Lambdajection.Core": "0.10.0-beta1",
+          "Lambdajection.Framework": "0.10.0-beta1"
         }
       },
       "StyleCop.Analyzers": {

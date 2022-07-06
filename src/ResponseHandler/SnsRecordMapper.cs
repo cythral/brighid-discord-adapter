@@ -1,8 +1,8 @@
-using Amazon.Lambda.SNSEvents;
-
 using Brighid.Discord.Models;
 using Brighid.Discord.Models.Payloads;
 using Brighid.Discord.Serialization;
+
+using Lambdajection.Sns;
 
 namespace Brighid.Discord.Adapter.ResponseHandler
 {
@@ -18,14 +18,14 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             this.serializer = serializer;
         }
 
-        public Request MapToRequest(SNSEvent.SNSRecord record)
+        public Request MapToRequest(SnsMessage<string> record)
         {
             return new Request(ChannelEndpoint.CreateMessage)
             {
-                Parameters = { ["channel.id"] = record.Sns.MessageAttributes["Brighid.SourceId"].Value },
+                Parameters = { ["channel.id"] = record.MessageAttributes["Brighid.SourceId"].Value },
                 RequestBody = serializer.Serialize(new CreateMessagePayload
                 {
-                    Content = record.Sns.Message,
+                    Content = record.Message,
                 }),
             };
         }

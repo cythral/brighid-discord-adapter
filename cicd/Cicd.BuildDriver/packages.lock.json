@@ -68,11 +68,6 @@
           "Amazon.Lambda.Core": "2.1.0"
         }
       },
-      "Amazon.Lambda.SNSEvents": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "NzEV+hsQygpukxwuyN4gyOINYhFGOilc6uSuHIeTRiOncz+dvtw100UbeBxObCMuAbofL9U4yidKV/rObnpInQ=="
-      },
       "AutoFixture": {
         "type": "Transitive",
         "resolved": "4.17.0",
@@ -2722,10 +2717,10 @@
         "type": "Project",
         "dependencies": {
           "AWSSDK.SQS": "3.7.2.74",
-          "Amazon.Lambda.SNSEvents": "2.0.0",
           "Lambdajection": "0.10.0-beta1",
           "Lambdajection.Layer": "0.10.0-beta1",
           "Lambdajection.Runtime": "0.10.0-beta1",
+          "Lambdajection.Sns": "0.10.0-beta1",
           "Models": "1.0.0"
         }
       },
