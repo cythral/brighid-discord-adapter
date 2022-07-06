@@ -422,6 +422,7 @@ Resources:
               Brighid.SourceSystem: [discord]
       Environment:
         Variables:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
           ResponseHandler__QueueUrl: !Ref RestQueue
 
   ResponseHandlerPolicy:

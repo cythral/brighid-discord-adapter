@@ -43,16 +43,17 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             cancellationToken.ThrowIfCancellationRequested();
             var mappedRequest = mapper.MapToRequest(@event);
             var message = serializer.Serialize(mappedRequest);
-            var entry = new SendMessageBatchRequestEntry
-            {
-                Id = mappedRequest.Id.ToString(),
-                MessageBody = message,
-            };
-
             var request = new SendMessageBatchRequest
             {
                 QueueUrl = options.QueueUrl.ToString(),
-                Entries = new() { entry },
+                Entries = new()
+                {
+                    new SendMessageBatchRequestEntry
+                    {
+                        Id = mappedRequest.Id.ToString(),
+                        MessageBody = message,
+                    },
+                },
             };
 
             logger.LogInformation("Sending sqs:SendMessageBatch with request: {@request}", request);
