@@ -38,7 +38,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             this.logger = logger;
         }
 
-        public async Task<bool> Handle(SnsMessage<string> @event, CancellationToken cancellationToken = default)
+        public async Task<string> Handle(SnsMessage<string> @event, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var mappedRequest = mapper.MapToRequest(@event);
@@ -58,7 +58,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
             logger.LogInformation("Sending sqs:SendMessageBatch with request: {@request}", request);
             var response = await sqs.SendMessageBatchAsync(request, cancellationToken);
             logger.LogInformation("Received sqs:SendMessageBatch response: {@response}", response);
-            return true;
+            return "OK";
         }
     }
 }
