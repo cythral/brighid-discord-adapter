@@ -74,15 +74,24 @@ namespace Brighid.Discord.Adapter.Gateway
         public Snowflake? BotId { get; set; }
 
         /// <inheritdoc />
-        public bool IsReady { get; set; }
+        public GatewayState State { get; private set; }
 
         /// <inheritdoc />
-        public bool IsRunning { get; private set; }
+        public void SetReadyState(bool ready)
+        {
+            if (!ready)
+            {
+                State &= ~GatewayState.Ready;
+                return;
+            }
+
+            State |= GatewayState.Ready;
+        }
 
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            IsRunning = true;
+            State |= GatewayState.Running;
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
 
             var cancellationTokenSource = new CancellationTokenSource();
@@ -98,7 +107,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public async Task StopAsync(CancellationToken cancellationToken = default)
         {
-            IsRunning = false;
+            State &= ~GatewayState.Running;
             await StopHeartbeat();
             await worker!.Stop();
             await rxWorker.Stop();
@@ -106,7 +115,7 @@ namespace Brighid.Discord.Adapter.Gateway
             webSocket?.Abort();
             webSocket = null;
             worker = null;
-            IsReady = false;
+            State &= ~GatewayState.Ready;
         }
 
         /// <inheritdoc />
@@ -177,7 +186,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
         private void ThrowIfNotRunning()
         {
-            if (!IsRunning)
+            if (!State.HasFlag(GatewayState.Running))
             {
                 throw new OperationCanceledException();
             }

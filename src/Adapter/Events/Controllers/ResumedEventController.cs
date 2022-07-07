@@ -43,7 +43,7 @@ namespace Brighid.Discord.Adapter.Events
             cancellationToken.ThrowIfCancellationRequested();
 
             _ = reporter.Report(default(ResumedEventMetric), cancellationToken);
-            gateway.IsReady = true;
+            gateway.SetReadyState(true);
         }
     }
 }

@@ -27,6 +27,33 @@ namespace Brighid.Discord.Adapter.Gateway
     public class DefaultGatewayServiceTests
     {
         [TestFixture]
+        [Category("Unit")]
+        public class SetReadyStateTests
+        {
+            [Test, Auto]
+            public void ShouldAddReadyToState(
+                [Target] DefaultGatewayService service
+            )
+            {
+                service.SetReadyState(true);
+
+                service.State.HasFlag(GatewayState.Ready).Should().BeTrue();
+            }
+
+            [Test, Auto]
+            public void ShouldRemoveReadyFromState(
+                [Target] DefaultGatewayService service
+            )
+            {
+                service.SetPrivateProperty(nameof(service.State), GatewayState.Ready);
+                service.SetReadyState(false);
+
+                service.State.HasFlag(GatewayState.Ready).Should().BeFalse();
+            }
+        }
+
+        [TestFixture]
+        [Category("Unit")]
         public class StartTests
         {
             [Test, Auto]
@@ -107,6 +134,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StopTests
         {
             [Test, Auto]
@@ -178,21 +206,21 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             [Test, Auto, Timeout(1000)]
-            public async Task StopShouldSetIsReadyToFalse(
+            public async Task StopShouldSetRemoveReadyFromState(
                 [Frozen, Substitute] IGatewayTxWorker txWorker,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Target] DefaultGatewayService gateway
             )
             {
-                gateway.IsReady = true;
                 await gateway.StartAsync();
                 await gateway.StopAsync();
 
-                gateway.IsReady.Should().BeFalse();
+                gateway.State.HasFlag(GatewayState.Ready).Should().BeFalse();
             }
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RestartTests
         {
             [Test, Auto]
@@ -211,6 +239,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class SendTests
         {
             [Test, Auto]
@@ -268,6 +297,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StartHeartbeat
         {
             [Test, Auto]
@@ -320,6 +350,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StopHeartbeat
         {
             [Test, Auto, Timeout(1000)]
@@ -343,6 +374,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RunTests
         {
             [Test, Auto]
@@ -452,6 +484,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class HeartbeatTests
         {
             [Test, Auto]

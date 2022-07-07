@@ -39,7 +39,7 @@ namespace Brighid.Discord.Adapter.Events
 
             gateway.SessionId = @event.SessionId;
             gateway.BotId = @event.User.Id;
-            gateway.IsReady = true;
+            gateway.SetReadyState(true);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Brighid.Discord.Adapter.Events
     public class ResumedEventControllerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -37,7 +38,7 @@ namespace Brighid.Discord.Adapter.Events
                 Func<Task> func = () => controller.Handle(@event, cancellationToken);
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
-                gateway.DidNotReceive().IsReady = true;
+                gateway.DidNotReceive().SetReadyState(Any<bool>());
             }
 
             [Test, Auto]
@@ -52,7 +53,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                gateway.Received().IsReady = true;
+                gateway.Received().SetReadyState(Is(true));
             }
 
             [Test, Auto]

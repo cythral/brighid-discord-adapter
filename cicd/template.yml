@@ -165,6 +165,12 @@ Resources:
       ServiceToken: !ImportValue identity-resources:RoleResourceArn
       Name: DiscordResponder
 
+  DiscordNodeManagerRole:
+    Type: Custom::IdentityRole
+    Properties:
+      ServiceToken: !ImportValue identity-resources:RoleResourceArn
+      Name: DiscordNodeManager
+
   DiscordIdentityApplication:
     Type: Custom::IdentityApplication
     Properties:
@@ -173,6 +179,7 @@ Resources:
       Roles:
         - Basic
         - Impersonator
+        - !GetAtt DiscordNodeManagerRole.Name
         - !GetAtt DiscordResponderRole.Name
 
   RestQueue:

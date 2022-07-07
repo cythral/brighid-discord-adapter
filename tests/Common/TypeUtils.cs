@@ -7,4 +7,11 @@ internal static class TypeUtils
         var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         field?.SetValue(target, value);
     }
+
+    public static void SetPrivateProperty(this object target, string propertyName, object value)
+    {
+        var property = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+        var setter = property?.GetSetMethod(true);
+        setter?.Invoke(target, new[] { value });
+    }
 }
