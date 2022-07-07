@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -80,7 +81,14 @@ namespace Brighid.Discord.Adapter.Management
             var nodes = from address in addresses
                         select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
 
-            return await Task.WhenAll(nodes);
+            try
+            {
+                return await Task.WhenAll(nodes);
+            }
+            catch (UriFormatException)
+            {
+                return Array.Empty<NodeInfo>();
+            }
         }
     }
 }
