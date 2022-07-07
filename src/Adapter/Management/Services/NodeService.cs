@@ -46,7 +46,7 @@ namespace Brighid.Discord.Adapter.Management
             }
 
             var taskMetadata = await httpClient.GetFromJsonAsync<TaskMetadata>(options.TaskMetadataUrl, cancellationToken: cancellationToken);
-            var describeTasksRequest = new DescribeTasksRequest { Tasks = new() { taskMetadata!.TaskArn } };
+            var describeTasksRequest = new DescribeTasksRequest { Cluster = taskMetadata!.Cluster, Tasks = new() { taskMetadata!.TaskArn } };
             var describeTasksResponse = await ecs.DescribeTasksAsync(describeTasksRequest, cancellationToken);
             return describeTasksResponse.Tasks.First().StartedBy;
         }

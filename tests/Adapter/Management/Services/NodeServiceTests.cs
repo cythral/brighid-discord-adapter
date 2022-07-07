@@ -8,9 +8,13 @@ using AutoFixture.NUnit3;
 
 using FluentAssertions;
 
+using NSubstitute;
+
 using NUnit.Framework;
 
 using RichardSzalay.MockHttp;
+
+using static NSubstitute.Arg;
 
 using Task = System.Threading.Tasks.Task;
 
@@ -26,6 +30,7 @@ namespace Brighid.Discord.Adapter.Management
             public async Task ShouldFetchNodeDeploymentId(
                 string taskArn,
                 string deploymentId,
+                string cluster,
                 [Frozen] AdapterOptions options,
                 [Frozen] DescribeTasksResponse describeResponse,
                 [Frozen] IAmazonECS ecs,
@@ -36,13 +41,14 @@ namespace Brighid.Discord.Adapter.Management
             {
                 handler
                 .Expect(HttpMethod.Get, options.TaskMetadataUrl!.ToString())
-                .Respond("application/json", $@"{{ ""TaskARN"": ""{taskArn}"" }}");
+                .Respond("application/json", $@"{{ ""Cluster"": ""{cluster}"", ""TaskARN"": ""{taskArn}"" }}");
 
                 describeResponse.Tasks[0].StartedBy = deploymentId;
 
                 var result = await service.GetDeploymentId(cancellationToken);
 
                 result.Should().Be(deploymentId);
+                await ecs.Received().DescribeTasksAsync(Is<DescribeTasksRequest>(req => req.Cluster == cluster && req.Tasks[0] == taskArn), Is(cancellationToken));
                 handler.VerifyNoOutstandingExpectation();
             }
 

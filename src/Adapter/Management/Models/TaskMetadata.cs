@@ -12,5 +12,11 @@ namespace Brighid.Discord.Adapter.Management
         /// </summary>
         [JsonPropertyName("TaskARN")]
         public string TaskArn { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name of the cluster.
+        /// </summary>
+        [JsonPropertyName("Cluster")]
+        public string Cluster { get; set; } = string.Empty;
     }
 }
