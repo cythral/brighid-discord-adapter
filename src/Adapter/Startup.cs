@@ -8,6 +8,7 @@ using Amazon.SQS;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
 using Brighid.Discord.Adapter.Database;
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Tracing;
 
 using Destructurama;
@@ -156,7 +157,7 @@ namespace Brighid.Discord.Adapter
         private void ConfigureMiscServices(IServiceCollection services)
         {
             services
-            .AddControllers()
+            .AddControllers(options => options.InputFormatters.Add(new EnumTextFormatter()))
             .AddControllersAsServices();
 
             services.AddHealthChecks();

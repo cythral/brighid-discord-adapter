@@ -14,11 +14,14 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using static NSubstitute.Arg;
+
 namespace Brighid.Discord.Adapter.Events
 {
     public class ReadyEventControllerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -79,7 +82,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                gateway.Received().IsReady = true;
+                gateway.Received().SetReadyState(Is(true));
             }
         }
     }

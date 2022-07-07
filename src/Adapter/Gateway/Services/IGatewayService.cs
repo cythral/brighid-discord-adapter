@@ -29,14 +29,15 @@ namespace Brighid.Discord.Adapter.Gateway
         Snowflake? BotId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the initial handshake with discord is complete.
+        /// Gets a value indicating the current state of the gateway.
         /// </summary>
-        bool IsReady { get; set; }
+        GatewayState State { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the service is running.
+        /// Sets the gateway's ready state.
         /// </summary>
-        bool IsRunning { get; }
+        /// <param name="ready">Whether or not the gateway is ready to process events from discord.</param>
+        void SetReadyState(bool ready);
 
         /// <summary>
         /// Restarts the gateway service.
