@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json.Serialization;
 
 namespace Brighid.Discord.Adapter.Management
@@ -7,6 +8,13 @@ namespace Brighid.Discord.Adapter.Management
     /// </summary>
     public class NodeInfo
     {
+        /// <summary>
+        /// Gets or sets the IP Address of the node.
+        /// </summary>
+        [JsonPropertyName("ip_address")]
+        [JsonConverter(typeof(IpAddressConverter))]
+        public IPAddress IpAddress { get; set; } = IPAddress.None;
+
         /// <summary>
         /// Gets or sets the shard number.
         /// </summary>

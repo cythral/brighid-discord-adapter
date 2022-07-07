@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,7 +43,19 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         /// <summary>
+        /// Gets a list of adapter node peers.  This is obtained only at startup and may not be up-to-date.
+        /// Used for debugging only.
+        /// </summary>
+        /// <returns>The list of node peers.</returns>
+        [HttpGet("peers")]
+        public ActionResult<IEnumerable<NodeInfo>> GetPeers()
+        {
+            return NotFound(context.Get<IEnumerable<NodeInfo>>());
+        }
+
+        /// <summary>
         /// Gets the current state of the gateway.
+        /// Used for debugging only.
         /// </summary>
         /// <returns>The current state of the gateway.</returns>
         [HttpGet("gateway/state")]

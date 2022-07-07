@@ -1,4 +1,6 @@
+using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 
 using Amazon.ECS;
@@ -25,8 +27,7 @@ namespace Brighid.Discord.Adapter.Management
         [Category("Unit")]
         public class GetDeploymentIdTests
         {
-            [Test]
-            [Auto]
+            [Test, Auto]
             public async Task ShouldFetchNodeDeploymentId(
                 string taskArn,
                 string deploymentId,
@@ -52,8 +53,7 @@ namespace Brighid.Discord.Adapter.Management
                 handler.VerifyNoOutstandingExpectation();
             }
 
-            [Test]
-            [Auto]
+            [Test, Auto]
             public async Task ShouldReturnLocalIfTheMetadataEndpointIsNull(
                 [Frozen] AdapterOptions options,
                 [Frozen] MockHttpMessageHandler handler,
@@ -66,6 +66,40 @@ namespace Brighid.Discord.Adapter.Management
                 var result = await service.GetDeploymentId(cancellationToken);
 
                 result.Should().Be("local");
+            }
+        }
+
+        [Category("Unit")]
+        public class GetPeersTests
+        {
+            [Test, Auto]
+            public async Task ShouldReturnAListOfPeers(
+                NodeInfo node1,
+                NodeInfo node2,
+                IPAddress node1Ip,
+                IPAddress node2Ip,
+                [Frozen] IDnsService dnsService,
+                [Frozen] MockHttpMessageHandler handler,
+                [Target] NodeService service,
+                CancellationToken cancellationToken
+            )
+            {
+                dnsService.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { node1Ip, node2Ip });
+
+                handler
+                .Expect(HttpMethod.Get, $"http://{node1Ip}/node")
+                .Respond("application/json", JsonSerializer.Serialize(node1));
+
+                handler
+                .Expect(HttpMethod.Get, $"http://{node2Ip}/node")
+                .Respond("application/json", JsonSerializer.Serialize(node2));
+
+                var result = await service.GetPeers(cancellationToken);
+
+                result.Should().ContainEquivalentOf(node1);
+                result.Should().ContainEquivalentOf(node2);
+
+                handler.VerifyNoOutstandingExpectation();
             }
         }
     }

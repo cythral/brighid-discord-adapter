@@ -72,9 +72,13 @@ namespace Brighid.Discord.Adapter
 
             adapterContext.Set(new NodeInfo
             {
+                IpAddress = nodeService.GetIpAddress(),
                 Shard = 0,
                 DeploymentId = await nodeService.GetDeploymentId(cancellationToken),
             });
+
+            var peers = await nodeService.GetPeers(cancellationToken);
+            adapterContext.Set(peers);
         }
     }
 }
