@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Brighid.Discord.Adapter.Management;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -20,8 +24,12 @@ namespace Brighid.Discord.Adapter
         public static async Task Main(string[] args)
         {
             AutoDetectDatabaseVersion = true;
+            using var cancellationTokenSource = new CancellationTokenSource();
             using var host = CreateHostBuilder(args).Build();
-            await host.RunAsync();
+
+            var cancellationToken = cancellationTokenSource.Token;
+            await FetchNodeInfo(host, cancellationToken);
+            await host.RunAsync(cancellationToken);
         }
 
 #pragma warning disable IDE0078 // Use Pattern Matching
@@ -55,5 +63,18 @@ namespace Brighid.Discord.Adapter
                 });
         }
 #pragma warning restore IDE0078
+
+        public static async Task FetchNodeInfo(IHost host, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var nodeService = host.Services.GetRequiredService<INodeService>();
+            var adapterContext = host.Services.GetRequiredService<IAdapterContext>();
+
+            adapterContext.Set(new NodeInfo
+            {
+                Shard = 0,
+                DeploymentId = await nodeService.GetDeploymentId(cancellationToken),
+            });
+        }
     }
 }

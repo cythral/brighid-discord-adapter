@@ -46,6 +46,9 @@ services:
       AWS_REGION: us-east-1
       AWS_XRAY_DAEMON_ADDRESS: xray:2000
       AWS_XRAY_TRACING_NAME: Discord
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
     labels:
       - traefik.enable=true
       - traefik.http.routers.adapter.rule=Host(`localhost`)

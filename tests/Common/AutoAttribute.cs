@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -47,11 +48,12 @@ internal class AutoAttribute : AutoDataAttribute
 
         var fixture = new Fixture();
         var messageHandler = new MockHttpMessageHandler();
+        var httpClient = new System.Net.Http.HttpClient(messageHandler) { Timeout = TimeSpan.FromSeconds(1) };
         fixture.Inject(messageHandler);
+        fixture.Inject(httpClient);
         fixture.Inject(new CancellationToken(false));
         fixture.Inject<JsonSerializerContext>(JsonContext.Default);
         fixture.Inject(new JwtSecurityTokenHandler { MaximumTokenSizeInBytes = int.MaxValue });
-        fixture.Inject(new System.Net.Http.HttpClient(messageHandler));
         fixture.Inject(provider.GetRequiredService<IStringLocalizer<Strings>>());
         fixture.Inject(new Endpoint('c', ChannelEndpoint.CreateMessage));
         fixture.Inject(new RequestOptions { BatchingBufferPeriod = 0.05 });

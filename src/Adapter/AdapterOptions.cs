@@ -12,6 +12,13 @@ namespace Brighid.Discord.Adapter
     public class AdapterOptions
     {
         /// <summary>
+        /// Gets or sets the task metadata url.
+        /// </summary>
+        public Uri? TaskMetadataUrl { get; set; } = Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") != null
+                ? new Uri(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") + "/task")
+                : null;
+
+        /// <summary>
         /// Gets or sets the auth scheme to use when making requests to the REST API.
         /// </summary>
         public string AuthScheme { get; set; } = "Bot";
