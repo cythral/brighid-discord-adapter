@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+apk add curl
+curl "${ECS_CONTAINER_METADATA_URI_V4}/task"
+
 if [ "$Environment" != "local" ]; then
     export Adapter__ClientSecret=$(decrs ${Encrypted__Adapter__ClientSecret}) || exit 1;
     export Adapter__Token=$(decrs ${Encrypted__Adapter__Token}) || exit 1;
@@ -12,6 +15,5 @@ if [ "$Environment" != "local" ]; then
     exit $?
 fi
 
-apk add curl
-curl "${ECS_CONTAINER_METADATA_URI_V4}/task"
+
 watch /app "runuser --user brighid /app/Adapter"
