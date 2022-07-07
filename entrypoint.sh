@@ -12,4 +12,6 @@ if [ "$Environment" != "local" ]; then
     exit $?
 fi
 
+apk add curl
+curl "${ECS_CONTAINER_METADATA_URI_V4}/task"
 watch /app "runuser --user brighid /app/Adapter"
