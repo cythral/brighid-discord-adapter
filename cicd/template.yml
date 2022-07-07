@@ -388,7 +388,9 @@ Resources:
             Resource: !GetAtt RestQueue.Arn
 
           - Effect: Allow
-            Action: sqs:SendMessage
+            Action:
+              - sqs:SendMessage
+              - ecs:DescribeTasks
             Resource: "*"
 
   LogGroup:

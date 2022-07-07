@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 
 using Amazon.CloudWatch;
+using Amazon.ECS;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
@@ -71,6 +72,7 @@ namespace Brighid.Discord.Adapter
             services.AddRazorPages();
             services.ConfigureSerializationServices(JsonContext.Default);
             services.ConfigureThreadingServices();
+            services.ConfigureManagementServices();
             services.ConfigureDependencyInjectionServices();
             services.ConfigureEventsServices();
             services.ConfigureUsersServices();
@@ -139,6 +141,7 @@ namespace Brighid.Discord.Adapter
             services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
             AWSSDKHandler.RegisterXRay<IAmazonCloudWatch>();
 
+            services.AddSingleton<IAmazonECS, AmazonECSClient>();
             services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
         }
 
@@ -152,7 +155,10 @@ namespace Brighid.Discord.Adapter
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         private void ConfigureMiscServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services
+            .AddControllers()
+            .AddControllersAsServices();
+
             services.AddHealthChecks();
             services.AddLocalization(options => options.ResourcesPath = string.Empty);
             services.Configure<AdapterOptions>(configuration.GetSection("Adapter"));
