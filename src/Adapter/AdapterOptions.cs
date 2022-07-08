@@ -24,6 +24,11 @@ namespace Brighid.Discord.Adapter
         public string AuthScheme { get; set; } = "Bot";
 
         /// <summary>
+        /// Gets or sets the host name that the adapter can be reached at.
+        /// </summary>
+        public string Host { get; set; } = "discord.brigh.id";
+
+        /// <summary>
         /// Gets or sets the token to authenticate against the gateway and REST API with.
         /// </summary>
         [NotLogged]

@@ -15,6 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddSingleton<INodeService, NodeService>();
             services.AddSingleton<IAdapterContext, AdapterContext>();
+            services.AddSingleton<IDnsService, DnsService>();
         }
     }
 }

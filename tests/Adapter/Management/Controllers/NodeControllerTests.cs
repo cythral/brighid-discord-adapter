@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AutoFixture.NUnit3;
@@ -41,6 +42,21 @@ namespace Brighid.Discord.Adapter.Management
                 var result = controller.GetInfo();
 
                 result.Result.Should().BeOfType<OkObjectResult>();
+            }
+        }
+
+        [Category("Unit")]
+        public class GetPeersTests
+        {
+            [Test, Auto]
+            public void ShouldReturnPeers(
+                [Frozen] IEnumerable<NodeInfo> peers,
+                [Target] NodeController controller
+            )
+            {
+                var result = controller.GetPeers();
+
+                result.Result.As<ObjectResult>().Value.Should().BeEquivalentTo(peers);
             }
         }
 
