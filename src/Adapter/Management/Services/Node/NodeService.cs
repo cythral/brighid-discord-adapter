@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Amazon.ECS;
 using Amazon.ECS.Model;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using HttpClient = System.Net.Http.HttpClient;
@@ -22,6 +23,7 @@ namespace Brighid.Discord.Adapter.Management
         private readonly HttpClient httpClient;
         private readonly IAmazonECS ecs;
         private readonly IDnsService dns;
+        private readonly ILogger<NodeService> logger;
         private readonly AdapterOptions options;
         private TaskMetadata? metadata;
 
@@ -32,16 +34,19 @@ namespace Brighid.Discord.Adapter.Management
         /// <param name="ecs">ECS Service to fetch task info from.</param>
         /// <param name="dns">DNS Service to fetch IP addresses with.</param>
         /// <param name="options">Adapter options.</param>
+        /// <param name="logger">Service used for logging messages.</param>
         public NodeService(
             HttpClient httpClient,
             IAmazonECS ecs,
             IDnsService dns,
-            IOptions<AdapterOptions> options
+            IOptions<AdapterOptions> options,
+            ILogger<NodeService> logger
         )
         {
             this.httpClient = httpClient;
             this.ecs = ecs;
             this.dns = dns;
+            this.logger = logger;
             this.options = options.Value;
         }
 
@@ -97,6 +102,7 @@ namespace Brighid.Discord.Adapter.Management
             }
 
             metadata ??= await httpClient.GetFromJsonAsync<TaskMetadata>(options.TaskMetadataUrl, cancellationToken: cancellationToken);
+            logger.LogInformation("Retrieved task metadata {@metadata}", metadata);
             return metadata;
         }
     }
