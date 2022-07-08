@@ -53,7 +53,7 @@ namespace Brighid.Discord.Adapter.Management
             var query = from @interface in NetworkInterface.GetAllNetworkInterfaces()
                         where @interface.NetworkInterfaceType == NetworkInterfaceType.Ethernet
                         from ip in @interface.GetIPProperties().UnicastAddresses
-                        where ip.Address.AddressFamily == AddressFamily.InterNetwork
+                        where ip.Address.AddressFamily == AddressFamily.InterNetwork && !ip.Address.ToString().StartsWith("169.254.")
                         select ip.Address;
 
             return query.FirstOrDefault(IPAddress.None);
@@ -77,6 +77,7 @@ namespace Brighid.Discord.Adapter.Management
         /// <inheritdoc />
         public async Task<IEnumerable<NodeInfo>> GetPeers(CancellationToken cancellationToken)
         {
+            var currentIpAddress = GetIpAddress();
             var addresses = await dns.GetIPAddresses(options.Host, cancellationToken);
             var nodes = from address in addresses
                         where address != GetIpAddress()
