@@ -244,6 +244,7 @@ Resources:
               Condition: HEALTHY
           PortMappings:
             - ContainerPort: 80
+          HealthCheck: {}
           LogConfiguration:
             LogDriver: awslogs
             Options:
