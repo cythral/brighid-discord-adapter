@@ -21,7 +21,7 @@ namespace Brighid.Discord.Tracing
         {
             AWSXRayRecorder.InitializeInstance();
 
-            services.AddSingleton<DelegatingHandler, HttpClientXRayTracingHandler>();
+            services.AddTransient<DelegatingHandler, HttpClientXRayTracingHandler>();
             services.TryAddSingleton<ITracingService, AwsXRayTracingService>();
             services.TryAddSingleton<ITracingIdService, AwsXRayTracingIdService>();
             services.TryAddSingleton<IAWSXRayRecorder>(AWSXRayRecorder.Instance);
