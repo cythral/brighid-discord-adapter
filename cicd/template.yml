@@ -201,7 +201,7 @@ Resources:
           Port: 80
       DesiredCount: 1
       DeploymentConfiguration:
-        MinimumHealthyPercent: 1
+        MinimumHealthyPercent: 100
         MaximumPercent: 200
         DeploymentCircuitBreaker:
           Enable: true
