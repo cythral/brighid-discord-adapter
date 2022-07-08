@@ -69,15 +69,16 @@ namespace Brighid.Discord.Adapter
             cancellationToken.ThrowIfCancellationRequested();
             var nodeService = host.Services.GetRequiredService<INodeService>();
             var adapterContext = host.Services.GetRequiredService<IAdapterContext>();
+            var ipAddress = await nodeService.GetIpAddress(cancellationToken);
 
             adapterContext.Set(new NodeInfo
             {
-                IpAddress = nodeService.GetIpAddress(),
+                IpAddress = ipAddress,
                 Shard = 0,
                 DeploymentId = await nodeService.GetDeploymentId(cancellationToken),
             });
 
-            var peers = await nodeService.GetPeers(cancellationToken);
+            var peers = await nodeService.GetPeers(ipAddress, cancellationToken);
             adapterContext.Set(peers);
         }
     }

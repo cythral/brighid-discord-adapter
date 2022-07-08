@@ -88,6 +88,15 @@ namespace Brighid.Discord.Adapter.Gateway
             State |= GatewayState.Ready;
         }
 
+        /// <inheritdoc/>
+        public void ThrowIfNotReady()
+        {
+            if (!State.HasFlag(GatewayState.Ready))
+            {
+                throw new OperationCanceledException();
+            }
+        }
+
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {

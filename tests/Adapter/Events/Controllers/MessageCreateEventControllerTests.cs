@@ -54,6 +54,22 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
+            public async Task ShouldThrowIfGatewayIsNotReady(
+                string content,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var message = new Message { Content = content };
+                var @event = new MessageCreateEvent { Message = message };
+
+                await controller.Handle(@event, cancellationToken);
+
+                gateway.Received().ThrowIfNotReady();
+            }
+
+            [Test, Auto]
             public async Task ShouldStartAndStopATraceWithMessageAndEventAnnotations(
                 string content,
                 Snowflake userId,

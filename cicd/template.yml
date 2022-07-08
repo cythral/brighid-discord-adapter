@@ -201,7 +201,7 @@ Resources:
           Port: 80
       DesiredCount: 1
       DeploymentConfiguration:
-        MinimumHealthyPercent: 1
+        MinimumHealthyPercent: 100
         MaximumPercent: 200
         DeploymentCircuitBreaker:
           Enable: true
@@ -258,6 +258,8 @@ Resources:
           Environment:
             - Name: AWS_XRAY_DAEMON_ADDRESS
               Value: xray:2000
+            - Name: AWS_XRAY_CONTEXT_MISSING
+              Value: LOG_ERROR
             - Name: Environment
               Value: !Ref EnvironmentName
             - Name: Encrypted__Adapter__Token

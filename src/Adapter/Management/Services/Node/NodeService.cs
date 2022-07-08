@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Amazon.ECS;
 using Amazon.ECS.Model;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using HttpClient = System.Net.Http.HttpClient;
-using NetworkInterface = System.Net.NetworkInformation.NetworkInterface;
 using Task = System.Threading.Tasks.Task;
 
 namespace Brighid.Discord.Adapter.Management
@@ -25,7 +23,9 @@ namespace Brighid.Discord.Adapter.Management
         private readonly HttpClient httpClient;
         private readonly IAmazonECS ecs;
         private readonly IDnsService dns;
+        private readonly ILogger<NodeService> logger;
         private readonly AdapterOptions options;
+        private TaskMetadata? metadata;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NodeService" /> class.
@@ -34,53 +34,54 @@ namespace Brighid.Discord.Adapter.Management
         /// <param name="ecs">ECS Service to fetch task info from.</param>
         /// <param name="dns">DNS Service to fetch IP addresses with.</param>
         /// <param name="options">Adapter options.</param>
+        /// <param name="logger">Service used for logging messages.</param>
         public NodeService(
             HttpClient httpClient,
             IAmazonECS ecs,
             IDnsService dns,
-            IOptions<AdapterOptions> options
+            IOptions<AdapterOptions> options,
+            ILogger<NodeService> logger
         )
         {
             this.httpClient = httpClient;
             this.ecs = ecs;
             this.dns = dns;
+            this.logger = logger;
             this.options = options.Value;
         }
 
         /// <inheritdoc />
-        public IPAddress GetIpAddress()
+        public async Task<IPAddress> GetIpAddress(CancellationToken cancellationToken)
         {
-            var query = from @interface in NetworkInterface.GetAllNetworkInterfaces()
-                        where @interface.NetworkInterfaceType == NetworkInterfaceType.Ethernet
-                        from ip in @interface.GetIPProperties().UnicastAddresses
-                        where ip.Address.AddressFamily == AddressFamily.InterNetwork && !ip.Address.ToString().StartsWith("169.254.")
-                        select ip.Address;
+            cancellationToken.ThrowIfCancellationRequested();
+            var taskMetadata = await GetTaskMetadata(cancellationToken);
 
-            return query.FirstOrDefault(IPAddress.None);
+            return taskMetadata == null
+                    ? IPAddress.None
+                    : IPAddress.Parse(taskMetadata.Containers[0].Networks[0].Ipv4Addresses[0]);
         }
 
         /// <inheritdoc />
         public async Task<string> GetDeploymentId(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (options.TaskMetadataUrl == null)
+            var taskMetadata = await GetTaskMetadata(cancellationToken);
+            if (taskMetadata == null)
             {
                 return "local";
             }
 
-            var taskMetadata = await httpClient.GetFromJsonAsync<TaskMetadata>(options.TaskMetadataUrl, cancellationToken: cancellationToken);
             var describeTasksRequest = new DescribeTasksRequest { Cluster = taskMetadata!.Cluster, Tasks = new() { taskMetadata!.TaskArn } };
             var describeTasksResponse = await ecs.DescribeTasksAsync(describeTasksRequest, cancellationToken);
             return describeTasksResponse.Tasks.First().StartedBy;
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<NodeInfo>> GetPeers(CancellationToken cancellationToken)
+        public async Task<IEnumerable<NodeInfo>> GetPeers(IPAddress currentIp, CancellationToken cancellationToken)
         {
-            var currentIpAddress = GetIpAddress();
             var addresses = await dns.GetIPAddresses(options.Host, cancellationToken);
             var nodes = from address in addresses
-                        where address != GetIpAddress()
+                        where !address.Equals(currentIp)
                         select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
 
             try
@@ -91,6 +92,18 @@ namespace Brighid.Discord.Adapter.Management
             {
                 return Array.Empty<NodeInfo>();
             }
+        }
+
+        private async Task<TaskMetadata?> GetTaskMetadata(CancellationToken cancellationToken)
+        {
+            if (options.TaskMetadataUrl == null)
+            {
+                return null;
+            }
+
+            metadata ??= await httpClient.GetFromJsonAsync<TaskMetadata>(options.TaskMetadataUrl, cancellationToken: cancellationToken);
+            logger.LogInformation("Retrieved task metadata {@metadata}", metadata);
+            return metadata;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace Brighid.Discord.Adapter.Management
@@ -18,5 +19,11 @@ namespace Brighid.Discord.Adapter.Management
         /// </summary>
         [JsonPropertyName("Cluster")]
         public string Cluster { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a list of containers on the task.
+        /// </summary>
+        [JsonPropertyName("Containers")]
+        public Container[] Containers { get; set; } = Array.Empty<Container>();
     }
 }

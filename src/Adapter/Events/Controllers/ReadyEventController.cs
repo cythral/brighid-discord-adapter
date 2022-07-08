@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Gateway;
+using Brighid.Discord.Adapter.Management;
 
 using Microsoft.Extensions.Logging;
 
@@ -14,31 +15,36 @@ namespace Brighid.Discord.Adapter.Events
     public class ReadyEventController : IEventController<ReadyEvent>
     {
         private readonly IGatewayService gateway;
+        private readonly ITrafficShifter shifter;
         private readonly ILogger<ReadyEventController> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadyEventController" /> class.
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
+        /// <param name="shifter">Service used for shifting traffic from previous shards to the current gateway.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public ReadyEventController(
             IGatewayService gateway,
+            ITrafficShifter shifter,
             ILogger<ReadyEventController> logger
         )
         {
             this.gateway = gateway;
+            this.shifter = shifter;
             this.logger = logger;
         }
 
         /// <inheritdoc />
         public async Task Handle(ReadyEvent @event, CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
             using var scope = logger.BeginScope("{@Event}", nameof(ReadyEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
             gateway.SessionId = @event.SessionId;
             gateway.BotId = @event.User.Id;
+
+            await shifter.PerformTrafficShift(cancellationToken);
             gateway.SetReadyState(true);
         }
     }

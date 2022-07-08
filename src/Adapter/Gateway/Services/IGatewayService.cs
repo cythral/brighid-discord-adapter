@@ -40,6 +40,11 @@ namespace Brighid.Discord.Adapter.Gateway
         void SetReadyState(bool ready);
 
         /// <summary>
+        /// Throw an exception if the gateway is not ready.
+        /// </summary>
+        void ThrowIfNotReady();
+
+        /// <summary>
         /// Restarts the gateway service.
         /// </summary>
         /// <param name="resume">Whether or not to resume after reconnecting.</param>
