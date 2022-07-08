@@ -78,7 +78,6 @@ namespace Brighid.Discord.Adapter
                 DeploymentId = await nodeService.GetDeploymentId(cancellationToken),
             });
 
-            Console.WriteLine(ipAddress.ToString());
             var peers = await nodeService.GetPeers(ipAddress, cancellationToken);
             adapterContext.Set(peers);
         }

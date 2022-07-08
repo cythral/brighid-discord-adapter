@@ -81,7 +81,7 @@ namespace Brighid.Discord.Adapter.Management
         {
             var addresses = await dns.GetIPAddresses(options.Host, cancellationToken);
             var nodes = from address in addresses
-                        where address != currentIp
+                        where !address.Equals(currentIp)
                         select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
 
             try
