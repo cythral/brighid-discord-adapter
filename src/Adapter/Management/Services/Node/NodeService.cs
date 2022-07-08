@@ -56,7 +56,7 @@ namespace Brighid.Discord.Adapter.Management
                         where ip.Address.AddressFamily == AddressFamily.InterNetwork
                         select ip.Address;
 
-            return query.First();
+            return query.FirstOrDefault(IPAddress.None);
         }
 
         /// <inheritdoc />
@@ -79,6 +79,7 @@ namespace Brighid.Discord.Adapter.Management
         {
             var addresses = await dns.GetIPAddresses(options.Host, cancellationToken);
             var nodes = from address in addresses
+                        where address != GetIpAddress()
                         select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
 
             try
