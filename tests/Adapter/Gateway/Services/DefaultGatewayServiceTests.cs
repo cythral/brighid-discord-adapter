@@ -54,6 +54,31 @@ namespace Brighid.Discord.Adapter.Gateway
 
         [TestFixture]
         [Category("Unit")]
+        public class ThrowIfNotReadyTests
+        {
+            [Test, Auto]
+            public void ShouldThrowCanceledIfNotReady(
+                [Target] DefaultGatewayService service
+            )
+            {
+                service.SetPrivateProperty("State", GatewayState.Running);
+                Action func = service.ThrowIfNotReady;
+                func.Should().Throw<OperationCanceledException>();
+            }
+
+            [Test, Auto]
+            public void ShouldNotThrowCanceledIfReady(
+                [Target] DefaultGatewayService service
+            )
+            {
+                service.SetPrivateProperty("State", GatewayState.Running | GatewayState.Ready);
+                Action func = service.ThrowIfNotReady;
+                func.Should().NotThrow<OperationCanceledException>();
+            }
+        }
+
+        [TestFixture]
+        [Category("Unit")]
         public class StartTests
         {
             [Test, Auto]

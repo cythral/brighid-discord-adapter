@@ -6,6 +6,7 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
@@ -71,8 +72,9 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
-            public async Task ShouldSetTheGatewayServiceReadyPropertyToTrue(
+            public async Task ShouldShiftTrafficThenSetTheGatewayServiceReadyPropertyToTrue(
                 string sessionId,
+                [Frozen, Substitute] ITrafficShifter shifter,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Target] ReadyEventController controller
             )
@@ -82,7 +84,11 @@ namespace Brighid.Discord.Adapter.Events
 
                 await controller.Handle(@event, cancellationToken);
 
-                gateway.Received().SetReadyState(Is(true));
+                Received.InOrder(async () =>
+                {
+                    await shifter.Received().PerformTrafficShift(Is(cancellationToken));
+                    gateway.Received().SetReadyState(Is(true));
+                });
             }
         }
     }

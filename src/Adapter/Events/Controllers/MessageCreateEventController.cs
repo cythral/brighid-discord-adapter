@@ -82,6 +82,8 @@ namespace Brighid.Discord.Adapter.Events
         public async Task Handle(MessageCreateEvent @event, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            gateway.ThrowIfNotReady();
+
             using var trace = tracingService.StartTrace();
             using var scope = logger.BeginScope("{@Event} {@TraceId}", nameof(MessageCreateEvent), trace.Id);
 
