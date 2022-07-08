@@ -13,8 +13,9 @@ namespace Brighid.Discord.Adapter.Management
         /// <summary>
         /// Gets the IP address of the node.
         /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The node's IP address.</returns>
-        IPAddress GetIpAddress();
+        Task<IPAddress> GetIpAddress(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the deployment ID.
@@ -26,8 +27,9 @@ namespace Brighid.Discord.Adapter.Management
         /// <summary>
         /// Get a list of peer nodes.
         /// </summary>
+        /// <param name="currentIp">IP address of the current node.</param>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>A list of peer adapter nodes.</returns>
-        Task<IEnumerable<NodeInfo>> GetPeers(CancellationToken cancellationToken);
+        Task<IEnumerable<NodeInfo>> GetPeers(IPAddress currentIp, CancellationToken cancellationToken);
     }
 }

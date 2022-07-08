@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace Brighid.Discord.Adapter.Management
@@ -18,5 +19,11 @@ namespace Brighid.Discord.Adapter.Management
         /// </summary>
         [JsonPropertyName("Cluster")]
         public string Cluster { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the list of network interfaces attached to the task.
+        /// </summary>
+        [JsonPropertyName("Networks")]
+        public Network[] Networks { get; set; } = Array.Empty<Network>();
     }
 }

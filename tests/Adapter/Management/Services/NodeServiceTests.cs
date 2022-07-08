@@ -25,6 +25,47 @@ namespace Brighid.Discord.Adapter.Management
     public class NodeServiceTests
     {
         [Category("Unit")]
+        public class GetIpAddressTests
+        {
+            [Test, Auto]
+            public async Task ShouldFetchIpAddress(
+                string taskArn,
+                string deploymentId,
+                string cluster,
+                IPAddress ip,
+                [Frozen] AdapterOptions options,
+                [Frozen] MockHttpMessageHandler handler,
+                [Target] NodeService service,
+                CancellationToken cancellationToken
+            )
+            {
+                handler
+                .Expect(HttpMethod.Get, options.TaskMetadataUrl!.ToString())
+                .Respond("application/json", $@"{{ ""Networks"": [ {{ ""IPv4Addresses"": [ ""{ip}"" ] }} ] }}");
+
+                var result = await service.GetIpAddress(cancellationToken);
+
+                result.Should().Be(ip);
+                handler.VerifyNoOutstandingExpectation();
+            }
+
+            [Test, Auto]
+            public async Task ShouldReturnNoneIfTheMetadataEndpointIsNull(
+                [Frozen] AdapterOptions options,
+                [Frozen] MockHttpMessageHandler handler,
+                [Target] NodeService service,
+                CancellationToken cancellationToken
+            )
+            {
+                options.TaskMetadataUrl = null;
+
+                var result = await service.GetIpAddress(cancellationToken);
+
+                result.Should().Be(IPAddress.None);
+            }
+        }
+
+        [Category("Unit")]
         public class GetDeploymentIdTests
         {
             [Test, Auto]
@@ -76,15 +117,17 @@ namespace Brighid.Discord.Adapter.Management
             public async Task ShouldReturnAListOfPeers(
                 NodeInfo node1,
                 NodeInfo node2,
-                IPAddress node1Ip,
-                IPAddress node2Ip,
                 [Frozen] IDnsService dnsService,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] NodeService service,
                 CancellationToken cancellationToken
             )
             {
-                dnsService.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { node1Ip, node2Ip });
+                var node1Ip = IPAddress.Parse("1.1.1.1");
+                var node2Ip = IPAddress.Parse("2.2.2.2");
+                var node3Ip = IPAddress.Parse("3.3.3.3");
+
+                dnsService.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { node1Ip, node2Ip, node3Ip });
 
                 handler
                 .Expect(HttpMethod.Get, $"http://{node1Ip}/node")
@@ -94,7 +137,7 @@ namespace Brighid.Discord.Adapter.Management
                 .Expect(HttpMethod.Get, $"http://{node2Ip}/node")
                 .Respond("application/json", JsonSerializer.Serialize(node2));
 
-                var result = await service.GetPeers(cancellationToken);
+                var result = await service.GetPeers(node3Ip, cancellationToken);
 
                 result.Should().ContainEquivalentOf(node1);
                 result.Should().ContainEquivalentOf(node2);
