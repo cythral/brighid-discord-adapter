@@ -1645,6 +1645,15 @@
           "Serilog": "2.9.0"
         }
       },
+      "Serilog.Filters.Expressions": {
+        "type": "Transitive",
+        "resolved": "2.1.0",
+        "contentHash": "e0ZaK+NWx6+j71xB5dRXohdreSeHgMJ9mp4giSp83/4UC8VsJWDH+CAT1YVXsyINAR9IQznXllnJ0e5j+BvwzA==",
+        "dependencies": {
+          "Serilog": "2.9.0",
+          "Superpower": "2.3.0"
+        }
+      },
       "Serilog.Formatting.Compact": {
         "type": "Transitive",
         "resolved": "1.1.0",
@@ -1691,6 +1700,11 @@
         "type": "Transitive",
         "resolved": "1.2.0.354",
         "contentHash": "/3RlM31XbJ02gaWh7dVumWOyMvGHswb/zygGJXd9oEJMRyyYc/HFJlAC5gBPxvi9cB4CMvIyyUTmZz5VLKwTvg=="
+      },
+      "Superpower": {
+        "type": "Transitive",
+        "resolved": "2.3.0",
+        "contentHash": "L7ZLWjec5aPWWebsOKM6+8SdobSFMPJFIS8S8TT46oH2iELA70H95spRMeP1yPH9nDL/o+XYP29DPtVwVdzPeA=="
       },
       "System.Buffers": {
         "type": "Transitive",
@@ -2686,7 +2700,8 @@
           "Models": "1.0.0",
           "Pomelo.EntityFrameworkCore.MySql": "6.0.1",
           "RestClient": "1.0.0",
-          "Serilog.AspNetCore": "5.0.0"
+          "Serilog.AspNetCore": "5.0.0",
+          "Serilog.Filters.Expressions": "2.1.0"
         }
       },
       "Brighid.Discord.Core": {
