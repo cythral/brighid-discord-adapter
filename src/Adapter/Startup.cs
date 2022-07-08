@@ -8,7 +8,6 @@ using Amazon.SQS;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
 using Brighid.Discord.Adapter.Database;
-using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Tracing;
 
 using Destructurama;
@@ -25,6 +24,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Serilog;
+using Serilog.Events;
 
 namespace Brighid.Discord.Adapter
 {
@@ -37,26 +37,23 @@ namespace Brighid.Discord.Adapter
         /// Initializes a new instance of the <see cref="Startup" /> class.
         /// </summary>
         /// <param name="configuration">Configuration to use for the application.</param>
-        /// <param name="environment">Environment to use for the program.</param>
         public Startup(
-            IConfiguration configuration,
-            IWebHostEnvironment environment
+            IConfiguration configuration
         )
         {
             this.configuration = configuration;
-            var loggerBuilder = new LoggerConfiguration()
+
+            Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:u}] [{Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}");
-
-            loggerBuilder = environment.EnvironmentName switch
-            {
-                Environments.Local or Environments.Development => loggerBuilder.MinimumLevel.Debug(),
-                _ => loggerBuilder.MinimumLevel.Information(),
-            };
-
-            Log.Logger = loggerBuilder.CreateLogger();
+                .MinimumLevel.Override("DefaultHealthCheckService", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Server.Kestrel", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Warning)
+                .Filter.ByExcluding("RequestPath = '/healthcheck' and (StatusCode = 200 or EventId.Name = 'ExecutingEndpoint' or EventId.Name = 'ExecutedEndpoint')")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:u}] [{Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}")
+                .CreateLogger();
         }
 
         /// <inheritdoc />
@@ -137,13 +134,11 @@ namespace Brighid.Discord.Adapter
         private static void ConfigureAwsServices(IServiceCollection services)
         {
             services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
-            AWSSDKHandler.RegisterXRay<IAmazonSimpleNotificationService>();
-
             services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
-            AWSSDKHandler.RegisterXRay<IAmazonCloudWatch>();
-
             services.AddSingleton<IAmazonECS, AmazonECSClient>();
             services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
+
+            AWSSDKHandler.RegisterXRayForAllServices();
         }
 
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
@@ -157,7 +152,7 @@ namespace Brighid.Discord.Adapter
         private void ConfigureMiscServices(IServiceCollection services)
         {
             services
-            .AddControllers(options => options.InputFormatters.Add(new EnumTextFormatter()))
+            .AddControllers()
             .AddControllersAsServices();
 
             services.AddHealthChecks();

@@ -201,7 +201,7 @@ namespace Brighid.Discord.Adapter.Requests
             {
                 try
                 {
-                    logger.LogInformation("Sleeping for {@time} ms", options.BatchingBufferPeriod * 1000);
+                    logger.LogDebug("Sleeping for {@time} ms", options.BatchingBufferPeriod * 1000);
                     await Task.Delay((int)(options.BatchingBufferPeriod * 1000), workerCancellationToken);
                     await Task.WhenAll(BatchDeleteMessages(), BatchChangeVisibilityTimeout());
                 }
@@ -212,7 +212,7 @@ namespace Brighid.Discord.Adapter.Requests
                 }
                 catch (Exception exception)
                 {
-                    logger.LogError("Received exception during batching period: {@exception}", exception);
+                    logger.LogError(exception, "Received exception during batching period.");
                 }
             }
         }
