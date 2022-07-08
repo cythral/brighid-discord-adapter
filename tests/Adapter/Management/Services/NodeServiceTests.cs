@@ -41,7 +41,7 @@ namespace Brighid.Discord.Adapter.Management
             {
                 handler
                 .Expect(HttpMethod.Get, options.TaskMetadataUrl!.ToString())
-                .Respond("application/json", $@"{{ ""Networks"": [ {{ ""IPv4Addresses"": [ ""{ip}"" ] }} ] }}");
+                .Respond("application/json", $@"{{ ""Containers"": [ {{ ""Networks"": [ {{ ""IPv4Addresses"": [ ""{ip}"" ] }} ] }} ] }}");
 
                 var result = await service.GetIpAddress(cancellationToken);
 

@@ -21,9 +21,9 @@ namespace Brighid.Discord.Adapter.Management
         public string Cluster { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the list of network interfaces attached to the task.
+        /// Gets or sets a list of containers on the task.
         /// </summary>
-        [JsonPropertyName("Networks")]
-        public Network[] Networks { get; set; } = Array.Empty<Network>();
+        [JsonPropertyName("Containers")]
+        public Container[] Containers { get; set; } = Array.Empty<Container>();
     }
 }
