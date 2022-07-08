@@ -112,13 +112,6 @@ Resources:
           - PortMapping:
               Port: 80
               Protocol: http2
-            HealthCheck:
-              UnhealthyThreshold: 3
-              HealthyThreshold: 5
-              TimeoutMillis: 30000
-              Path: /healthcheck
-              Protocol: http2
-              IntervalMillis: 30000
         ServiceDiscovery:
           AWSCloudMap:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
@@ -251,6 +244,10 @@ Resources:
               Condition: HEALTHY
           PortMappings:
             - ContainerPort: 80
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl --fail --http2-prior-knowledge http://localhost/healthcheck || exit 1
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -325,9 +322,6 @@ Resources:
             Command:
               - CMD-SHELL
               - curl -s http://localhost:9901/server_info | grep state | grep -q LIVE
-            Interval: 5
-            Timeout: 2
-            Retries: 3
           LogConfiguration:
             LogDriver: "awslogs"
             Options:
