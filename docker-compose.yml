@@ -18,6 +18,7 @@ services:
     working_dir: /app
     restart: unless-stopped
     platform: linux/arm64
+    healthcheck: {}
     ports:
       - "80"
     volumes:
