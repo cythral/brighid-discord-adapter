@@ -23,6 +23,7 @@ namespace Brighid.Discord.Adapter
     [JsonSerializable(typeof(MessageCreateEvent))]
     [JsonSerializable(typeof(ReconnectEvent))]
     [JsonSerializable(typeof(HeartbeatEvent))]
+    [JsonSerializable(typeof(HeartbeatAckEvent))]
     [JsonSerializable(typeof(IdentifyEvent))]
     [JsonSerializable(typeof(ResumeEvent))]
     [JsonSerializable(typeof(ResumedEvent))]

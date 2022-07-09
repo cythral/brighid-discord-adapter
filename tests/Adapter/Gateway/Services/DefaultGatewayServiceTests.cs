@@ -396,6 +396,25 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await heartbeat.Received().Stop();
             }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task ShouldSetAwaitingHeartbeatAcknowledgementToFalse(
+                uint interval,
+                int sequenceNumber,
+                [Frozen] ITimer heartbeat,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Frozen, Substitute] ITimerFactory timerFactory,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                gateway.SetPrivateField("heartbeat", Substitute.For<ITimer>());
+                gateway.AwaitingHeartbeatAcknowledgement = true;
+
+                await gateway.StopHeartbeat();
+
+                gateway.AwaitingHeartbeatAcknowledgement.Should().BeFalse();
+            }
         }
 
         [TestFixture]
@@ -552,6 +571,54 @@ namespace Brighid.Discord.Adapter.Gateway
                     ),
                     Any<CancellationToken>()
                 );
+            }
+
+            [Test, Auto]
+            public async Task ShouldRestartTheGatewayIfStillAwaitingHeartbeatAck(
+                int sequenceNumber,
+                [Frozen, Substitute] IGatewayRestartService restartService,
+                [Target] DefaultGatewayService gateway,
+                CancellationToken cancellationToken
+            )
+            {
+                gateway.SequenceNumber = sequenceNumber;
+                gateway.AwaitingHeartbeatAcknowledgement = true;
+                await gateway.Heartbeat(cancellationToken);
+
+                await restartService.Received().Restart(Is(gateway), Is(true), Is(cancellationToken));
+            }
+
+            [Test, Auto]
+            public async Task ShouldNotEmitHeartbeatIfStillAwaitingHeartbeatAck(
+                int sequenceNumber,
+                [Frozen, Substitute] IGatewayRestartService restartService,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Target] DefaultGatewayService gateway,
+                CancellationToken cancellationToken
+            )
+            {
+                gateway.SequenceNumber = sequenceNumber;
+                gateway.AwaitingHeartbeatAcknowledgement = true;
+                await gateway.Heartbeat(cancellationToken);
+
+                await txWorker.DidNotReceiveWithAnyArgs().Emit(
+                    Any<GatewayMessage>(),
+                    Any<CancellationToken>()
+                );
+            }
+
+            [Test, Auto]
+            public async Task ShouldSetAwaitingHeartbeatAcknowledgementToTrue(
+                int sequenceNumber,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Target] DefaultGatewayService gateway,
+                CancellationToken cancellationToken
+            )
+            {
+                gateway.SequenceNumber = sequenceNumber;
+                await gateway.Heartbeat(cancellationToken);
+
+                gateway.AwaitingHeartbeatAcknowledgement.Should().BeTrue();
             }
         }
     }
