@@ -137,7 +137,7 @@ Resources:
             Hostname:
               Exact: !Ref DomainName
 
-  ServiceRegistryRecord:
+  ServiceRegistry:
     Type: AWS::ServiceDiscovery::Service
     Properties:
       Description: Service Registry Record for Brighid Discord Adapter
@@ -200,7 +200,7 @@ Resources:
           AssignPublicIp: ENABLED
       TaskDefinition: !Ref TaskDefinition
       ServiceRegistries:
-        - RegistryArn: !GetAtt ServiceRegistryRecord.Arn
+        - RegistryArn: !GetAtt ServiceRegistry.Arn
           Port: 80
       DesiredCount: 1
       DeploymentConfiguration:
