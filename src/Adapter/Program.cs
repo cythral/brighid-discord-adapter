@@ -55,9 +55,9 @@ namespace Brighid.Discord.Adapter
                     builder.UseStartup<Startup>();
                     builder.ConfigureKestrel(options =>
                     {
-                        options.Listen(IPAddress.Any, 80, listenOptions =>
+                        options.ListenAnyIP(80, options =>
                         {
-                            listenOptions.Protocols = HttpProtocols.Http2;
+                            options.Protocols = HttpProtocols.Http2;
                         });
                     });
                 });
