@@ -70,8 +70,8 @@ Parameters:
     Production: "."
 
   EnvoyImage:
-    Development: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:arm64-v1.21.1.0-prod
-    Production: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:arm64-v1.21.1.0-prod
+    Development: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:arm64-v1.22.2.0-prod
+    Production: 840364872350.dkr.ecr.us-east-1.amazonaws.com/aws-appmesh-envoy:arm64-v1.22.2.0-prod
 
   XrayImage:
     Development: public.ecr.aws/xray/aws-xray-daemon:3.3.3
