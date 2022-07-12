@@ -1,7 +1,6 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 
 using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -50,18 +49,6 @@ namespace Brighid.Discord.Adapter.Messages
             }
 
             writer.WriteEndObject();
-        }
-
-        private void WriteData<TValue>(Utf8JsonWriter writer, string name, in TValue value, JsonTypeInfo typeInfo)
-        {
-            Console.WriteLine(typeof(TValue).Name);
-            if (value != null && typeInfo is JsonTypeInfo<TValue> jsonTypeInfo && jsonTypeInfo.SerializeHandler != null)
-            {
-                writer.WritePropertyName(name);
-                jsonTypeInfo.SerializeHandler(writer, value);
-                writer.Flush();
-                return;
-            }
         }
     }
 }

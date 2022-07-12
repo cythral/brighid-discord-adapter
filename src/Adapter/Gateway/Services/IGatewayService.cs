@@ -34,6 +34,11 @@ namespace Brighid.Discord.Adapter.Gateway
         GatewayState State { get; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the gateway is waiting for heartbeat acknowledgement.
+        /// </summary>
+        bool AwaitingHeartbeatAcknowledgement { get; set; }
+
+        /// <summary>
         /// Sets the gateway's ready state.
         /// </summary>
         /// <param name="ready">Whether or not the gateway is ready to process events from discord.</param>

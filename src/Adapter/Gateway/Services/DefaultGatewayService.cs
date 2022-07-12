@@ -76,6 +76,9 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public GatewayState State { get; private set; }
 
+        /// <inheritdoc/>
+        public bool AwaitingHeartbeatAcknowledgement { get; set; }
+
         /// <inheritdoc />
         public void SetReadyState(bool ready)
         {
@@ -159,6 +162,7 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             logger.LogInformation("Stopping Heartbeat. Last Sequence: {@sequenceNumber}", SequenceNumber);
+            AwaitingHeartbeatAcknowledgement = false;
             await heartbeat.Stop();
         }
 
@@ -189,7 +193,14 @@ namespace Brighid.Discord.Adapter.Gateway
         public async Task Heartbeat(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (AwaitingHeartbeatAcknowledgement)
+            {
+                await restartService.Restart(this, true, cancellationToken);
+                return;
+            }
+
             var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };
+            AwaitingHeartbeatAcknowledgement = true;
             await txWorker.Emit(message, cancellationToken);
         }
 

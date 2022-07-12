@@ -102,7 +102,7 @@ namespace Brighid.Discord.Generators
                 var switchExpression = SwitchExpression(IdentifierName(identifier), Token(SwitchKeyword), Token(OpenBraceToken), SeparatedList(switchArms), Token(CloseBraceToken));
 
                 yield return ParseStatement("message.ExtensionData.TryGetValue(\"d\", out var data);");
-                yield return ParseStatement("var text = (data.ValueKind == JsonValueKind.Undefined) ? \"{}\" : data.GetRawText();");
+                yield return ParseStatement("var text = (data.ValueKind == JsonValueKind.Undefined || data.ValueKind == JsonValueKind.Null) ? \"{}\" : data.GetRawText();");
                 yield return ReturnStatement(switchExpression);
             }
 
