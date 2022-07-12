@@ -116,6 +116,7 @@ Resources:
           AWSCloudMap:
             NamespaceName: !ImportValue brighid-infrastructure:ServiceRegistryName
             ServiceName: discord
+            IpPreference: IPv6_PREFERRED
 
   MeshGatewayRoute:
     Type: Custom::MeshGatewayRoute
@@ -145,6 +146,8 @@ Resources:
         DnsRecords:
           - TTL: 60
             Type: A
+          - TTL: 60
+            Type: AAAA
           - TTL: 60
             Type: SRV
       HealthCheckCustomConfig:
