@@ -47,6 +47,7 @@ namespace Brighid.Discord.Adapter
                 .ReadFrom.Configuration(configuration)
                 .Destructure.UsingAttributes()
                 .Enrich.FromLogContext()
+                .MinimumLevel.Is(LogEventLevel.Debug)
                 .MinimumLevel.Override("DefaultHealthCheckService", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Server.Kestrel", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware", LogEventLevel.Warning)
