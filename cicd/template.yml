@@ -189,6 +189,7 @@ Resources:
       Cluster: !ImportValue brighid-infrastructure:ClusterName
       ServiceName: discord-adapter
       LaunchType: FARGATE
+      EnableExecuteCommand: true
       NetworkConfiguration:
         AwsvpcConfiguration:
           Subnets: !Split
