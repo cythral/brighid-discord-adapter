@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -55,16 +56,17 @@ namespace Brighid.Discord.Adapter.Management
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private async Task Stop(IPAddress address, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var response = await httpClient.PutAsync($"http://{address}/node/gateway/state", content, cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                logger.LogError("Was unable to shift traffic from {@address}, got status code: {@status}", address, response.StatusCode);
-                return;
+                cancellationToken.ThrowIfCancellationRequested();
+                var response = await httpClient.PutAsync($"http://{address}/node/gateway/state", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                logger.LogInformation("Successfully shifted traffic from {@address}", address);
             }
-
-            logger.LogInformation("Successfully shifted traffic from {@address}", address);
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Was unable to shift traffic from {@address}", address);
+            }
         }
     }
 }
