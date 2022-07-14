@@ -83,14 +83,17 @@ namespace Brighid.Discord.Adapter.Management
             logger.LogInformation("Peer IP Addresses: {@peers}", string.Join(", ", addresses.Select(address => address.ToString())));
             var nodes = from address in addresses
                         where !address.Equals(currentIp)
-                        select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
+                        select httpClient.GetFromJsonAsync<NodeInfo>($"http://[{address}]/node", cancellationToken: cancellationToken);
 
             try
             {
-                return await Task.WhenAll(nodes);
+                var result = await Task.WhenAll(nodes);
+                logger.LogInformation("Received list of peers: {@peers}", result);
+                return result;
             }
-            catch (UriFormatException)
+            catch (UriFormatException exception)
             {
+                logger.LogError(exception, "Got exception when retrieving peer list.");
                 return Array.Empty<NodeInfo>();
             }
         }
