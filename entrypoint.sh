@@ -2,6 +2,8 @@
 
 set -eo pipefail
 
+env
+
 if [ "$Environment" != "local" ]; then
     export Adapter__ClientSecret=$(decrs ${Encrypted__Adapter__ClientSecret}) || exit 1;
     export Adapter__Token=$(decrs ${Encrypted__Adapter__Token}) || exit 1;
