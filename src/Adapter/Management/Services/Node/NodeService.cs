@@ -80,6 +80,7 @@ namespace Brighid.Discord.Adapter.Management
         public async Task<IEnumerable<NodeInfo>> GetPeers(IPAddress currentIp, CancellationToken cancellationToken)
         {
             var addresses = await dns.GetIPAddresses(options.Host, cancellationToken);
+            logger.LogInformation("Peer IP Addresses: {@peers}", string.Join(", ", addresses.Select(address => address.ToString())));
             var nodes = from address in addresses
                         where !address.Equals(currentIp)
                         select httpClient.GetFromJsonAsync<NodeInfo>($"http://{address}/node", cancellationToken: cancellationToken);
