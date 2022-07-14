@@ -123,18 +123,18 @@ namespace Brighid.Discord.Adapter.Management
                 CancellationToken cancellationToken
             )
             {
-                var node1Ip = IPAddress.Parse("1.1.1.1");
-                var node2Ip = IPAddress.Parse("2.2.2.2");
-                var node3Ip = IPAddress.Parse("3.3.3.3");
+                var node1Ip = IPAddress.Parse("ea9b:3c94:1791:fafb:f5fe:5c7e:05fc:af52");
+                var node2Ip = IPAddress.Parse("8526:e466:415c:e5f2:4998:d840:bb1c:1e49");
+                var node3Ip = IPAddress.Parse("8193:6160:9ba4:8599:d274:b058:4b02:3dff");
 
                 dnsService.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { node1Ip, node2Ip, node3Ip });
 
                 handler
-                .Expect(HttpMethod.Get, $"http://{node1Ip}/node")
+                .Expect(HttpMethod.Get, $"http://[{node1Ip}]/node")
                 .Respond("application/json", JsonSerializer.Serialize(node1));
 
                 handler
-                .Expect(HttpMethod.Get, $"http://{node2Ip}/node")
+                .Expect(HttpMethod.Get, $"http://[{node2Ip}]/node")
                 .Respond("application/json", JsonSerializer.Serialize(node2));
 
                 var result = await service.GetPeers(node3Ip, cancellationToken);
