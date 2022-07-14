@@ -359,6 +359,7 @@ Resources:
         - arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
       AssumeRolePolicyDocument:
         Version: 2012-10-17
