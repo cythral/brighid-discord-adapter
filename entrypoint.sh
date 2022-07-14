@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-env
+curl "$ECS_CONTAINER_METADATA_URI_V4/task"
 
 if [ "$Environment" != "local" ]; then
     export Adapter__ClientSecret=$(decrs ${Encrypted__Adapter__ClientSecret}) || exit 1;
