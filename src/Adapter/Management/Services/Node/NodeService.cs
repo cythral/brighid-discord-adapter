@@ -91,7 +91,7 @@ namespace Brighid.Discord.Adapter.Management
                 logger.LogInformation("Received list of peers: {@peers}", result);
                 return result;
             }
-            catch (UriFormatException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception, "Got exception when retrieving peer list.");
                 return Array.Empty<NodeInfo>();
