@@ -11,7 +11,7 @@ namespace Brighid.Discord.Adapter.Management
         /// <summary>
         /// Gets or sets the list of ip addresses.
         /// </summary>
-        [JsonPropertyName("IPv4Addresses")]
-        public string[] Ipv4Addresses { get; set; } = Array.Empty<string>();
+        [JsonPropertyName("IPv6Addresses")]
+        public string[] IPv6Addresses { get; set; } = Array.Empty<string>();
     }
 }

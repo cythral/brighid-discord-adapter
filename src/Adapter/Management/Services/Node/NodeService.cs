@@ -58,7 +58,7 @@ namespace Brighid.Discord.Adapter.Management
 
             return taskMetadata == null
                     ? IPAddress.None
-                    : IPAddress.Parse(taskMetadata.Containers[0].Networks[0].Ipv4Addresses[0]);
+                    : IPAddress.Parse(taskMetadata.Containers[0].Networks[0].IPv6Addresses[0]);
         }
 
         /// <inheritdoc />
