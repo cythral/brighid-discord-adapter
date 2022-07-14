@@ -334,6 +334,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
           Environment:
+            - Name: ENVOY_LOG_LEVEL
+              Value: debug
             - Name: APPMESH_RESOURCE_ARN
               Value: !Sub
                 - mesh/brighid-mesh@${SharedAccountId}/virtualNode/${MeshNode.VirtualNodeName}
