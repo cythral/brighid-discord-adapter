@@ -1,7 +1,4 @@
-using System.Net.Http;
-
 using Amazon.XRay.Recorder.Core;
-using Amazon.XRay.Recorder.Handlers.System.Net;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -21,7 +18,7 @@ namespace Brighid.Discord.Tracing
         {
             AWSXRayRecorder.InitializeInstance();
 
-            services.AddTransient<DelegatingHandler, HttpClientXRayTracingHandler>();
+            // services.AddTransient<DelegatingHandler, HttpClientXRayTracingHandler>();
             services.TryAddSingleton<ITracingService, AwsXRayTracingService>();
             services.TryAddSingleton<ITracingIdService, AwsXRayTracingIdService>();
             services.TryAddSingleton<IAWSXRayRecorder>(AWSXRayRecorder.Instance);
