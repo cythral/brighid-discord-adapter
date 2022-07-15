@@ -75,3 +75,12 @@ services:
 
 volumes:
   my-db: null
+
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: fd00:109b:2e51::/80
+          gateway: fd00:109b:2e51::1

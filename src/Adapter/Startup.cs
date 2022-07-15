@@ -42,6 +42,7 @@ namespace Brighid.Discord.Adapter
         )
         {
             this.configuration = configuration;
+            _ = new NetEventLogListener();
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
