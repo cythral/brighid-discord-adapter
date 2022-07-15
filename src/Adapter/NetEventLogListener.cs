@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.Tracing;
+using System.Linq;
 
 #pragma warning disable SA1600, IDE0044
 
@@ -7,10 +8,11 @@ namespace Brighid.Discord.Adapter
 {
     public class NetEventLogListener : EventListener
     {
+        private static readonly string[] EventSourceNames = new[] { "Private.InternalDiagnostics.System.Net.Http", "System.Net.Http" };
+
         protected override void OnEventSourceCreated(EventSource eventSource)
         {
-            Console.WriteLine(eventSource.Name);
-            if (eventSource.Name == "Private.InternalDiagnostics.System.Net.Http")
+            if (EventSourceNames.Contains(eventSource.Name))
             {
                 // initialize a string, string dictionary of arguments to pass to the EventSource.
                 // Turn on loggers matching App* to Information, everything else (*) is the default level (which is EventLevel.Error)
