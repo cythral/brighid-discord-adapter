@@ -4,11 +4,11 @@
     "net6.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.2.78, )",
-        "resolved": "3.7.2.78",
-        "contentHash": "hWCKRwgwWDNC3+2z/XsJ9wc1NaIWdXUM8hP4JaGzYEgwOencaSuV7uvy3wjQsrJftqvdrD+JTIJAxQaoaG+JoQ==",
+        "requested": "[3.7.2.79, )",
+        "resolved": "3.7.2.79",
+        "contentHash": "ThHRaLYaqUUak+0E6ay+BNVBjcB/5spl79vThNG1FV9/79RxxNu85gwsucz7VzC1pB5/twoeROEdSF+lrEO7Gw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.9, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.10, 4.0.0)"
         }
       },
       "Microsoft.AspNetCore.Mvc": {
@@ -82,8 +82,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.12.9",
-        "contentHash": "Eo0uJXDhZGhgm7hUGAigWsYgEtpsr7icoMJ0Fb5MFWh7iO5QcmItt/XIlPQ08j9iQezmoQabPqrnf6MFNOksbA=="
+        "resolved": "3.7.12.10",
+        "contentHash": "53teS6IJr7RE+U7z6MR3JgMUFsn8HzgMamPhunw15zSrUf94sRND2xeTRc2Z1gkYOJWlWuYngWEIjDc7n1D8iA=="
       },
       "AWSXRayRecorder": {
         "type": "Transitive",
