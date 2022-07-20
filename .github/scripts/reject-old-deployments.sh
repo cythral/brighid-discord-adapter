@@ -9,9 +9,8 @@ deployment_id=$(gh api repos/$repo/deployments --jq '[.[] | select(.environment 
 target_url=$(gh api repos/$repo/deployments/$deployment_id/statuses --jq '.[0].target_url')
 job_id=$(echo $target_url | sed -E "s/https:\/\/github.com\/${escaped_repo}\/runs\/([0-9]+).*/\1/")
 run_id=$(gh api repos/$repo/actions/jobs/$job_id --jq '.run_id')
-deployments=$(gh api repos/$repo/actions/$run_id/pending_deployments --jq '. | length')
 
-if [ "$deployments" != "0" ]; then
+if gh api repos/$repo/actions/$run_id/pending_deployments 2>/dev/null; then
     gh api \
         --method POST \
         repos/$repo/actions/runs/$run_id/pending_deployments \
