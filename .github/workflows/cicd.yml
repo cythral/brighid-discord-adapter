@@ -81,7 +81,7 @@ jobs:
 
   deploy-dev:
     uses: cythral/brighid-discord-adapter/.github/workflows/deploy.yml@master
-    needs: 
+    needs:
       - build
       - start-dev-db
     with:
@@ -91,12 +91,27 @@ jobs:
       role: ${{ secrets.AWS_DEV_ROLE }}
       discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
+  reject-old-deployments:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deploy-dev
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
+    concurrency: reject-old-deployments
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Reject Old Deployments
+        run: ./.github/scripts/reject-old-deployments.sh
+
   deploy-prod:
     uses: cythral/brighid-discord-adapter/.github/workflows/deploy.yml@master
     if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
     needs:
       - build
       - deploy-dev
+      - reject-old-deployments
     with:
       environment: Production
       artifacts-location: ${{ needs.build.outputs.artifacts-location }}
