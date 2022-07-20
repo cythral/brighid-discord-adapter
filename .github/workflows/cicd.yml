@@ -104,6 +104,8 @@ jobs:
 
       - name: Reject Old Deployments
         run: ./.github/scripts/reject-old-deployments.sh ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   deploy-prod:
     uses: cythral/brighid-discord-adapter/.github/workflows/deploy.yml@master
