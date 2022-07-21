@@ -37,14 +37,14 @@ namespace Brighid.Discord.RestClient.Responses
                     {
                         var ips =
                             from address in networkInterface.GetIPProperties().UnicastAddresses
-                            where address.Address.AddressFamily == AddressFamily.InterNetwork &&
+                            where address.Address.AddressFamily == AddressFamily.InterNetworkV6 &&
                                 !IPAddress.IsLoopback(address.Address)
                             select address.Address;
 
                         if (ips.Any())
                         {
                             var ip = ips.First();
-                            uri = new Uri($"http://{ip}/brighid/discord/rest-response");
+                            uri = new Uri($"http://[{ip}]/brighid/discord/rest-response");
                             break;
                         }
                     }
