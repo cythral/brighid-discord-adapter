@@ -97,7 +97,6 @@ jobs:
     needs:
       - build
       - deploy-dev
-      - reject-old-deployments
     with:
       environment: Production
       artifacts-location: ${{ needs.build.outputs.artifacts-location }}
