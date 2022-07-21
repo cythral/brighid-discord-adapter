@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
 
 using Amazon.CloudWatch;
 using Amazon.ECS;
@@ -146,7 +145,7 @@ namespace Brighid.Discord.Adapter
         [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2026:RequiresUnreferencedCode", Justification = "Everything referenced is preserved via attributes.")]
         private void ConfigureBrighidServices(IServiceCollection services)
         {
-            services.ConfigureBrighidIdentity<IdentityOptions>(configuration.GetSection("Identity"), new SocketsHttpHandler { EnableMultipleHttp2Connections = true });
+            services.ConfigureBrighidIdentity<IdentityOptions>(configuration.GetSection("Identity"));
             services.AddBrighidCommands(configuration.GetSection("Commands").Bind);
         }
 
