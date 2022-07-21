@@ -15,7 +15,7 @@ function has_pending_deployment() {
     return 1
 }
 
-if has_pending_deployment $repo $run_id; then
+if has_pending_deployment; then
     gh api \
         --method POST \
         repos/$repo/actions/runs/$run_id/pending_deployments \
