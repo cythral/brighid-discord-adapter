@@ -10,7 +10,12 @@ target_url=$(gh api repos/$repo/deployments/$deployment_id/statuses --jq '.[0].t
 job_id=$(echo $target_url | sed -E "s/https:\/\/github.com\/${escaped_repo}\/runs\/([0-9]+).*/\1/")
 run_id=$(gh api repos/$repo/actions/jobs/$job_id --jq '.run_id')
 
-if gh api repos/$repo/actions/runs/$run_id/pending_deployments >/dev/null 2>&1; then
+function has_pending_deployment() {
+    gh api repos/$repo/actions/runs/$run_id/pending_deployments || return 0
+    return 1
+}
+
+if has_pending_deployment $repo $run_id; then
     gh api \
         --method POST \
         repos/$repo/actions/runs/$run_id/pending_deployments \
