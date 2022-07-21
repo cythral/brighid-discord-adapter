@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 using Destructurama.Attributed;
 
+using Serilog.Events;
+
 namespace Brighid.Discord.Adapter
 {
     /// <summary>
@@ -17,6 +19,11 @@ namespace Brighid.Discord.Adapter
         public Uri? TaskMetadataUrl { get; set; } = Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") != null
                 ? new Uri(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI_V4") + "/task")
                 : null;
+
+        /// <summary>
+        /// Gets or sets the minimum log level to use for the adapter.
+        /// </summary>
+        public LogEventLevel LogLevel { get; set; } = LogEventLevel.Information;
 
         /// <summary>
         /// Gets or sets the auth scheme to use when making requests to the REST API.

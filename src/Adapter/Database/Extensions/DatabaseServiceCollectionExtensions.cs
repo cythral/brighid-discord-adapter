@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using Brighid.Discord.Adapter;
 using Brighid.Discord.Adapter.Database;
 
 using Microsoft.EntityFrameworkCore;
@@ -33,9 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 conn += "DefaultCommandTimeout=0;";
                 conn += "UseCompression=true";
 
-                var version = Program.AutoDetectDatabaseVersion
-                    ? ServerVersion.AutoDetect(conn)
-                    : new MySqlServerVersion(new Version(5, 7, 0));
+                var version = GetVersion(conn);
 
                 options
                 .UseMySql(conn, version)
@@ -43,6 +40,18 @@ namespace Microsoft.Extensions.DependencyInjection
             });
 
             services.AddSingleton<ITransactionFactory, DefaultTransactionFactory>();
+        }
+
+        private static ServerVersion GetVersion(string conn)
+        {
+            try
+            {
+                return ServerVersion.AutoDetect(conn);
+            }
+            catch
+            {
+                return new MySqlServerVersion(new Version(8, 0, 0));
+            }
         }
     }
 }

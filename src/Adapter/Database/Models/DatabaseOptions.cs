@@ -9,6 +9,11 @@ namespace Brighid.Discord.Adapter.Database
     public class DatabaseOptions
     {
         /// <summary>
+        /// Gets or sets a value indicating whether migrations should run at startup.
+        /// </summary>
+        public bool RunMigrationsOnStartup { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets the database host name.
         /// </summary>
         public string Host { get; set; } = string.Empty;
