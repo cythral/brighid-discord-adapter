@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using Brighid.Discord.RestClient.Responses;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -24,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services
             .AddMvcCore()
-            .AddApplicationPart(Assembly.GetCallingAssembly());
+            .AddApplicationPart(typeof(ResponsesServiceCollectionExtensions).Assembly);
         }
     }
 }
