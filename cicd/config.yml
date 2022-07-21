@@ -80,3 +80,11 @@ Parameters:
   MeshNodeName:
     Development: discord-dev
     Production: discord-prod
+
+  LogLevel:
+    Development: Debug
+    Production: Information
+
+  ValidateScopes:
+    Development: "true"
+    Production: "false"

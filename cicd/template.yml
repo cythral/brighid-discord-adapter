@@ -89,6 +89,17 @@ Parameters:
     Type: String
     Description: Name to use for the node in the App Mesh.
 
+  LogLevel:
+    Type: String
+    Description: The minimum log level to allow.
+
+  ValidateScopes:
+    Type: String
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether or not to perform scope validation (don't use in production as this adds extra overhead to service initialization).
+
 Resources:
   MeshService:
     Type: AWS::AppMesh::VirtualService
@@ -304,6 +315,10 @@ Resources:
               Value: !Ref RegistrationUrl
             - Name: Adapter__OAuth2RedirectUri
               Value: !Sub https://${DomainName}/oauth2/callback
+            - Name: Adapter__LogLevel
+              Value: !Ref LogLevel
+            - Name: Adapter__ValidateScopes
+              Value: !Ref ValidateScopes
             - Name: Commands__ServiceUri
               Value: !Ref CommandsServiceUri
             - Name: Commands__DefaultPrefix

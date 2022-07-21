@@ -8,6 +8,7 @@
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSelfContained>true</PublishSelfContained>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <RootNamespace>Brighid.Discord.Adapter</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

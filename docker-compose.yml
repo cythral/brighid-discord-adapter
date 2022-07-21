@@ -32,6 +32,7 @@ services:
       Identity__ClientSecret: ${IDENTITY_CLIENT_SECRET}
       Commands__ServiceUri: ${COMMANDS_SERVICE_URI}
       Commands__DefaultPrefix: '-'
+      Database__RunMigrationsOnStartup: 'true'
       Database__Host: db
       Database__Name: ${DB_NAME}
       Database__User: ${DB_USER}
@@ -43,6 +44,8 @@ services:
       Adapter__Token: ${ADAPTER_TOKEN}
       Adapter__RegistrationUrl: https://identity.dev.brigh.id/account/link/discord
       Adapter__StaticAssetsRepositoryUrl: https://static.dev.brigh.id
+      Adapter__LogLevel: Debug
+      Adapter__ValidateScopes: 'true'
       Metrics__Namespace: ${METRICS_NAMESPACE}
       AWS_REGION: us-east-1
       AWS_XRAY_DAEMON_ADDRESS: xray:2000
