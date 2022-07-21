@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -83,7 +84,7 @@ namespace Brighid.Discord.Adapter.Management
             logger.LogInformation("Peer IP Addresses: {@peers}", string.Join(", ", addresses.Select(address => address.ToString())));
             var nodes = from address in addresses
                         where !address.Equals(currentIp)
-                        select httpClient.GetFromJsonAsync<NodeInfo>($"http://[{address}]/node", cancellationToken: cancellationToken);
+                        select GetPeerNodeInfo(address, cancellationToken);
 
             try
             {
@@ -96,6 +97,21 @@ namespace Brighid.Discord.Adapter.Management
                 logger.LogError(exception, "Got exception when retrieving peer list.");
                 return Array.Empty<NodeInfo>();
             }
+        }
+
+        private async Task<NodeInfo> GetPeerNodeInfo(IPAddress peer, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"http://[{peer}]/node"),
+                Version = new Version(2, 0),
+                VersionPolicy = HttpVersionPolicy.RequestVersionExact,
+            };
+
+            var response = await httpClient.SendAsync(request, cancellationToken: cancellationToken);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<NodeInfo>(cancellationToken: cancellationToken) ?? throw new Exception($"Received invalid peer info from {peer}");
         }
 
         private async Task<TaskMetadata?> GetTaskMetadata(CancellationToken cancellationToken)
