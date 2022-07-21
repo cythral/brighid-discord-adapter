@@ -49,9 +49,9 @@ namespace Brighid.Discord.Adapter.Management
             )
             {
                 currentNode.Shard = 2;
-                SetupNode(peer1, 2, "1.1.1.1", http, true);
-                SetupNode(peer2, 1, "2.2.2.2", http, false);
-                SetupNode(peer3, 2, "3.3.3.3", http, true);
+                SetupNode(peer1, 2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
+                SetupNode(peer2, 1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
+                SetupNode(peer3, 2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, true);
 
                 context.Get<NodeInfo>().Returns(currentNode);
                 context.Get<IEnumerable<NodeInfo>>().Returns(new[] { peer1, peer2, peer3 });
@@ -74,9 +74,9 @@ namespace Brighid.Discord.Adapter.Management
             )
             {
                 currentNode.Shard = 2;
-                SetupNode(peer1, 2, "1.1.1.1", http, true);
-                SetupNode(peer2, 1, "2.2.2.2", http, false);
-                SetupNode(peer3, 2, "3.3.3.3", http, false);
+                SetupNode(peer1, 2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
+                SetupNode(peer2, 1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
+                SetupNode(peer3, 2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, false);
 
                 context.Get<NodeInfo>().Returns(currentNode);
                 context.Get<IEnumerable<NodeInfo>>().Returns(new[] { peer1, peer2, peer3 });
