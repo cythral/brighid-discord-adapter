@@ -59,7 +59,7 @@ namespace Brighid.Discord.Adapter.Management
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var response = await httpClient.PutAsync($"http://{address}/node/gateway/state", content, cancellationToken);
+                var response = await httpClient.PutAsync($"http://[{address}]/node/gateway/state", content, cancellationToken);
                 response.EnsureSuccessStatusCode();
                 logger.LogInformation("Successfully shifted traffic from {@address}", address);
             }
