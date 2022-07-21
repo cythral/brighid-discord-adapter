@@ -22,6 +22,7 @@ namespace Brighid.Discord.Adapter.Requests
     public class DefaultBucketServiceTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class GetBucketAndWaitForAvailabilityTests
         {
             [Test, Auto]
@@ -140,7 +141,7 @@ namespace Brighid.Discord.Adapter.Requests
             }
 
             [Test, Auto]
-            public async Task ShouldNotDelayIfHitsRemainingIsNotZero(
+            public async Task ShouldNotDelayIfHitsRemainingIsNotZeroOr1(
                 Request request,
                 [Frozen] Bucket bucket,
                 [Frozen, Substitute] ITimerFactory timerFactory,
@@ -149,7 +150,7 @@ namespace Brighid.Discord.Adapter.Requests
                 CancellationToken cancellationToken
             )
             {
-                bucket.HitsRemaining = 1;
+                bucket.HitsRemaining = 2;
                 await service.GetBucketAndWaitForAvailability(request, cancellationToken);
 
                 await timerFactory.DidNotReceive().CreateDelay(Is((int)Math.Ceiling((bucket.ResetAfter - DateTimeOffset.Now).TotalMilliseconds)), Is(cancellationToken));
