@@ -492,7 +492,7 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - !ImportValue cfn-utilities:LambdaSecurityGroupId
-        SubnetIds: !Split [",", !ImportValue cfn-utilities:PrivateSubnetIds]
+        SubnetIds: !Split [",", !ImportValue cfn-utilities:SubnetIds]
       Environment:
         Variables:
           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
