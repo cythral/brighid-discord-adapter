@@ -11,7 +11,7 @@ namespace Brighid.Discord.CacheExpirer
         public async Task<IEnumerable<IPAddress>> GetIPAddresses(string host, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await Dns.GetHostAddressesAsync(host, AddressFamily.InterNetworkV6, cancellationToken);
+            return await Dns.GetHostAddressesAsync(host, AddressFamily.Unspecified, cancellationToken);
         }
     }
 }

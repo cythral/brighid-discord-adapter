@@ -25,7 +25,7 @@ namespace Brighid.Discord.CacheExpirer
         {
             cancellationToken.ThrowIfCancellationRequested();
             logger.LogInformation("Expiring cache for user: {@userId} on IP {@ip}", userId, ip);
-            using var response = await httpClient.DeleteAsync($"http://[{ip}]/cache/users/{userId}", cancellationToken);
+            using var response = await httpClient.DeleteAsync($"http://{ip}/cache/users/{userId}", cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
@@ -33,7 +33,7 @@ namespace Brighid.Discord.CacheExpirer
         {
             cancellationToken.ThrowIfCancellationRequested();
             logger.LogInformation("Expiring cache for command: {@command} on IP {@ip}", command, ip);
-            using var response = await httpClient.DeleteAsync($"http://[{ip}]/cache/commands/{command}", cancellationToken);
+            using var response = await httpClient.DeleteAsync($"http://{ip}/cache/commands/{command}", cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }
