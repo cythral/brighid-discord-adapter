@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Lambdajection.Attributes;
 using Lambdajection.Sns;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.CacheExpirer
@@ -18,16 +19,19 @@ namespace Brighid.Discord.CacheExpirer
 
         private readonly IDnsService dns;
         private readonly ICacheService cache;
+        private readonly ILogger<Handler> logger;
         private readonly CacheExpirerOptions options;
 
         public Handler(
             IDnsService dns,
             ICacheService cache,
-            IOptions<CacheExpirerOptions> options
+            IOptions<CacheExpirerOptions> options,
+            ILogger<Handler> logger
         )
         {
             this.dns = dns;
             this.cache = cache;
+            this.logger = logger;
             this.options = options.Value;
         }
 
@@ -42,6 +46,7 @@ namespace Brighid.Discord.CacheExpirer
             };
 
             var ipAddresses = await dns.GetIPAddresses(options.AdapterUrl, cancellationToken);
+            logger.LogInformation("Found IP Addresses: {@ipAddresses}", string.Join(',', ipAddresses));
             var tasks = ipAddresses.Select(ip => expireFunction(ip, request.Message.Id, cancellationToken));
             await Task.WhenAll(tasks);
 
