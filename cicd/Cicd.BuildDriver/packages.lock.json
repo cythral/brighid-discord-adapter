@@ -1014,10 +1014,10 @@
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "sFIo5e9RmQoCTEvH6EeSV8ptmX3dw/6XgyD8R93X/i7A9+XCeG9KTjSNjrszVjVOtCu/eyvYqqcv2uZ/BHhlYA==",
+        "resolved": "6.0.2",
+        "contentHash": "KvlZ800CnEuEGnxj5OT1fCKGjQXxW5kpPlCP91JqBYG+2Z3927eqXmlX6LLKUt4swqE8ZsEQ+Zkpab8bqstf4g==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "[6.0.1, 7.0.0)",
+          "Microsoft.EntityFrameworkCore.Relational": "[6.0.7, 7.0.0)",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "MySqlConnector": "2.1.2"
         }
@@ -1935,7 +1935,7 @@
           "Microsoft.Extensions.Hosting": "6.0.1",
           "Microsoft.Extensions.Options": "6.0.0",
           "Models": "1.0.0",
-          "Pomelo.EntityFrameworkCore.MySql": "6.0.1",
+          "Pomelo.EntityFrameworkCore.MySql": "6.0.2",
           "RestClient": "1.0.0",
           "Serilog.AspNetCore": "6.0.1",
           "Serilog.Filters.Expressions": "2.1.0"
