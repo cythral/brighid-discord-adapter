@@ -201,6 +201,7 @@ Resources:
       ServiceName: discord-adapter
       LaunchType: FARGATE
       EnableExecuteCommand: true
+      EnableECSManagedTags: true
       NetworkConfiguration:
         AwsvpcConfiguration:
           Subnets: !Split
