@@ -491,8 +491,8 @@ Resources:
             Topic: !ImportValue brighid-infrastructure:CacheExpirationTopic
       VpcConfig:
         SecurityGroupIds:
-          - !Ref CacheExpirerSecurityGroup
-        SubnetIds: !Split [",", !ImportValue cfn-utilities:PrivateSubnetIds]
+          - !ImportValue cfn-utilities:LambdaSecurityGroupId
+        SubnetIds: !Split [",", !ImportValue cfn-utilities:SubnetIds]
       Environment:
         Variables:
           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
@@ -500,12 +500,6 @@ Resources:
           Identity__IdentityServerUri: !Sub http://${IdentityServerUri}
           Identity__ClientId: !GetAtt CacheExpirerIdentityApplication.Id
           Identity__ClientSecret: !GetAtt CacheExpirerIdentityApplication.EncryptedSecret
-
-  CacheExpirerSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security Group for Brighid Discord Cache Expirer
-      VpcId: !ImportValue cfn-utilities:VpcId
 
   CacheExpirerIdentityApplication:
     Type: Custom::IdentityApplication
