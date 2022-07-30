@@ -4,11 +4,11 @@
     "net6.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.2.83, )",
-        "resolved": "3.7.2.83",
-        "contentHash": "5wUzVKaYji4KSk/5P3peZkszXxHiJ1EC2S3v8SQxlLO8J9B2Jn9jqq8Wwut9kMrVnyR+xYuVDqrZmffhCHL6OQ==",
+        "requested": "[3.7.2.84, )",
+        "resolved": "3.7.2.84",
+        "contentHash": "5piq5b4Nlc3mmVytl8cTwe9pGMzthV3J5hJSVVGNveRChzvgVMh4V/+LUP1LVxA1N3q5rEpu3M6ymGoSY9ToqQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.15, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.16, 4.0.0)"
         }
       },
       "Lambdajection": {
@@ -73,8 +73,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.12.15",
-        "contentHash": "kiR7Pv/hgTjX2fS9qbkmeXo10DKSF+YVeN0rUgE/P1TKSunz/IRx2EYgrJkcRoM9JOYHfrHH4y/CrOmFQn+DIg=="
+        "resolved": "3.7.12.16",
+        "contentHash": "6o20L6vXNHtRZ0Ir0QN3v7H+jy8+WUQXMN9tdDdIDj/NCacWU1BHHDEbpCTAV6UopRIFd+IulXGbHCfoLLbgDw=="
       },
       "Humanizer.Core": {
         "type": "Transitive",
