@@ -161,23 +161,23 @@
       },
       "AWSSDK.CloudWatch": {
         "type": "Transitive",
-        "resolved": "3.7.5.4",
-        "contentHash": "0eyZAViRRWfVVRc42mbaefqclpdDptO9prR7aEENkp0ESnYBE4mZiJX9e2ftgARfDKmy3/9qskK6PYHkrnj1qw==",
+        "resolved": "3.7.5.5",
+        "contentHash": "Oy00g1qY+Yre942vuWoXs0YhvoPa6ydM9l1BYsGlCw1IQefYwO0Lh84i+Uj5AWko2dE/NSZzsnnDYYkmNRZhgg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.16, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.17, 4.0.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.12.16",
-        "contentHash": "6o20L6vXNHtRZ0Ir0QN3v7H+jy8+WUQXMN9tdDdIDj/NCacWU1BHHDEbpCTAV6UopRIFd+IulXGbHCfoLLbgDw=="
+        "resolved": "3.7.12.17",
+        "contentHash": "74qBM2d3LZluV+Qq1o0OGNKjNmZHNe3TIcMJ7PVeIhLG0r0fj20B82ib95gE8sPfaOIgw1p0jc1oVyO2biBTcQ=="
       },
       "AWSSDK.ECS": {
         "type": "Transitive",
-        "resolved": "3.7.5.58",
-        "contentHash": "GznI1GyM2cry+YeMB66072oPa0Wes/OLEicdVqhSGzoi0iezTUEuV4MsNScEenDmzEZDaCvzsuMLxGgdjOUWjw==",
+        "resolved": "3.7.5.59",
+        "contentHash": "NXZuATiKtwyhRXlKG0vwPRqY6xEP9HbymBIrNg3iHLDrojCDtidHJRBv1MDvQxl8Yg44NDPN7vE9U2/SeQp9AA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.16, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.17, 4.0.0)"
         }
       },
       "AWSSDK.KeyManagementService": {
@@ -190,18 +190,18 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.7.3.87",
-        "contentHash": "P0eOm17cCUtxAtz4fRKsPCAq751EMJoYogJu9JxS0rN9x87y03C3n03q+AOhNEUT36SuEVSp8eFOcQpgWsAlFA==",
+        "resolved": "3.7.3.88",
+        "contentHash": "muyZ2AZ9oJW8f9fQ+TyZQ/BAO0xWhsxoGHDWKI8TLn7+64U2wuoF44Apb0ylkSNTifrXaxbRASXBGJCncXH4qg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.16, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.17, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.2.84",
-        "contentHash": "5piq5b4Nlc3mmVytl8cTwe9pGMzthV3J5hJSVVGNveRChzvgVMh4V/+LUP1LVxA1N3q5rEpu3M6ymGoSY9ToqQ==",
+        "resolved": "3.7.2.85",
+        "contentHash": "TaB+qoQJP2jPzRCOBkyvR0N2Rq3BCDBj6FdXESEVLGRxrvm4y8sfMtncwVr8uiB1V+tqHdcpw1gfx98NLx8fxg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.12.16, 4.0.0)"
+          "AWSSDK.Core": "[3.7.12.17, 4.0.0)"
         }
       },
       "AWSXRayRecorder": {
@@ -1917,9 +1917,9 @@
       "adapter": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.5.4",
-          "AWSSDK.ECS": "3.7.5.58",
-          "AWSSDK.SimpleNotificationService": "3.7.3.87",
+          "AWSSDK.CloudWatch": "3.7.5.5",
+          "AWSSDK.ECS": "3.7.5.59",
+          "AWSSDK.SimpleNotificationService": "3.7.3.88",
           "Brighid.Commands.Client": "0.3.0.119-beta1",
           "Brighid.Discord.Core": "1.0.0",
           "Brighid.Identity.Client": "0.6.4.6",
@@ -1965,7 +1965,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.2.84",
+          "AWSSDK.SQS": "3.7.2.85",
           "Lambdajection": "0.10.0-beta1",
           "Lambdajection.Layer": "0.10.0-beta1",
           "Lambdajection.Runtime": "0.10.0-beta1",
@@ -1976,7 +1976,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.2.84",
+          "AWSSDK.SQS": "3.7.2.85",
           "Brighid.Discord.Core": "1.0.0",
           "Microsoft.Extensions.Hosting": "6.0.1",
           "Microsoft.Extensions.Options": "6.0.0",
