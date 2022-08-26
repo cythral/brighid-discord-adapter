@@ -544,6 +544,7 @@ Resources:
       MetricName: GatewayRestarted
       Namespace: !Ref MetricsNamespace
       TreatMissingData: notBreaching
+      Unit: Count
       AlarmActions:
         - !Ref MonitoringTopic
       OKActions:
