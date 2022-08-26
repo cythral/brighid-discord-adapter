@@ -5,9 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Brighid.Discord.Adapter.Events;
-using Brighid.Discord.Adapter.Metrics;
-
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Adapter.Requests
@@ -20,7 +17,6 @@ namespace Brighid.Discord.Adapter.Requests
         private readonly IRequestMessageRelay relay;
         private readonly IBucketService bucketService;
         private readonly IBucketRepository bucketRepository;
-        private readonly IMetricReporter reporter;
         private readonly ILogger<DefaultRequestInvoker> logger;
 
         /// <summary>
@@ -31,7 +27,6 @@ namespace Brighid.Discord.Adapter.Requests
         /// <param name="relay">Service used to relay messages back and forth between SQS.</param>
         /// <param name="bucketService">Service used to manage buckets.</param>
         /// <param name="bucketRepository">Repository to manage buckets.</param>
-        /// <param name="reporter">Service used to report metrics.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public DefaultRequestInvoker(
             HttpMessageInvoker client,
@@ -39,7 +34,6 @@ namespace Brighid.Discord.Adapter.Requests
             IRequestMessageRelay relay,
             IBucketService bucketService,
             IBucketRepository bucketRepository,
-            IMetricReporter reporter,
             ILogger<DefaultRequestInvoker> logger
         )
         {
@@ -48,7 +42,6 @@ namespace Brighid.Discord.Adapter.Requests
             this.relay = relay;
             this.bucketService = bucketService;
             this.bucketRepository = bucketRepository;
-            this.reporter = reporter;
             this.logger = logger;
         }
 
@@ -68,12 +61,12 @@ namespace Brighid.Discord.Adapter.Requests
                     Content = CreateContent(request),
                 };
 
-                logger.LogInformation("Sending request uri:{@uri} method:{@method} body:{@body}", httpRequest.RequestUri, httpRequest.Method, httpRequest.Content);
+                logger.LogDebug("Sending request uri:{@uri} method:{@method} body:{@body}", httpRequest.RequestUri, httpRequest.Method, httpRequest.Content);
                 var httpResponse = await client.SendAsync(httpRequest, cancellationToken);
                 var responseString = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
                 _ = relay.Respond(request, httpResponse.StatusCode, responseString, cancellationToken);
                 _ = relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
-                logger.LogInformation("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
+                logger.LogDebug("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
 
                 bucket = await bucketService.MergeBucketIds(bucket, httpResponse, cancellationToken);
                 bucketService.UpdateBucketHitsRemaining(bucket, httpResponse);
@@ -82,14 +75,13 @@ namespace Brighid.Discord.Adapter.Requests
                 if (httpResponse.StatusCode == HttpStatusCode.TooManyRequests)
                 {
                     // throw exception here
-                    _ = reporter.Report(default(RestApiRateLimitedMetric), cancellationToken);
+                    logger.LogError(LogEvents.RestApiRateLimited, "Rest API call was rate limited.");
                 }
             }
             catch (Exception exception)
             {
-                logger.LogError("Error occurred while attempting to invoke request: {@exception}", exception);
+                logger.LogError(LogEvents.RestApiFailed, exception, "Rest API call failed.");
                 _ = relay.Fail(request, 0, cancellationToken);
-                _ = reporter.Report(default(RestApiFailedMessageMetric), cancellationToken);
             }
 
             if (bucket != null)

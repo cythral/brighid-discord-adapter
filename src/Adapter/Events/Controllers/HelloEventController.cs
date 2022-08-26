@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
-using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Models;
 
 using Microsoft.Extensions.Logging;
@@ -21,27 +20,23 @@ namespace Brighid.Discord.Adapter.Events
         private readonly IGatewayService gateway;
         private readonly AdapterOptions adapterOptions;
         private readonly GatewayOptions gatewayOptions;
-        private readonly IMetricReporter reporter;
         private readonly ILogger<HelloEventController> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelloEventController" /> class.
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
-        /// <param name="reporter">Reporter to use to report metrics with.</param>
         /// <param name="adapterOptions">Options used across the adapter.</param>
         /// <param name="gatewayOptions">The options to use for the gateway.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public HelloEventController(
             IGatewayService gateway,
-            IMetricReporter reporter,
             IOptions<AdapterOptions> adapterOptions,
             IOptions<GatewayOptions> gatewayOptions,
             ILogger<HelloEventController> logger
         )
         {
             this.gateway = gateway;
-            this.reporter = reporter;
             this.adapterOptions = adapterOptions.Value;
             this.gatewayOptions = gatewayOptions.Value;
             this.logger = logger;
@@ -53,7 +48,6 @@ namespace Brighid.Discord.Adapter.Events
             using var scope = logger.BeginScope("{@Event}", nameof(HelloEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
-            _ = reporter.Report(default(HelloEventMetric), cancellationToken);
             await gateway.StartHeartbeat(@event.HeartbeatInterval);
 
             var message = gateway.SessionId == null || gateway.SequenceNumber == null ? CreateIdentifyMessage() : CreateResumeMessage();

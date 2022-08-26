@@ -6,7 +6,6 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
-using Brighid.Discord.Adapter.Metrics;
 
 using FluentAssertions;
 
@@ -52,21 +51,6 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await gateway.Received().Restart(Is(resumable));
-            }
-
-            [Test, Auto]
-            public async Task ShouldReportAReconnectMetric(
-                bool resumable,
-                [Frozen, Substitute] IMetricReporter reporter,
-                [Target] InvalidSessionEventController controller
-            )
-            {
-                var cancellationToken = new CancellationToken(false);
-                var @event = new InvalidSessionEvent(resumable);
-
-                await controller.Handle(@event, cancellationToken);
-
-                await reporter.Received().Report(Is(default(InvalidSessionEventMetric)), Is(cancellationToken));
             }
         }
     }

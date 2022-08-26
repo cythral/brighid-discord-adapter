@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Gateway;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Brighid.Discord.Adapter.Management
@@ -13,6 +14,7 @@ namespace Brighid.Discord.Adapter.Management
     /// Controller for node-specific endpoints.
     /// </summary>
     [Route("/node")]
+    [Authorize(Roles = "DiscordNodeManager")]
     public class NodeController : Controller
     {
         private readonly IAdapterContext context;
@@ -63,6 +65,18 @@ namespace Brighid.Discord.Adapter.Management
         public ActionResult<string> GetGatewayState()
         {
             return Ok(gateway.State.ToString());
+        }
+
+        /// <summary>
+        /// Restarts the gateway.
+        /// </summary>
+        /// <returns>No Content if successful.</returns>
+        [HttpPost("gateway/restart")]
+        [Consumes("text/plain"), Produces("text/plain")]
+        public async Task<ActionResult> Restart()
+        {
+            await gateway.Restart(true, HttpContext.RequestAborted);
+            return NoContent();
         }
 
         /// <summary>

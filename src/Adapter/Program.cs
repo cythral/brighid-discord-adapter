@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.CloudWatch;
 using Amazon.ECS;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
@@ -30,6 +29,7 @@ using Microsoft.Extensions.Options;
 
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 using Environments = Brighid.Discord.Adapter.Environments;
 
@@ -58,7 +58,6 @@ builder.Services.ConfigureTracingServices();
 AWSSDKHandler.RegisterXRayForAllServices();
 
 builder.Services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
-builder.Services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
 builder.Services.AddSingleton<IAmazonECS, AmazonECSClient>();
 builder.Services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
 
@@ -87,7 +86,6 @@ builder.Services.ConfigureDatabaseServices(builder.Configuration);
 builder.Services.ConfigureRequestsServices(builder.Configuration);
 builder.Services.ConfigureGatewayServices(builder.Configuration);
 builder.Services.ConfigureMessageServices(builder.Configuration);
-builder.Services.ConfigureMetricServices(builder.Configuration);
 builder.Services.ConfigureAuthServices(builder.Configuration.GetSection("Auth").Bind);
 builder.Services.ConfigureRestClientResponseServices();
 builder.Services.ConfigureRestClientServices(builder.Configuration);
@@ -117,7 +115,6 @@ await host.RunAsync(cancellationToken);
 static void SetupLogger(WebApplication host)
 {
     var adapterOptions = host.Services.GetRequiredService<IOptions<AdapterOptions>>();
-
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(host.Configuration)
         .Destructure.UsingAttributes()
@@ -128,7 +125,7 @@ static void SetupLogger(WebApplication host)
         .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Warning)
         .Filter.ByExcluding("RequestPath = '/healthcheck' and (StatusCode = 200 or EventId.Name = 'ExecutingEndpoint' or EventId.Name = 'ExecutedEndpoint')")
-        .WriteTo.Console(outputTemplate: "[{Timestamp:u}] [{Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}")
+        .WriteTo.Console(formatter: new CompactJsonFormatter())
         .CreateLogger();
 }
 

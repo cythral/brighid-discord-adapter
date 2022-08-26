@@ -6,7 +6,6 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
-using Brighid.Discord.Adapter.Metrics;
 
 using FluentAssertions;
 
@@ -116,22 +115,6 @@ namespace Brighid.Discord.Events
                 await service.Restart(gateway, resume, cancellationToken);
 
                 await gateway.Received().StartAsync(Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldReportARestartMetric(
-                string sessionId,
-                [Frozen, Substitute] IMetricReporter reporter,
-                [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRestartService service
-            )
-            {
-                var cancellationToken = new CancellationToken(false);
-                var resume = true;
-
-                await service.Restart(gateway, resume, cancellationToken);
-
-                await reporter.Received().Report(Is(default(GatewayRestartMetric)), Is(cancellationToken));
             }
         }
     }
