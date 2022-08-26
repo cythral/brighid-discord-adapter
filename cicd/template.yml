@@ -545,6 +545,7 @@ Resources:
       Namespace: !Ref MetricsNamespace
       TreatMissingData: notBreaching
       Unit: Count
+      Statistic: Sum
       AlarmActions:
         - !Ref MonitoringTopic
       OKActions:
