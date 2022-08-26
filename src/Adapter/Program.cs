@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,7 +75,14 @@ builder.Services.AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), ty
 builder.Services.ConfigureBrighidIdentity<IdentityOptions>(builder.Configuration.GetSection("Identity"));
 builder.Services.AddBrighidCommands(builder.Configuration.GetSection("Commands").Bind);
 
-builder.Services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:22e4:7b00::"), 56));
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:2323:b900::"), 56));
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:24a8:e000::"), 56));
+});
+
 builder.Services.AddRazorPages();
 builder.Services.ConfigureSerializationServices(JsonContext.Default);
 builder.Services.ConfigureThreadingServices();
