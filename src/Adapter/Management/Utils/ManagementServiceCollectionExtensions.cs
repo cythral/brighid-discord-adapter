@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddSingleton<IAdapterContext, AdapterContext>();
             services.AddSingleton<IDnsService, DnsService>();
-            services.UseBrighidIdentityWithHttp2<INodeService, NodeService>();
+            services.AddSingleton<INodeService, NodeService>();
             services.UseBrighidIdentityWithHttp2<ITrafficShifter, TrafficShifter>();
         }
     }

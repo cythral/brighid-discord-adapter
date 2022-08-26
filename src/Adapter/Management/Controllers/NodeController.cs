@@ -14,7 +14,6 @@ namespace Brighid.Discord.Adapter.Management
     /// Controller for node-specific endpoints.
     /// </summary>
     [Route("/node")]
-    [Authorize(Roles = "DiscordNodeManager")]
     public class NodeController : Controller
     {
         private readonly IAdapterContext context;
@@ -73,6 +72,7 @@ namespace Brighid.Discord.Adapter.Management
         /// <returns>No Content if successful.</returns>
         [HttpPost("gateway/restart")]
         [Consumes("text/plain"), Produces("text/plain")]
+        [Authorize(Roles = "DiscordNodeManager")]
         public async Task<ActionResult> Restart()
         {
             await gateway.Restart(true, HttpContext.RequestAborted);
@@ -87,6 +87,7 @@ namespace Brighid.Discord.Adapter.Management
         // [Authorize(Roles = "DiscordNodeManager")
         [HttpPut("gateway/state")]
         [Consumes("text/plain"), Produces("text/plain")]
+        [Authorize(Roles = "DiscordNodeManager")]
         public async Task<ActionResult> SetGatewayState([FromBody] GatewayState state)
         {
             HttpContext.RequestAborted.ThrowIfCancellationRequested();
