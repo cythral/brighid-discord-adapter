@@ -324,7 +324,7 @@ Resources:
             - Name: Auth__MetadataAddress
               Value: !Sub http://${IdentityServerUri}/.well-known/openid-configuration
             - Name: Auth__ValidIssuer
-              Value: !Sub https://${IdentityServerUri}
+              Value: !Sub https://${IdentityServerUri}/
         - Name: envoy
           Image: !Ref EnvoyImage
           Essential: true
