@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.ECS" Version="3.7.5.67" />
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.7.3" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.97" />
+    <PackageReference Include="AWSSDK.ECS" Version="3.7.5.68" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.7.4" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.98" />
   </ItemGroup>
 
   <ItemGroup>
