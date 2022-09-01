@@ -9,7 +9,6 @@ using AutoFixture.NUnit3;
 using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
-using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models;
 using Brighid.Discord.Models.Payloads;
@@ -402,18 +401,6 @@ namespace Brighid.Discord.Adapter.Events
 
                 await userClient.DidNotReceive().CreateDirectMessageChannel(Is(userId), Is(cancellationToken));
                 await channelClient.DidNotReceive().CreateMessage(Is(channel.Id), Is<CreateMessagePayload>(payload => payload.Content == strings["RegistrationGreeting", options.RegistrationUrl]!), Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldReportMessageCreateEventMetric(
-                [Frozen, Substitute] IMetricReporter reporter,
-                [Target] MessageCreateEventController controller
-            )
-            {
-                var cancellationToken = new CancellationToken(false);
-                await controller.Handle(new MessageCreateEvent { }, cancellationToken);
-
-                await reporter.Received().Report(Is(default(MessageCreateEventMetric)), Is(cancellationToken));
             }
         }
     }

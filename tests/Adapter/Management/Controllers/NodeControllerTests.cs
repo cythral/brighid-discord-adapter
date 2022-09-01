@@ -86,6 +86,38 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         [Category("Unit")]
+        public class RestartTests
+        {
+            [Test, Auto]
+            public async Task ShouldRestartTheGateway(
+                HttpContext httpContext,
+                [Frozen] IGatewayService gateway,
+                [Target] NodeController controller
+            )
+            {
+                controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+                await controller.Restart();
+
+                await gateway.Received().Restart(Is(true), Is(httpContext.RequestAborted));
+            }
+
+            [Test, Auto]
+            public async Task ShouldReturnOk(
+                HttpContext httpContext,
+                [Frozen] IGatewayService gateway,
+                [Target] NodeController controller
+            )
+            {
+                controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+                var result = await controller.Restart();
+
+                result.Should().BeOfType<NoContentResult>();
+            }
+        }
+
+        [Category("Unit")]
         public class SetGatewayStateTests
         {
             [Test, Auto]

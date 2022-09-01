@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Adapter.Gateway;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Brighid.Discord.Adapter.Management
@@ -66,6 +67,19 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         /// <summary>
+        /// Restarts the gateway.
+        /// </summary>
+        /// <returns>No Content if successful.</returns>
+        [HttpPost("gateway/restart")]
+        [Consumes("text/plain"), Produces("text/plain")]
+        [Authorize(Roles = "DiscordNodeManager")]
+        public async Task<ActionResult> Restart()
+        {
+            await gateway.Restart(true, HttpContext.RequestAborted);
+            return NoContent();
+        }
+
+        /// <summary>
         /// Sets the current state of the gateway. Currently only supports setting gateway state to false.
         /// </summary>
         /// <param name="state">The desired state of the gateway.</param>
@@ -73,6 +87,7 @@ namespace Brighid.Discord.Adapter.Management
         // [Authorize(Roles = "DiscordNodeManager")
         [HttpPut("gateway/state")]
         [Consumes("text/plain"), Produces("text/plain")]
+        [Authorize(Roles = "DiscordNodeManager")]
         public async Task<ActionResult> SetGatewayState([FromBody] GatewayState state)
         {
             HttpContext.RequestAborted.ThrowIfCancellationRequested();

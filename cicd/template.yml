@@ -270,7 +270,6 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: brighid
-              awslogs-datetime-format: \[%Y-%m-%d %H:%M:%SZ\]
           Environment:
             - Name: AWS_XRAY_DAEMON_ADDRESS
               Value: xray:2000
@@ -286,8 +285,6 @@ Resources:
               Value: !Ref RestQueue
             - Name: Gateway__Uri
               Value: !Ref GatewayUri
-            - Name: Metrics__Namespace
-              Value: !Ref MetricsNamespace
             - Name: Sns__TopicArn
               Value: !ImportValue brighid-infrastructure:RequestTopicArn
             - Name: Identity__IdentityServerUri
@@ -327,7 +324,7 @@ Resources:
             - Name: Auth__MetadataAddress
               Value: !Sub http://${IdentityServerUri}/.well-known/openid-configuration
             - Name: Auth__ValidIssuer
-              Value: !Sub https://${IdentityServerUri}
+              Value: !Sub https://${IdentityServerUri}/
         - Name: envoy
           Image: !Ref EnvoyImage
           Essential: true
@@ -400,13 +397,6 @@ Resources:
           - Effect: Allow
             Action: sns:Publish
             Resource: !ImportValue brighid-infrastructure:RequestTopicArn
-
-          - Effect: Allow
-            Action: cloudwatch:PutMetricData
-            Resource: "*"
-            Condition:
-              StringEquals:
-                cloudwatch:namespace: !Ref MetricsNamespace
 
           - Effect: Allow
             Action:
@@ -523,3 +513,39 @@ Resources:
       Type: String
       Name: /brighid/discord/account-link/start-url
       Value: !Sub https://discord.com/api/oauth2/authorize?client_id=${ClientId}&redirect_uri=https%3A%2F%2F${DomainName}%2Foauth2%2Fcallback&response_type=code&scope=identify
+
+  MonitoringTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Brighid Discord Adapter Monitoring
+      Subscription:
+        - Endpoint: talen.fisher+brighid-discord-adapter@cythral.com
+          Protocol: email
+
+  GatewayRestartFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref LogGroup
+      FilterPattern: '{ $.EventId.Name = "GatewayRestarted" }'
+      MetricTransformations:
+        - MetricName: GatewayRestarted
+          MetricNamespace: !Ref MetricsNamespace
+          MetricValue: "1"
+          Unit: Count
+
+  GatewayRestartAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Period: 60
+      Threshold: 1
+      MetricName: GatewayRestarted
+      Namespace: !Ref MetricsNamespace
+      TreatMissingData: notBreaching
+      Unit: Count
+      Statistic: Sum
+      AlarmActions:
+        - !Ref MonitoringTopic
+      OKActions:
+        - !Ref MonitoringTopic

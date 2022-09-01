@@ -159,14 +159,6 @@
           "System.ComponentModel.Annotations": "4.3.0"
         }
       },
-      "AWSSDK.CloudWatch": {
-        "type": "Transitive",
-        "resolved": "3.7.7.5",
-        "contentHash": "62/05luYQFLP/a2WZchOyGB2hBa5MDdRej4MAEXXPL9VPUnmuTMdPGUy1RzsaxIjQ32rq8Vo/zstbir1Or2W0w==",
-        "dependencies": {
-          "AWSSDK.Core": "[3.7.12.27, 4.0.0)"
-        }
-      },
       "AWSSDK.Core": {
         "type": "Transitive",
         "resolved": "3.7.12.27",
@@ -1917,7 +1909,6 @@
       "adapter": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.CloudWatch": "3.7.7.5",
           "AWSSDK.ECS": "3.7.5.69",
           "AWSSDK.SimpleNotificationService": "3.7.3.99",
           "Brighid.Commands.Client": "0.3.0.119-beta1",

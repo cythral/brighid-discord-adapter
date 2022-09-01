@@ -6,15 +6,12 @@ using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
-using Brighid.Discord.Adapter.Metrics;
 
 using FluentAssertions;
 
 using NSubstitute;
 
 using NUnit.Framework;
-
-using static NSubstitute.Arg;
 
 namespace Brighid.Discord.Adapter.Events
 {
@@ -52,21 +49,6 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await gateway.Received().Restart();
-            }
-
-            [Test, Auto]
-            public async Task ShouldReportAReconnectMetric(
-                string sessionId,
-                [Frozen, Substitute] IMetricReporter reporter,
-                [Target] ReconnectEventController controller
-            )
-            {
-                var cancellationToken = new CancellationToken(false);
-                var @event = new ReconnectEvent { };
-
-                await controller.Handle(@event, cancellationToken);
-
-                await reporter.Received().Report(Is(default(ReconnectEventMetric)), Is(cancellationToken));
             }
         }
     }

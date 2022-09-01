@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Amazon.CloudWatch;
 using Amazon.ECS;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
@@ -30,6 +30,7 @@ using Microsoft.Extensions.Options;
 
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 using Environments = Brighid.Discord.Adapter.Environments;
 
@@ -58,7 +59,6 @@ builder.Services.ConfigureTracingServices();
 AWSSDKHandler.RegisterXRayForAllServices();
 
 builder.Services.AddSingleton<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
-builder.Services.AddSingleton<IAmazonCloudWatch, AmazonCloudWatchClient>();
 builder.Services.AddSingleton<IAmazonECS, AmazonECSClient>();
 builder.Services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
 
@@ -75,7 +75,14 @@ builder.Services.AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), ty
 builder.Services.ConfigureBrighidIdentity<IdentityOptions>(builder.Configuration.GetSection("Identity"));
 builder.Services.AddBrighidCommands(builder.Configuration.GetSection("Commands").Bind);
 
-builder.Services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:22e4:7b00::"), 56));
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:2323:b900::"), 56));
+    options.KnownNetworks.Add(new IPNetwork(IPAddress.Parse("2600:1f18:24a8:e000::"), 56));
+});
+
 builder.Services.AddRazorPages();
 builder.Services.ConfigureSerializationServices(JsonContext.Default);
 builder.Services.ConfigureThreadingServices();
@@ -87,7 +94,6 @@ builder.Services.ConfigureDatabaseServices(builder.Configuration);
 builder.Services.ConfigureRequestsServices(builder.Configuration);
 builder.Services.ConfigureGatewayServices(builder.Configuration);
 builder.Services.ConfigureMessageServices(builder.Configuration);
-builder.Services.ConfigureMetricServices(builder.Configuration);
 builder.Services.ConfigureAuthServices(builder.Configuration.GetSection("Auth").Bind);
 builder.Services.ConfigureRestClientResponseServices();
 builder.Services.ConfigureRestClientServices(builder.Configuration);
@@ -117,7 +123,6 @@ await host.RunAsync(cancellationToken);
 static void SetupLogger(WebApplication host)
 {
     var adapterOptions = host.Services.GetRequiredService<IOptions<AdapterOptions>>();
-
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(host.Configuration)
         .Destructure.UsingAttributes()
@@ -128,7 +133,7 @@ static void SetupLogger(WebApplication host)
         .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Warning)
         .Filter.ByExcluding("RequestPath = '/healthcheck' and (StatusCode = 200 or EventId.Name = 'ExecutingEndpoint' or EventId.Name = 'ExecutedEndpoint')")
-        .WriteTo.Console(outputTemplate: "[{Timestamp:u}] [{Level:u3}] [{SourceContext:s}] {Message:lj} {Properties:j} {Exception}{NewLine}")
+        .WriteTo.Console(formatter: new CompactJsonFormatter())
         .CreateLogger();
 }
 

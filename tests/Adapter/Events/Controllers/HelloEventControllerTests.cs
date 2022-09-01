@@ -8,7 +8,6 @@ using AutoFixture.NUnit3;
 
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
-using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
@@ -57,18 +56,6 @@ namespace Brighid.Discord.Adapter.Events
                 await controller.Handle(@event, cancellationToken);
 
                 await gateway.Received().StartHeartbeat(interval);
-            }
-
-            [Test, Auto]
-            public async Task ShouldReportHelloEventMetric(
-                    [Frozen, Substitute] IMetricReporter reporter,
-                    [Target] HelloEventController controller
-                )
-            {
-                var cancellationToken = new CancellationToken(false);
-                await controller.Handle(new HelloEvent { }, cancellationToken);
-
-                await reporter.Received().Report(Is(default(HelloEventMetric)), Is(cancellationToken));
             }
 
             [Test, Auto]

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Gateway;
 using Brighid.Discord.Adapter.Messages;
-using Brighid.Discord.Adapter.Metrics;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models.Payloads;
 using Brighid.Discord.RestClient.Client;
@@ -34,7 +33,6 @@ namespace Brighid.Discord.Adapter.Events
         private readonly AdapterOptions adapterOptions;
         private readonly IBrighidCommandsService commandsService;
         private readonly IGatewayService gateway;
-        private readonly IMetricReporter reporter;
         private readonly ILogger<MessageCreateEventController> logger;
 
         /// <summary>
@@ -49,7 +47,6 @@ namespace Brighid.Discord.Adapter.Events
         /// <param name="adapterOptions">Options to use for the adapter.</param>
         /// <param name="commandsService">Client for interacting with the commands service.</param>
         /// <param name="gateway">Gateway that discord sends events through.</param>
-        /// <param name="reporter">Reporter to report metrics to.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public MessageCreateEventController(
             ITracingService tracingService,
@@ -61,7 +58,6 @@ namespace Brighid.Discord.Adapter.Events
             IOptions<AdapterOptions> adapterOptions,
             IBrighidCommandsService commandsService,
             IGatewayService gateway,
-            IMetricReporter reporter,
             ILogger<MessageCreateEventController> logger
         )
         {
@@ -74,7 +70,6 @@ namespace Brighid.Discord.Adapter.Events
             this.adapterOptions = adapterOptions.Value;
             this.commandsService = commandsService;
             this.gateway = gateway;
-            this.reporter = reporter;
             this.logger = logger;
         }
 
@@ -89,7 +84,6 @@ namespace Brighid.Discord.Adapter.Events
 
             tracingService.AddAnnotation("event", "incoming-message");
             tracingService.AddAnnotation("messageId", @event.Message.Id);
-            _ = reporter.Report(default(MessageCreateEventMetric), cancellationToken);
 
             if (await userService.IsUserRegistered(@event.Message.Author, cancellationToken))
             {
