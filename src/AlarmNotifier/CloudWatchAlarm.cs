@@ -29,7 +29,7 @@ namespace Brighid.Discord.AlarmNotifier
         /// <summary>
         /// Gets or sets the time when the state of the alarm changed.
         /// </summary>
-        public DateTimeOffset StateChangeTime { get; set; }
+        public string StateChangeTime { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the ARN of the alarm.
