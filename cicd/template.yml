@@ -514,14 +514,6 @@ Resources:
       Name: /brighid/discord/account-link/start-url
       Value: !Sub https://discord.com/api/oauth2/authorize?client_id=${ClientId}&redirect_uri=https%3A%2F%2F${DomainName}%2Foauth2%2Fcallback&response_type=code&scope=identify
 
-  MonitoringTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      DisplayName: Brighid Discord Adapter Monitoring
-      Subscription:
-        - Endpoint: talen.fisher+brighid-discord-adapter@cythral.com
-          Protocol: email
-
   GatewayRestartFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
@@ -546,6 +538,34 @@ Resources:
       Unit: Count
       Statistic: Sum
       AlarmActions:
-        - !Ref MonitoringTopic
+        - !ImportValue brighid-infrastructure:MonitoringTopic
       OKActions:
-        - !Ref MonitoringTopic
+        - !ImportValue brighid-infrastructure:MonitoringTopic
+
+  ErrorCountFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref LogGroup
+      FilterPattern: '{ $.Level = "Error" }'
+      MetricTransformations:
+        - MetricName: Error
+          MetricNamespace: !Ref MetricsNamespace
+          MetricValue: "1"
+          Unit: Count
+
+  ErrorCountAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Period: 60
+      Threshold: 1
+      MetricName: Error
+      Namespace: !Ref MetricsNamespace
+      TreatMissingData: notBreaching
+      Unit: Count
+      Statistic: Sum
+      AlarmActions:
+        - !ImportValue brighid-infrastructure:MonitoringTopic
+      OKActions:
+        - !ImportValue brighid-infrastructure:MonitoringTopic
