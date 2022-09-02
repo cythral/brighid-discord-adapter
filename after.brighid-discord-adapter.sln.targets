@@ -1,5 +1,5 @@
 <Project>
-    <Target Name="RestoreTools" AfterTargets="Restore">
+    <Target Name="RestoreTools" AfterTargets="Restore" Condition="'$(DesignTimeBuild)' == ''">
         <Exec Command="dotnet tool restore" ConsoleToMsBuild="true" />
     </Target>
 
