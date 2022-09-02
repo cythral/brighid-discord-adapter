@@ -36,6 +36,7 @@ namespace Brighid.Discord.AlarmNotifier
             var alarmName = request.Message.AlarmName;
             var metricNamespace = request.Message.Trigger.Namespace;
             var metricName = request.Message.Trigger.MetricName;
+            var description = string.IsNullOrEmpty(request.Message.AlarmDescription) ? request.Message.AlarmName : request.Message.AlarmDescription;
             var payload = new ExecuteWebhookPayload
             {
                 Embeds = new Embed[]
@@ -47,7 +48,7 @@ namespace Brighid.Discord.AlarmNotifier
                         Color = alarmStatus == "ALARM" ? 15548997 : 5763719,
                         Fields = new EmbedField[]
                         {
-                            new EmbedField { Name = "Description", Value = request.Message.AlarmDescription },
+                            new EmbedField { Name = "Description", Value = description },
                             new EmbedField { Name = "Metric", Value = $"{metricNamespace}/{metricName}" },
                             new EmbedField { Name = "Environment", Value = config.Environment },
                         },
