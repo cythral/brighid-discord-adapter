@@ -132,7 +132,7 @@ namespace Brighid.Discord.Adapter.Users
             }
             catch (ApiException exception)
             {
-                logger.LogError("Received exception from Brighid Identity: {@exception}", exception);
+                logger.LogWarning(exception, "Received an exception from Brighid Identity while checking if a user exists {@user}", user.Id);
                 return false;
             }
         }
