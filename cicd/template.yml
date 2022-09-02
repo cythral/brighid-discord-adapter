@@ -518,7 +518,7 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties:
       LogGroupName: !Ref LogGroup
-      FilterPattern: '{ $.EventId.Name = "GatewayRestarted" }'
+      FilterPattern: '{ $.Properties.EventId.Name = "GatewayRestarted" }'
       MetricTransformations:
         - MetricName: GatewayRestarted
           MetricNamespace: !Ref MetricsNamespace
