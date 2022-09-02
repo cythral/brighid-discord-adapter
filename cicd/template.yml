@@ -100,6 +100,11 @@ Parameters:
       - "false"
     Description: Whether or not to perform scope validation (don't use in production as this adds extra overhead to service initialization).
 
+  DiscordWebhook:
+    Type: String
+    NoEcho: true
+    Description: Discord webhook to post alarm notifications to. 
+    
 Resources:
   MeshService:
     Type: AWS::AppMesh::VirtualService
@@ -514,6 +519,37 @@ Resources:
       Name: /brighid/discord/account-link/start-url
       Value: !Sub https://discord.com/api/oauth2/authorize?client_id=${ClientId}&redirect_uri=https%3A%2F%2F${DomainName}%2Foauth2%2Fcallback&response_type=code&scope=identify
 
+  AlarmNotifier:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: AlarmNotifier::Brighid.Discord.AlarmNotifier.Handler::Run
+      Runtime: provided.al2
+      Timeout: 30
+      CodeUri: ../bin/AlarmNotifier/Release/linux-arm64/publish/
+      MemorySize: 512
+      Architectures:
+        - arm64
+      Layers:
+        - !Sub "{{resolve:ssm:/dotnet/${DotnetVersion}/layer-arn}}"
+        - !Sub "{{resolve:ssm:/lambdajection/${LambdajectionVersion}/layer-arn}}"
+      Policies:
+        - AWSLambdaExecute
+        - !ImportValue cfn-utilities:SecretsKeyDecryptPolicyArn
+      Events:
+        Sns:
+          Type: SNS
+          Properties:
+            Topic: !ImportValue brighid-infrastructure:MonitoringTopic
+      VpcConfig:
+        SecurityGroupIds:
+          - !ImportValue cfn-utilities:LambdaSecurityGroupId
+        SubnetIds: !Split [",", !ImportValue cfn-utilities:SubnetIds]
+      Environment:
+        Variables:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
+          AlarmNotifier__DiscordWebhook: !Ref DiscordWebhook
+          AlarmNotifier__Environment: !Ref EnvironmentName
+  
   GatewayRestartFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
