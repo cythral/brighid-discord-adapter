@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.ResponseHandler;
 using Brighid.Discord.Models;
 
 using Lambdajection.Attributes;
@@ -52,7 +53,7 @@ namespace Brighid.Discord.AlarmNotifier
                 },
             };
 
-            var response = await httpClient.PostAsJsonAsync(config.DiscordWebhook, payload, cancellationToken: cancellationToken);
+            var response = await httpClient.PostAsJsonAsync(config.DiscordWebhook, payload, JsonContext.Default.ExecuteWebhookPayload, cancellationToken);
             response.EnsureSuccessStatusCode();
             return string.Empty;
         }
