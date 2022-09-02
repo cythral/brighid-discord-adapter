@@ -564,6 +564,7 @@ Resources:
   GatewayRestartAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
+      AlarmDescription: The Brighid Discord Adapter Gateway restarted more than 1 time in the past minute.
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       Period: 60
@@ -592,7 +593,8 @@ Resources:
   ErrorCountAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      ComparisonOperator: GreaterThanThreshold
+      AlarmDescription: 1 or more errors occurred on the Brighid Discord Adapter in the past minute.
+      ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
       Period: 60
       Threshold: 1
