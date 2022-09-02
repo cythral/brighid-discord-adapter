@@ -549,3 +549,31 @@ Resources:
         - !Ref MonitoringTopic
       OKActions:
         - !Ref MonitoringTopic
+
+  ErrorCountFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref LogGroup
+      FilterPattern: '{ $.Level = "Error" }'
+      MetricTransformations:
+        - MetricName: Error
+          MetricNamespace: !Ref MetricsNamespace
+          MetricValue: "1"
+          Unit: Count
+
+  ErrorCountAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Period: 60
+      Threshold: 1
+      MetricName: Error
+      Namespace: !Ref MetricsNamespace
+      TreatMissingData: notBreaching
+      Unit: Count
+      Statistic: Sum
+      AlarmActions:
+        - !Ref MonitoringTopic
+      OKActions:
+        - !Ref MonitoringTopic

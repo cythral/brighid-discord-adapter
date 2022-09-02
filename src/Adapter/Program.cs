@@ -30,7 +30,7 @@ using Microsoft.Extensions.Options;
 
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Compact;
+using Serilog.Formatting.Json;
 
 using Environments = Brighid.Discord.Adapter.Environments;
 
@@ -133,7 +133,7 @@ static void SetupLogger(WebApplication host)
         .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Warning)
         .Filter.ByExcluding("RequestPath = '/healthcheck' and (StatusCode = 200 or EventId.Name = 'ExecutingEndpoint' or EventId.Name = 'ExecutedEndpoint')")
-        .WriteTo.Console(formatter: new CompactJsonFormatter())
+        .WriteTo.Console(formatter: new JsonFormatter())
         .CreateLogger();
 }
 
