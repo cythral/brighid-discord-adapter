@@ -88,7 +88,7 @@ namespace Brighid.Discord.Threading
                 {
                     if (period > 0)
                     {
-                        await Task.Delay(period, cancellationToken);
+                        Thread.Sleep(period);
                     }
 
                     await callback(cancellationToken);
