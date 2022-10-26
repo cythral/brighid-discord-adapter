@@ -103,8 +103,8 @@ Parameters:
   DiscordWebhook:
     Type: String
     NoEcho: true
-    Description: Discord webhook to post alarm notifications to. 
-    
+    Description: Discord webhook to post alarm notifications to.
+
 Resources:
   MeshService:
     Type: AWS::AppMesh::VirtualService
@@ -231,7 +231,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Cpu: "256"
+      Cpu: "512"
       Memory: "512"
       Family: !Ref AWS::StackName
       NetworkMode: awsvpc
@@ -549,7 +549,7 @@ Resources:
           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
           AlarmNotifier__DiscordWebhook: !Ref DiscordWebhook
           AlarmNotifier__Environment: !Ref EnvironmentName
-  
+
   GatewayRestartFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
