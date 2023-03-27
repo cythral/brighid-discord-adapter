@@ -20,6 +20,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -177,6 +178,33 @@ namespace Brighid.Discord.Adapter.Events
                     await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
                     await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(channelId.ToString()), Is(cancellationToken));
                 });
+            }
+
+            [Test, Auto]
+            public async Task ShouldCatchErrorsFromExecutingCommands(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var identityUserId = new UserId(Guid.NewGuid(), false, true);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+
+                commandsClient.ParseAndExecuteCommandAsUser(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Throws<Exception>();
+
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                var func = () => controller.Handle(@event, cancellationToken);
+
+                await func.Should().NotThrowAsync<Exception>();
             }
 
             [Test, Auto]
