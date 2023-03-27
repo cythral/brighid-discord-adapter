@@ -128,24 +128,32 @@ namespace Brighid.Discord.Adapter.Events
             logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
             _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
 
-            var result = await commandsService.ParseAndExecuteCommandAsUser(
-                message: @event.Message.Content,
-                userId: userId,
-                sourceSystemId: @event.Message.ChannelId,
-                cancellationToken: cancellationToken
-            );
-
-            logger.LogInformation("Got result: {@result}", result);
-
-            if (result?.ReplyImmediately == true)
+            try
             {
-                var createMessagePayload = new CreateMessagePayload
-                {
-                    Content = result.Response,
-                    Embed = GetDebugEmbed(user, trace),
-                };
+                var result = await commandsService.ParseAndExecuteCommandAsUser(
+                    message: @event.Message.Content,
+                    userId: userId,
+                    sourceSystemId: @event.Message.ChannelId,
+                    cancellationToken: cancellationToken
+                );
 
-                await discordChannelClient.CreateMessage(@event.Message.ChannelId, createMessagePayload, cancellationToken);
+                logger.LogInformation("Got result: {@result}", result);
+
+                if (result?.ReplyImmediately == true)
+                {
+                    var createMessagePayload = new CreateMessagePayload
+                    {
+                        Content = result.Response,
+                        Embed = GetDebugEmbed(user, trace),
+                    };
+
+                    await discordChannelClient.CreateMessage(@event.Message.ChannelId, createMessagePayload, cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Received exception while trying to execute a command");
+                return;
             }
         }
 
