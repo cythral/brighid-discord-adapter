@@ -561,6 +561,17 @@ Resources:
           MetricValue: "1"
           Unit: Count
 
+  ReconnectEventFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref LogGroup
+      FilterPattern: '{ $.Properties.EventId.Name = "ReconnectEvent" }'
+      MetricTransformations:
+        - MetricName: ReconnectEventReceived
+          MetricNamespace: !Ref MetricsNamespace
+          MetricValue: "1"
+          Unit: Count
+
   GatewayRestartAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
