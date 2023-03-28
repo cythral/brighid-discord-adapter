@@ -25,6 +25,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private ITimer? worker;
         private IGatewayService? gateway;
         private Stream? stream;
+        private ulong streamLength;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayRxWorker" /> class.
@@ -101,17 +102,15 @@ namespace Brighid.Discord.Adapter.Gateway
 
             var chunk = await channel.Read(cancellationToken);
             await stream!.WriteAsync(chunk.Bytes, cancellationToken);
+            streamLength += (ulong)chunk.Count;
 
-            if (chunk.EndOfMessage)
+            if (chunk.EndOfMessage && streamLength > 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 stream.Position = 0;
 
                 var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
-                if (message.SequenceNumber != null)
-                {
-                    gateway!.SequenceNumber = message.SequenceNumber;
-                }
+                gateway!.SequenceNumber = (message.SequenceNumber != null) ? message.SequenceNumber : gateway!.SequenceNumber;
 
                 if (message.Data != null)
                 {
@@ -120,6 +119,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 logger.LogDebug("Received message from gateway: {@message}", message);
                 stream.SetLength(0);
+                streamLength = 0;
             }
         }
 

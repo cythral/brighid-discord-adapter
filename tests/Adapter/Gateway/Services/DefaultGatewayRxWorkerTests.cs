@@ -152,6 +152,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RunTests
         {
             [Test, Auto]
@@ -367,6 +368,26 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
+
+                await worker.Start(gateway);
+                await worker.Run(cancellationToken);
+
+                await serializer.DidNotReceive().Deserialize<GatewayMessage>(Is(stream), Is(cancellationToken));
+            }
+
+            [Test, Auto, Timeout(1000)]
+            public async Task RunShouldNotDeserializeTheMessageIfMessageIsZeroBytes(
+                byte[] bytes,
+                [Frozen, Substitute] Stream stream,
+                [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ISerializer serializer,
+                [Target] DefaultGatewayRxWorker worker
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(Array.Empty<byte>(), 0, true));
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
