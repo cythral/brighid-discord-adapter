@@ -73,10 +73,10 @@ namespace Brighid.Discord.Adapter.Messages
                 },
             };
 
-            logger.LogInformation("Sending request: {@request}", request);
+            logger.LogDebug("Sending request: {@request}", request);
 
             var response = await snsClient.PublishAsync(request, cancellationToken);
-            logger.LogInformation("Received response: {@response}", response);
+            logger.LogInformation("Received SNS Response: {@response}", response);
         }
     }
 }

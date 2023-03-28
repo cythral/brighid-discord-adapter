@@ -118,7 +118,7 @@ namespace Brighid.Discord.Adapter.Gateway
                     _ = eventRouter.Route(message.Data, cancellationToken);
                 }
 
-                logger.LogInformation("Received message: {@message}", message);
+                logger.LogDebug("Received message from gateway: {@message}", message);
                 stream.SetLength(0);
             }
         }

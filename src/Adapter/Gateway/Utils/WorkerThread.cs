@@ -40,7 +40,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public void Start(CancellationTokenSource cancellationTokenSource)
         {
-            logger.LogInformation("Starting Worker Thread.");
+            logger.LogDebug("Starting Worker Thread.");
             this.cancellationTokenSource = cancellationTokenSource;
             thread = new Thread(Run);
             thread.Start();
@@ -49,7 +49,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public void Stop()
         {
-            logger.LogInformation("Stopping Worker Thread.");
+            logger.LogDebug("Stopping Worker Thread.");
             if (thread == null)
             {
                 return;

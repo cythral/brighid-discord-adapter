@@ -42,7 +42,7 @@ namespace Brighid.Discord.Adapter.Events
                 cancellationToken.ThrowIfCancellationRequested();
                 var cancellationTokenSource = new CancellationTokenSource();
 
-                logger.LogInformation(LogEvents.InvalidSessionEvent, "Received an invalid session event");
+                logger.LogWarning(LogEvents.InvalidSessionEvent, "Received an invalid session event");
             }
 
             await gateway.Restart(@event.IsResumable, CancellationToken.None);

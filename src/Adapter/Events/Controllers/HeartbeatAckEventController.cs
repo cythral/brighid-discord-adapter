@@ -35,7 +35,7 @@ namespace Brighid.Discord.Adapter.Events
         {
             cancellationToken.ThrowIfCancellationRequested();
             gateway.AwaitingHeartbeatAcknowledgement = false;
-            logger.LogInformation("Heartbeat acknowledged.");
+            logger.LogDebug("Heartbeat acknowledged.");
             return Task.CompletedTask;
         }
     }

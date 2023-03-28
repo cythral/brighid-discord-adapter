@@ -68,7 +68,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// <inheritdoc />
         public async Task CreateDelay(uint millisecondsDelay, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Sleeping for {timespan} ms", millisecondsDelay);
+            logger.LogDebug("Sleeping for {timespan} ms", millisecondsDelay);
             await Task.Delay((int)millisecondsDelay, cancellationToken);
         }
 

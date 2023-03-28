@@ -42,7 +42,7 @@ namespace Brighid.Discord.Adapter.Events
                 cancellationToken.ThrowIfCancellationRequested();
                 var cancellationTokenSource = new CancellationTokenSource();
 
-                logger.LogInformation(LogEvents.ReconnectEvent, "Received a reconnect event");
+                logger.LogWarning(LogEvents.ReconnectEvent, "Received a reconnect event");
             }
 
             await gateway.Restart(cancellationToken: CancellationToken.None);

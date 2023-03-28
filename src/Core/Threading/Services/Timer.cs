@@ -59,7 +59,7 @@ namespace Brighid.Discord.Threading
         /// <inheritdoc />
         public async Task Start()
         {
-            logger.LogInformation("Starting Timer.");
+            logger.LogDebug("Starting Timer.");
             cancellationTokenSource = new CancellationTokenSource();
             cancellationToken = cancellationTokenSource.Token;
             startPromise = new TaskCompletionSource();
@@ -72,7 +72,7 @@ namespace Brighid.Discord.Threading
         /// <inheritdoc />
         public async Task Stop()
         {
-            logger.LogInformation("Stopping Timer.");
+            logger.LogDebug("Stopping Timer.");
             cancellationTokenSource?.Cancel();
             await stopPromise!.Task;
         }
@@ -95,7 +95,7 @@ namespace Brighid.Discord.Threading
                 }
                 catch (OperationCanceledException)
                 {
-                    logger.LogInformation("Timer canceled, shutting down gracefully.");
+                    logger.LogDebug("Timer canceled, shutting down gracefully.");
                 }
                 catch (Exception exception)
                 {
@@ -115,7 +115,7 @@ namespace Brighid.Discord.Threading
                 }
             }
 
-            logger.LogInformation("Timer stopped.");
+            logger.LogDebug("Timer stopped.");
             stopPromise?.TrySetResult();
         }
     }

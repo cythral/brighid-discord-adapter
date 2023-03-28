@@ -230,7 +230,7 @@ namespace Brighid.Discord.Adapter.Requests
             try
             {
                 var entries = from message in messagesToDelete select new DeleteMessageBatchRequestEntry { Id = message.RequestDetails.Id.ToString(), ReceiptHandle = message.ReceiptHandle };
-                logger.LogInformation("Sending sqs:DeleteMessageBatch with {@count} entries", entries.Count());
+                logger.LogDebug("Sending sqs:DeleteMessageBatch with {@count} entries", entries.Count());
 
                 var request = new DeleteMessageBatchRequest { QueueUrl = options.QueueUrl.ToString(), Entries = entries.ToList() };
                 var response = await sqs.DeleteMessageBatchAsync(request, workerCancellationToken);
@@ -273,7 +273,7 @@ namespace Brighid.Discord.Adapter.Requests
                                   VisibilityTimeout = (int)message.VisibilityTimeout,
                               };
 
-                logger.LogInformation("Sending sqs:ChangeMessageVisibilityBatch with {@count} entries", entries.Count());
+                logger.LogDebug("Sending sqs:ChangeMessageVisibilityBatch with {@count} entries", entries.Count());
                 var response = await sqs.ChangeMessageVisibilityBatchAsync(options.QueueUrl.ToString(), entries.ToList(), workerCancellationToken);
                 logger.LogInformation("Received sqs:ChangeMessageVisibilityBatch response: {@response}", response);
 

@@ -56,7 +56,7 @@ namespace Brighid.Discord.Adapter.ResponseHandler
                 },
             };
 
-            logger.LogInformation("Sending sqs:SendMessageBatch with request: {@request}", request);
+            logger.LogDebug("Sending sqs:SendMessageBatch with request: {@request}", request);
             var response = await sqs.SendMessageBatchAsync(request, cancellationToken);
             logger.LogInformation("Received sqs:SendMessageBatch response: {@response}", response);
             return "OK";
