@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -13,7 +14,15 @@ namespace Brighid.Discord.Adapter.Management
         public async Task<IEnumerable<IPAddress>> GetIPAddresses(string host, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await Dns.GetHostAddressesAsync(host, AddressFamily.InterNetworkV6, cancellationToken);
+
+            try
+            {
+                return await Dns.GetHostAddressesAsync(host, AddressFamily.InterNetworkV6, cancellationToken);
+            }
+            catch (SocketException)
+            {
+                return Array.Empty<IPAddress>();
+            }
         }
     }
 }
