@@ -4,14 +4,14 @@
     "net6.0": {
       "Amazon.CDK.Lib": {
         "type": "Direct",
-        "requested": "[2.71.0, )",
-        "resolved": "2.71.0",
-        "contentHash": "xnJt0ygU69H6Bg07T5mt2THjP94zDj2NMlyqtdqQ+p8KRF62Usjz615xuQjmxeQ5oeU2J+VNwTsxhtBGWIClcg==",
+        "requested": "[2.72.0, )",
+        "resolved": "2.72.0",
+        "contentHash": "gaaRt+CQny+n9etR04QQ7m9GZ9RP1SYmjh7YwDrbQYg0eTMH62bPquMB5gL7qUHk2/ZLiIYS5bfRTtIBLIrLUQ==",
         "dependencies": {
           "Amazon.CDK.Asset.AwsCliV1": "[2.2.97, 3.0.0)",
           "Amazon.CDK.Asset.KubectlV20": "[2.1.1, 3.0.0)",
           "Amazon.CDK.Asset.NodeProxyAgentV5": "[2.0.77, 3.0.0)",
-          "Amazon.JSII.Runtime": "[1.77.0, 2.0.0)",
+          "Amazon.JSII.Runtime": "[1.78.1, 2.0.0)",
           "Constructs": "[10.0.0, 11.0.0)"
         }
       },
