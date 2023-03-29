@@ -118,21 +118,36 @@ namespace Brighid.Discord.Adapter.Events
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await userService.GetIdentityServiceUserId(@event.Message.Author, cancellationToken);
-            var userId = user.Id.ToString();
-
             if (!user.Enabled)
             {
                 return;
             }
 
             logger.LogInformation("Message author is registered, parsing for possible command & emitting message.");
-            _ = emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+            await Task.WhenAll(new[]
+            {
+                EmitMessage(@event, cancellationToken),
+                HandleCommand(@event, user, trace, cancellationToken),
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task EmitMessage(MessageCreateEvent @event, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await emitter.Emit(@event.Message, @event.Message.ChannelId, cancellationToken);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task HandleCommand(MessageCreateEvent @event, UserId user, TraceContext trace, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
 
             try
             {
                 var result = await commandsService.ParseAndExecuteCommandAsUser(
                     message: @event.Message.Content,
-                    userId: userId,
+                    userId: user.Id.ToString(),
                     sourceSystemId: @event.Message.ChannelId,
                     cancellationToken: cancellationToken
                 );
@@ -153,7 +168,6 @@ namespace Brighid.Discord.Adapter.Events
             catch (Exception exception)
             {
                 logger.LogError(exception, "Received exception while trying to execute a command");
-                return;
             }
         }
 

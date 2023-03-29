@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,10 +56,14 @@ namespace Brighid.Discord.Adapter.Gateway
         public bool IsRunning { get; private set; }
 
         /// <inheritdoc />
+        public Dictionary<int, Task> TaskQueue { get; private set; } = new Dictionary<int, Task>();
+
+        /// <inheritdoc />
         public async Task Start(IGatewayService gateway)
         {
             this.gateway = gateway;
             IsRunning = true;
+            TaskQueue.Clear();
 
             stream = gatewayUtilsFactory.CreateStream();
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
@@ -72,9 +77,12 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             IsRunning = false;
             await worker!.Stop();
+            await Task.WhenAll(TaskQueue.Values);
             await stream!.DisposeAsync();
+
             stream = null;
             worker = null;
+            TaskQueue.Clear();
         }
 
         /// <inheritdoc />
@@ -111,7 +119,9 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 var copy = new MemoryStream();
                 await stream.CopyToAsync(copy, cancellationToken);
-                _ = ProcessMessage(copy, cancellationToken);
+
+                var task = ProcessMessage(copy, cancellationToken).ContinueWith(CleanupTask, CancellationToken.None);
+                TaskQueue.Add(task.Id, task);
 
                 stream.SetLength(0);
                 streamLength = 0;
@@ -133,6 +143,11 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 await eventRouter.Route(message.Data, cancellationToken);
             }
+        }
+
+        private void CleanupTask(Task task)
+        {
+            TaskQueue.Remove(task.Id);
         }
 
         private void ThrowIfNotRunning()

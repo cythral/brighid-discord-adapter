@@ -65,6 +65,9 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <inheritdoc />
+        public int RxTaskCount => rxWorker.TaskQueue.Count;
+
+        /// <inheritdoc />
         public int? SequenceNumber { get; set; }
 
         /// <inheritdoc />

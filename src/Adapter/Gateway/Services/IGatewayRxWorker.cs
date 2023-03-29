@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +15,11 @@ namespace Brighid.Discord.Adapter.Gateway
         /// Gets a value indicating whether the service is running.
         /// </summary>
         bool IsRunning { get; }
+
+        /// <summary>
+        /// Gets a list of currently running or waiting tasks.
+        /// </summary>
+        Dictionary<int, Task> TaskQueue { get; }
 
         /// <summary>
         /// Start the worker.

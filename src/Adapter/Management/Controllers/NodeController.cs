@@ -67,6 +67,17 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         /// <summary>
+        /// Gets the current number of tasks in the Gateway RX Task Queue.
+        /// </summary>
+        /// <returns>Number of tasks in the gateway rx task queue.</returns>
+        [HttpGet("gateway/rx/task-count")]
+        [Produces("text/plain")]
+        public ActionResult<int> GetGatewayRxTaskCount()
+        {
+            return Ok(gateway.RxTaskCount.ToString());
+        }
+
+        /// <summary>
         /// Restarts the gateway.
         /// </summary>
         /// <returns>No Content if successful.</returns>
