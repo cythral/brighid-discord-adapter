@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,10 +56,14 @@ namespace Brighid.Discord.Adapter.Gateway
         public bool IsRunning { get; private set; }
 
         /// <inheritdoc />
+        public Dictionary<int, Task> TaskQueue { get; private set; } = new Dictionary<int, Task>();
+
+        /// <inheritdoc />
         public async Task Start(IGatewayService gateway)
         {
             this.gateway = gateway;
             IsRunning = true;
+            TaskQueue.Clear();
 
             stream = gatewayUtilsFactory.CreateStream();
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
@@ -72,9 +77,12 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             IsRunning = false;
             await worker!.Stop();
+            await Task.WhenAll(TaskQueue.Values);
             await stream!.DisposeAsync();
+
             stream = null;
             worker = null;
+            TaskQueue.Clear();
         }
 
         /// <inheritdoc />
@@ -109,18 +117,37 @@ namespace Brighid.Discord.Adapter.Gateway
                 cancellationToken.ThrowIfCancellationRequested();
                 stream.Position = 0;
 
-                var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
-                gateway!.SequenceNumber = (message.SequenceNumber != null) ? message.SequenceNumber : gateway!.SequenceNumber;
+                var copy = new MemoryStream();
+                await stream.CopyToAsync(copy, cancellationToken);
 
-                if (message.Data != null)
-                {
-                    _ = eventRouter.Route(message.Data, cancellationToken);
-                }
+                var task = ProcessMessage(copy, cancellationToken).ContinueWith(CleanupTask, CancellationToken.None);
+                TaskQueue.Add(task.Id, task);
 
-                logger.LogDebug("Received message from gateway: {@message}", message);
                 stream.SetLength(0);
                 streamLength = 0;
             }
+        }
+
+        private async Task ProcessMessage(Stream stream, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            stream.Position = 0;
+
+            var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
+            await stream.DisposeAsync();
+
+            logger.LogDebug("Received message from gateway: {@message}", message);
+            gateway!.SequenceNumber = (message.SequenceNumber != null) ? message.SequenceNumber : gateway!.SequenceNumber;
+
+            if (message.Data != null)
+            {
+                await eventRouter.Route(message.Data, cancellationToken);
+            }
+        }
+
+        private void CleanupTask(Task task)
+        {
+            TaskQueue.Remove(task.Id);
         }
 
         private void ThrowIfNotRunning()

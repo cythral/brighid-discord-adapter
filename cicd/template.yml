@@ -572,6 +572,17 @@ Resources:
           MetricValue: "1"
           Unit: Count
 
+  ResumedEventFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref LogGroup
+      FilterPattern: '{ $.Properties.EventId.Name = "ResumedEvent" }'
+      MetricTransformations:
+        - MetricName: ResumedEventReceived
+          MetricNamespace: !Ref MetricsNamespace
+          MetricValue: "1"
+          Unit: Count
+
   GatewayRestartAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:

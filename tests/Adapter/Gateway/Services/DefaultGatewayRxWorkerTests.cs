@@ -26,6 +26,7 @@ namespace Brighid.Discord.Adapter.Gateway
     public class DefaultGatewayRxWorkerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class StartTests
         {
             [Test, Auto]
@@ -76,6 +77,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StopTests
         {
             [Test, Auto]
@@ -93,6 +95,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class EmitTests
         {
             [Test, Auto]
@@ -169,6 +172,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 factory.Received().CreateStream();
             }
@@ -188,6 +192,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await channel.Received().WaitToRead(Is(cancellationToken));
             }
@@ -207,6 +212,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await channel.DidNotReceive().Read(Is(cancellationToken));
             }
@@ -227,6 +233,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await channel.Received().Read(Is(cancellationToken));
             }
@@ -246,6 +253,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await stream.Received().WriteAsync(Is<ReadOnlyMemory<byte>>(givenBytes => Encoding.UTF8.GetString(bytes) == Encoding.UTF8.GetString(bytes)), Is(cancellationToken));
             }
@@ -264,6 +272,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 stream.Received().SetLength(0);
             }
@@ -284,8 +293,9 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
-                await serializer.Received().Deserialize<GatewayMessage>(Is(stream), Is(cancellationToken));
+                await serializer.Received().Deserialize<GatewayMessage>(Any<Stream>(), Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -307,6 +317,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 gateway.Received().SequenceNumber = sequenceNumber;
             }
@@ -333,6 +344,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await router.Received().Route(Is(@event), Is(cancellationToken));
             }
@@ -351,6 +363,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 stream.DidNotReceive().SetLength(0);
             }
@@ -371,6 +384,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await serializer.DidNotReceive().Deserialize<GatewayMessage>(Is(stream), Is(cancellationToken));
             }
@@ -391,6 +405,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run(cancellationToken);
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await serializer.DidNotReceive().Deserialize<GatewayMessage>(Is(stream), Is(cancellationToken));
             }
@@ -414,6 +429,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 gateway.DidNotReceive().SequenceNumber = sequenceNumber;
             }
@@ -439,6 +455,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 gateway.SequenceNumber.Should().Be(sequenceNumber);
             }
@@ -461,6 +478,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await router.DidNotReceive().Route(Any<IGatewayEvent>(), Any<CancellationToken>());
             }
@@ -483,6 +501,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway);
                 await worker.Run();
+                await Task.WhenAll(worker.TaskQueue.Values);
 
                 await router.DidNotReceive().Route(Any<IGatewayEvent>(), Any<CancellationToken>());
             }

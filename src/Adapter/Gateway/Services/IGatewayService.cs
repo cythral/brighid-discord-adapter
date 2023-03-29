@@ -14,6 +14,11 @@ namespace Brighid.Discord.Adapter.Gateway
     public interface IGatewayService : IHostedService
     {
         /// <summary>
+        /// Gets the number of currently running or waiting rx tasks.
+        /// </summary>
+        int RxTaskCount { get; }
+
+        /// <summary>
         /// Gets or sets the last sequence number received.
         /// </summary>
         int? SequenceNumber { get; set; }

@@ -86,6 +86,33 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         [Category("Unit")]
+        public class GetGatewayRxTaskCountTests
+        {
+            [Test, Auto]
+            public void ShouldReturnRxTaskCountQueue(
+                int count,
+                [Frozen] IGatewayService gateway,
+                [Target] NodeController controller
+            )
+            {
+                gateway.RxTaskCount.Returns(count);
+                var result = controller.GetGatewayRxTaskCount();
+
+                result.Result.As<ObjectResult>().Value.Should().BeEquivalentTo(count.ToString());
+            }
+
+            [Test, Auto]
+            public void ShouldReturnOk(
+                [Target] NodeController controller
+            )
+            {
+                var result = controller.GetGatewayRxTaskCount();
+
+                result.Result.Should().BeOfType<OkObjectResult>();
+            }
+        }
+
+        [Category("Unit")]
         public class RestartTests
         {
             [Test, Auto]
