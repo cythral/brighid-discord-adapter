@@ -26,6 +26,7 @@ namespace Brighid.Discord.Adapter.Gateway
     public class DefaultGatewayRxWorkerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class StartTests
         {
             [Test, Auto]
@@ -76,6 +77,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class StopTests
         {
             [Test, Auto]
@@ -93,6 +95,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class EmitTests
         {
             [Test, Auto]

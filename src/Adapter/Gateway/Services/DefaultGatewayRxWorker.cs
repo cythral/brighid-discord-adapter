@@ -109,17 +109,29 @@ namespace Brighid.Discord.Adapter.Gateway
                 cancellationToken.ThrowIfCancellationRequested();
                 stream.Position = 0;
 
-                var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
-                gateway!.SequenceNumber = (message.SequenceNumber != null) ? message.SequenceNumber : gateway!.SequenceNumber;
+                var copy = new MemoryStream();
+                await stream.CopyToAsync(copy, cancellationToken);
+                _ = ProcessMessage(copy, cancellationToken);
 
-                if (message.Data != null)
-                {
-                    _ = eventRouter.Route(message.Data, cancellationToken);
-                }
-
-                logger.LogDebug("Received message from gateway: {@message}", message);
                 stream.SetLength(0);
                 streamLength = 0;
+            }
+        }
+
+        private async Task ProcessMessage(Stream stream, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            stream.Position = 0;
+
+            var message = await serializer.Deserialize<GatewayMessage>(stream, cancellationToken);
+            await stream.DisposeAsync();
+
+            logger.LogDebug("Received message from gateway: {@message}", message);
+            gateway!.SequenceNumber = (message.SequenceNumber != null) ? message.SequenceNumber : gateway!.SequenceNumber;
+
+            if (message.Data != null)
+            {
+                await eventRouter.Route(message.Data, cancellationToken);
             }
         }
 
