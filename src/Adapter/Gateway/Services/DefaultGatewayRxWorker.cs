@@ -77,7 +77,6 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             IsRunning = false;
             await worker!.Stop();
-            await Task.WhenAll(TaskQueue.Values);
             await stream!.DisposeAsync();
 
             stream = null;
