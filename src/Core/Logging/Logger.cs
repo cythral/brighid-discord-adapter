@@ -36,9 +36,9 @@ namespace Brighid.Discord
         }
 
         /// <inheritdoc />
-        IDisposable ILogger.BeginScope<TState>(TState state)
+        IDisposable? ILogger.BeginScope<TState>(TState state)
         {
-            return logger.BeginScope(state);
+            return logger?.BeginScope(state);
         }
 
         /// <inheritdoc />
