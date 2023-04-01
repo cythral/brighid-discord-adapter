@@ -30,11 +30,7 @@ namespace Brighid.Discord.Generators
                                  _ => type != null ? Cast(arg.Value!, type) : arg.Value,
                              };
 
-            var result = (T?)Activator.CreateInstance(typeof(T), parameters.ToArray());
-            if (result == null)
-            {
-                throw new Exception();
-            }
+            var result = (T?)Activator.CreateInstance(typeof(T), parameters.ToArray()) ?? throw new Exception();
 
             foreach (var (key, constant) in attributeData.NamedArguments)
             {

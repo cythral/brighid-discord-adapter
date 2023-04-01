@@ -10,7 +10,7 @@ namespace Brighid.Discord.Models
     /// Represents an endpoint.
     /// </summary>
     [JsonConverter(typeof(EndpointConverter))]
-    public struct Endpoint
+    public readonly struct Endpoint
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Endpoint" /> struct.
