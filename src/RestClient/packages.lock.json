@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
         "requested": "[3.7.100.102, )",
@@ -552,16 +552,16 @@
       "Brighid.Discord.Core": {
         "type": "Project",
         "dependencies": {
-          "AWSXRayRecorder": "2.14.0",
-          "Microsoft.Extensions.DependencyInjection": "6.0.1",
-          "Microsoft.Extensions.Logging": "6.0.0",
-          "System.Linq.Async": "6.0.1"
+          "AWSXRayRecorder": "[2.14.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )",
+          "Microsoft.Extensions.Logging": "[6.0.0, )",
+          "System.Linq.Async": "[6.0.1, )"
         }
       },
       "models": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "6.0.1"
+          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )"
         }
       }
     }

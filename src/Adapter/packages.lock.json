@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "AWSSDK.ECS": {
         "type": "Direct",
         "requested": "[3.7.105.23, )",
@@ -835,30 +835,30 @@
       "Brighid.Discord.Core": {
         "type": "Project",
         "dependencies": {
-          "AWSXRayRecorder": "2.14.0",
-          "Microsoft.Extensions.DependencyInjection": "6.0.1",
-          "Microsoft.Extensions.Logging": "6.0.0",
-          "System.Linq.Async": "6.0.1"
+          "AWSXRayRecorder": "[2.14.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )",
+          "Microsoft.Extensions.Logging": "[6.0.0, )",
+          "System.Linq.Async": "[6.0.1, )"
         }
       },
       "models": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "6.0.1"
+          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )"
         }
       },
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "3.7.100.102",
-          "Brighid.Discord.Core": "1.0.0",
-          "Microsoft.Extensions.Hosting": "6.0.1",
-          "Microsoft.Extensions.Options": "6.0.0",
-          "Models": "1.0.0"
+          "AWSSDK.SQS": "[3.7.100.102, )",
+          "Brighid.Discord.Core": "[1.0.0, )",
+          "Microsoft.Extensions.Hosting": "[6.0.1, )",
+          "Microsoft.Extensions.Options": "[6.0.0, )",
+          "Models": "[1.0.0, )"
         }
       }
     },
-    "net6.0/linux-musl-arm64": {
+    "net7.0/linux-musl-arm64": {
       "Microsoft.Win32.Registry": {
         "type": "Transitive",
         "resolved": "4.4.0",
