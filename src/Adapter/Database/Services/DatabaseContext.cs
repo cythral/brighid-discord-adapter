@@ -17,10 +17,12 @@ namespace Brighid.Discord.Adapter.Database
         /// Initializes a new instance of the <see cref="DatabaseContext" /> class.
         /// </summary>
         /// <param name="options">Options to use when interacting with the database.</param>
+#pragma warning disable IL2026
         public DatabaseContext(DbContextOptions options)
             : base(options)
         {
         }
+#pragma warning restore IL2026
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseContext" /> class.
