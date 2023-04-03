@@ -15,14 +15,6 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <Target Name="GetLambdajectionVersion" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveReferences;RunResolvePackageDependencies">
-        <ItemGroup>
-            <AssemblyAttribute Include="LambdajectionVersion" Condition="%(PackageDefinitions.Name) == 'Lambdajection'">
-                <_Parameter1>%(PackageDefinitions.Version)</_Parameter1>
-            </AssemblyAttribute>
-        </ItemGroup>
-    </Target>
-
     <ItemGroup>
         <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.101.37" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
