@@ -20,6 +20,10 @@
     <type fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration" />
   </assembly>
 
+  <assembly fullname="Microsoft.IdentityModel.Tokens">
+    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKeySet" />
+  </assembly>
+
   <assembly fullname="System.IdentityModel.Tokens.Jwt">
     <type fullname="System.IdentityModel.Tokens.Jwt.JwtHeader" />
     <type fullname="System.IdentityModel.Tokens.Jwt.JwtPayload" />
