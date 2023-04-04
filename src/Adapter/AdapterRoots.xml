@@ -11,6 +11,7 @@
   <assembly fullname="Brighid.Commands.Client" />
   <assembly fullname="AWSSDK.Core" />
   <assembly fullname="AWSSDK.ECS" />
+  <assembly fullname="AWSSDK.SimpleNotificationService" />
 
   <assembly fullname="Microsoft.AspNetCore.Mvc.Razor">
     <type fullname="Microsoft.AspNetCore.Mvc.ApplicationParts.ConsolidatedAssemblyApplicationPartFactory" />
@@ -22,6 +23,7 @@
 
   <assembly fullname="Microsoft.IdentityModel.Tokens">
     <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKeySet" />
+    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKey" />
   </assembly>
 
   <assembly fullname="System.IdentityModel.Tokens.Jwt">
