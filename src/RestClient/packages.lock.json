@@ -4,11 +4,11 @@
     "net7.0": {
       "AWSSDK.SQS": {
         "type": "Direct",
-        "requested": "[3.7.100.104, )",
-        "resolved": "3.7.100.104",
-        "contentHash": "KU6U2PfERNvEhR4oLPMll/l6juOlIUWrwVXcYURYqyM07XmDBIFDVD6MykLPMtzsZvAVDEChBLbHiUSYlnX/gg==",
+        "requested": "[3.7.100.105, )",
+        "resolved": "3.7.100.105",
+        "contentHash": "R3WiCWEal5pMBrwceqiZCPq9N3en/qWRP5ic+U0Bfuaj1YVptmxbrnG1ULPc2crswADFStfGyyg2pR0ra0iNAQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.106.11, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.12, 4.0.0)"
         }
       },
       "Microsoft.Extensions.Hosting": {
@@ -67,8 +67,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.106.11",
-        "contentHash": "447pMAGuroYZSJh0xM85c22rQrLykEMTgYBVUJ6NoHiff/VgS5zBZj6gSExKa4ia97ez1T1cFm6gOrjYopVJ7w=="
+        "resolved": "3.7.106.12",
+        "contentHash": "qD649MG2hmNOzvlzBq9AqBZsgUNCjvvNasCu4HZRGGDBrzZIm90OnWJhW0pDe3Vd3YmICjAH5acMjLgim8DnZQ=="
       },
       "AWSXRayRecorder": {
         "type": "Transitive",
