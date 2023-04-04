@@ -1912,8 +1912,8 @@
         "type": "Project",
         "dependencies": {
           "AWSXRayRecorder": "[2.14.0, )",
-          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )",
-          "Microsoft.Extensions.Logging": "[6.0.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
+          "Microsoft.Extensions.Logging": "[7.0.0, )",
           "System.Linq.Async": "[6.0.1, )"
         }
       },
@@ -1938,7 +1938,7 @@
       "models": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )"
+          "Microsoft.Extensions.DependencyInjection": "[7.0.0, )"
         }
       },
       "responsehandler": {
@@ -1957,8 +1957,8 @@
         "dependencies": {
           "AWSSDK.SQS": "[3.7.100.104, )",
           "Brighid.Discord.Core": "[1.0.0, )",
-          "Microsoft.Extensions.Hosting": "[6.0.1, )",
-          "Microsoft.Extensions.Options": "[6.0.0, )",
+          "Microsoft.Extensions.Hosting": "[7.0.1, )",
+          "Microsoft.Extensions.Options": "[7.0.1, )",
           "Models": "[1.0.0, )"
         }
       },
