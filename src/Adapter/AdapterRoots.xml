@@ -4,6 +4,9 @@
 
   <assembly fullname="AWSXRayRecorder.Core" />
   <assembly fullname="AWSXRayRecorder.Handlers.AwsSdk" />
+  <assembly fullname="AWSXRayRecorder.Handlers.EntityFramework" />
+  <assembly fullname="AWSXRayRecorder.Handlers.System.Net" />
+  <assembly fullname="AWSXRayRecorder.Handlers.AspNetCore" />
   <assembly fullname="Brighid.Identity.Client" />
   <assembly fullname="Brighid.Commands.Client" />
   <assembly fullname="AWSSDK.Core" />
