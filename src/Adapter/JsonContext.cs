@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 
+using Brighid.Commands.Client;
 using Brighid.Discord.Adapter.Events;
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Adapter.Messages;
 using Brighid.Discord.Adapter.Users;
 using Brighid.Discord.Models.Payloads;
@@ -32,6 +34,9 @@ namespace Brighid.Discord.Adapter
     [JsonSerializable(typeof(OAuth2TokenResponse))]
     [JsonSerializable(typeof(CreateDirectMessageChannelPayload))]
     [JsonSerializable(typeof(IGatewayEvent))]
+    [JsonSerializable(typeof(TaskMetadata))]
+    [JsonSerializable(typeof(NodeInfo))]
+    [JsonSerializable(typeof(CommandsClientOptions))]
     public partial class JsonContext : JsonSerializerContext
     {
     }

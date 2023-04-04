@@ -5,7 +5,7 @@ namespace Brighid.Discord.Adapter.Users
     /// <summary>
     /// A user's id.
     /// </summary>
-    public struct UserId
+    public readonly struct UserId
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserId" /> struct.

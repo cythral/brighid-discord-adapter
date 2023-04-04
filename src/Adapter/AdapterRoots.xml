@@ -1,0 +1,21 @@
+<linker>
+  <assembly fullname="Adapter" />
+  <assembly fullname="Models" />
+
+  <assembly fullname="AWSXRayRecorder.Core" />
+  <assembly fullname="AWSXRayRecorder.Handlers.AwsSdk" />
+  <assembly fullname="Brighid.Identity.Client" />
+  <assembly fullname="Brighid.Commands.Client" />
+  <assembly fullname="AWSSDK.Core" />
+  <assembly fullname="AWSSDK.ECS" />
+
+  <assembly fullname="Microsoft.AspNetCore.Mvc.Razor">
+    <type fullname="Microsoft.AspNetCore.Mvc.ApplicationParts.ConsolidatedAssemblyApplicationPartFactory" />
+  </assembly>
+
+
+  <assembly fullname="System.IdentityModel.Tokens.Jwt">
+    <type fullname="System.IdentityModel.Tokens.Jwt.JwtHeader" />
+    <type fullname="System.IdentityModel.Tokens.Jwt.JwtPayload" />
+  </assembly>
+</linker>

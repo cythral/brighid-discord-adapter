@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="AWSSDK.CloudFormation" Version="3.7.104.40" />
         <PackageReference Include="AWSSDK.S3" Version="3.7.103.39" />
         <PackageReference Include="AWSSDK.ECS" Version="3.7.105.23" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     </ItemGroup>
 
     <ItemGroup>

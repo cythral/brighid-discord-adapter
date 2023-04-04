@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,9 @@ using System.Threading.Tasks;
 using Amazon.SecurityToken;
 
 using Brighid.Discord.Cicd.Utils;
+
+using Lambdajection.Core;
+using Lambdajection.Framework;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -233,11 +237,14 @@ namespace Brighid.Discord.Cicd.BuildDriver
 
             var deserializer = new DeserializerBuilder().Build();
             var config = deserializer.Deserialize<Config>(configReader);
+
+            var lambdajectionCoreAssembly = typeof(ILambda<,>).Assembly;
+            var attribute = lambdajectionCoreAssembly.GetCustomAttribute<LambdajectionVersionAttribute>()!;
             var parameters = new Dictionary<string, string>
             {
                 ["Image"] = imageTag,
                 ["DotnetVersion"] = DotnetSdkVersionAttribute.ThisAssemblyDotnetSdkVersion,
-                ["LambdajectionVersion"] = LambdajectionVersionAttribute.ThisAssemblyLambdajectionVersion,
+                ["LambdajectionVersion"] = attribute.Version,
             };
 
             foreach (var (parameterName, parameterDefinition) in config.Parameters)

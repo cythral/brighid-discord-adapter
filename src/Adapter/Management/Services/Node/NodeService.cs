@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Amazon.ECS;
 using Amazon.ECS.Model;
+
+using Brighid.Discord.Serialization;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,6 +27,7 @@ namespace Brighid.Discord.Adapter.Management
         private readonly IDnsService dns;
         private readonly ILogger<NodeService> logger;
         private readonly AdapterOptions options;
+        private readonly ISerializer serializer;
         private TaskMetadata? metadata;
 
         /// <summary>
@@ -34,12 +36,14 @@ namespace Brighid.Discord.Adapter.Management
         /// <param name="httpClient">HTTP Client to fetch instance metadata with.</param>
         /// <param name="ecs">ECS Service to fetch task info from.</param>
         /// <param name="dns">DNS Service to fetch IP addresses with.</param>
+        /// <param name="serializer">Service for serializing and deserializing messages.</param>
         /// <param name="options">Adapter options.</param>
         /// <param name="logger">Service used for logging messages.</param>
         public NodeService(
             HttpClient httpClient,
             IAmazonECS ecs,
             IDnsService dns,
+            ISerializer serializer,
             IOptions<AdapterOptions> options,
             ILogger<NodeService> logger
         )
@@ -47,6 +51,7 @@ namespace Brighid.Discord.Adapter.Management
             this.httpClient = httpClient;
             this.ecs = ecs;
             this.dns = dns;
+            this.serializer = serializer;
             this.logger = logger;
             this.options = options.Value;
         }
@@ -111,7 +116,9 @@ namespace Brighid.Discord.Adapter.Management
 
             var response = await httpClient.SendAsync(request, cancellationToken: cancellationToken);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<NodeInfo>(cancellationToken: cancellationToken) ?? throw new Exception($"Received invalid peer info from {peer}");
+
+            var content = await response.Content.ReadAsStreamAsync(cancellationToken);
+            return await serializer.Deserialize<NodeInfo>(content, cancellationToken: cancellationToken) ?? throw new Exception($"Received invalid peer info from {peer}");
         }
 
         private async Task<TaskMetadata?> GetTaskMetadata(CancellationToken cancellationToken)
@@ -121,7 +128,11 @@ namespace Brighid.Discord.Adapter.Management
                 return null;
             }
 
-            metadata ??= await httpClient.GetFromJsonAsync<TaskMetadata>(options.TaskMetadataUrl, cancellationToken: cancellationToken);
+            var response = await httpClient.GetAsync(options.TaskMetadataUrl, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStreamAsync(cancellationToken);
+            metadata ??= await serializer.Deserialize<TaskMetadata>(content, cancellationToken);
             logger.LogInformation("Retrieved task metadata {@metadata}", metadata);
             return metadata;
         }

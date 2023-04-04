@@ -33,10 +33,12 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 
 using Environments = Brighid.Discord.Adapter.Environments;
+using JsonSerializer = Brighid.Discord.Serialization.JsonSerializer;
 
 #pragma warning disable SA1516
 
 using var cancellationTokenSource = new CancellationTokenSource();
+var serializer = new JsonSerializer(JsonContext.Default);
 var cancellationToken = cancellationTokenSource.Token;
 var environment = Environment.GetEnvironmentVariable("Environment") ?? Environments.Local;
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, EnvironmentName = environment });
@@ -45,9 +47,11 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Host.UseSerilog(dispose: true);
 builder.Host.UseDefaultServiceProvider((context, provider) =>
 {
+#pragma warning disable IL2026
     var validateScopes = context.Configuration.GetValue<bool>("Adapter:ValidateScopes");
     provider.ValidateOnBuild = validateScopes;
     provider.ValidateScopes = validateScopes;
+#pragma warning restore IL2026
 });
 
 builder.WebHost.ConfigureKestrel(kestrel =>
@@ -68,12 +72,20 @@ builder.Services
 
 builder.Services.AddHealthChecks();
 builder.Services.AddLocalization(options => options.ResourcesPath = string.Empty);
-builder.Services.Configure<AdapterOptions>(builder.Configuration.GetSection("Adapter"));
+
+#pragma warning disable IL2026
+var adapterOptionsSection = builder.Configuration.GetSection("Adapter");
+builder.Services.Configure<AdapterOptions>(adapterOptionsSection);
+#pragma warning restore IL2026
+
 builder.Services.TryAddSingleton<Random>();
 builder.Services.AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), typeof(Logger<>));
 
 builder.Services.ConfigureBrighidIdentity<IdentityOptions>(builder.Configuration.GetSection("Identity"));
+
+#pragma warning disable IL2026
 builder.Services.AddBrighidCommands(builder.Configuration.GetSection("Commands").Bind);
+#pragma warning restore IL2026
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -94,9 +106,12 @@ builder.Services.ConfigureDatabaseServices(builder.Configuration);
 builder.Services.ConfigureRequestsServices(builder.Configuration);
 builder.Services.ConfigureGatewayServices(builder.Configuration);
 builder.Services.ConfigureMessageServices(builder.Configuration);
-builder.Services.ConfigureAuthServices(builder.Configuration.GetSection("Auth").Bind);
 builder.Services.ConfigureRestClientResponseServices();
 builder.Services.ConfigureRestClientServices(builder.Configuration);
+
+#pragma warning disable IL2026
+builder.Services.ConfigureAuthServices(builder.Configuration.GetSection("Auth").Bind);
+#pragma warning restore IL2026
 
 using var host = builder.Build();
 host.UseForwardedHeaders();
@@ -109,16 +124,14 @@ host.UseStaticFiles(new StaticFileOptions
 host.UseAuthentication();
 host.UseRouting();
 host.UseAuthorization();
-host.UseEndpoints(endpoints =>
-{
-    endpoints.MapHealthChecks("/healthcheck");
-    endpoints.MapControllers();
-});
+host.MapHealthChecks("/healthcheck");
+host.MapControllers();
 
 SetupLogger(host);
+
 await FetchNodeInfo(host, cancellationToken);
 await InitializeDatabase(host, cancellationToken);
-await host.RunAsync(cancellationToken);
+await host.RunAsync();
 
 static void SetupLogger(WebApplication host)
 {

@@ -28,11 +28,7 @@ namespace Brighid.Discord.Models
 
         public override Endpoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var stringValue = reader.GetString();
-            if (stringValue == null)
-            {
-                throw new SerializationException("Endpoint cannot be null.");
-            }
+            var stringValue = reader.GetString() ?? throw new SerializationException("Endpoint cannot be null.");
 
             var category = stringValue[0];
             if (!CategoryDictionary.TryGetValue(category, out var enumType))

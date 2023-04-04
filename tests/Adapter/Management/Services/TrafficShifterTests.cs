@@ -23,10 +23,9 @@ namespace Brighid.Discord.Adapter.Management
         [Category("Unit")]
         public class PerformTrafficShiftTests
         {
-            public static void SetupNode(NodeInfo node, int shard, string ip, MockHttpMessageHandler http, bool expected)
+            public static NodeInfo SetupNode(int shard, string ip, MockHttpMessageHandler http, bool expected)
             {
-                node.Shard = shard;
-                node.IpAddress = IPAddress.Parse(ip);
+                var node = new NodeInfo { IpAddress = IPAddress.Parse(ip), Shard = shard };
 
                 if (expected)
                 {
@@ -34,14 +33,13 @@ namespace Brighid.Discord.Adapter.Management
                     .Expect(HttpMethod.Put, $"http://{ip}/node/gateway/state")
                     .Respond(HttpStatusCode.NoContent);
                 }
+
+                return node;
             }
 
             [Test, Auto]
             public async Task ShouldStopGatewayForPeersWithTheSameShard(
                 NodeInfo currentNode,
-                NodeInfo peer1,
-                NodeInfo peer2,
-                NodeInfo peer3,
                 [Frozen] MockHttpMessageHandler http,
                 [Frozen] IAdapterContext context,
                 [Target] TrafficShifter shifter,
@@ -49,9 +47,9 @@ namespace Brighid.Discord.Adapter.Management
             )
             {
                 currentNode.Shard = 2;
-                SetupNode(peer1, 2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
-                SetupNode(peer2, 1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
-                SetupNode(peer3, 2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, true);
+                var peer1 = SetupNode(2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
+                var peer2 = SetupNode(1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
+                var peer3 = SetupNode(2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, true);
 
                 context.Get<NodeInfo>().Returns(currentNode);
                 context.Get<IEnumerable<NodeInfo>>().Returns(new[] { peer1, peer2, peer3 });
@@ -64,9 +62,6 @@ namespace Brighid.Discord.Adapter.Management
             [Test, Auto]
             public async Task ShouldHandleErrorsGracefully(
                 NodeInfo currentNode,
-                NodeInfo peer1,
-                NodeInfo peer2,
-                NodeInfo peer3,
                 [Frozen] MockHttpMessageHandler http,
                 [Frozen] IAdapterContext context,
                 [Target] TrafficShifter shifter,
@@ -74,9 +69,9 @@ namespace Brighid.Discord.Adapter.Management
             )
             {
                 currentNode.Shard = 2;
-                SetupNode(peer1, 2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
-                SetupNode(peer2, 1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
-                SetupNode(peer3, 2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, false);
+                var peer1 = SetupNode(2, "[8a77:b11a:b906:6b6e:7e2f:0368:eef3:f2f8]", http, true);
+                var peer2 = SetupNode(1, "[58f5:6a61:edbc:7895:ad4c:7d24:34b7:c9b8]", http, false);
+                var peer3 = SetupNode(2, "[e1a9:b314:eb28:d8dc:bc79:e0b1:8f89:7579]", http, false);
 
                 context.Get<NodeInfo>().Returns(currentNode);
                 context.Get<IEnumerable<NodeInfo>>().Returns(new[] { peer1, peer2, peer3 });

@@ -6,7 +6,7 @@ namespace Brighid.Discord.Adapter.Messages
     /// <summary>
     /// A message chunk received from the gateway.
     /// </summary>
-    public struct GatewayMessageChunk
+    public readonly struct GatewayMessageChunk
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GatewayMessageChunk" /> struct.
