@@ -13,6 +13,9 @@
     <type fullname="Microsoft.AspNetCore.Mvc.ApplicationParts.ConsolidatedAssemblyApplicationPartFactory" />
   </assembly>
 
+  <assembly fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect">
+    <type fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration" />
+  </assembly>
 
   <assembly fullname="System.IdentityModel.Tokens.Jwt">
     <type fullname="System.IdentityModel.Tokens.Jwt.JwtHeader" />
