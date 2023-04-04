@@ -1,6 +1,7 @@
 <linker>
   <assembly fullname="Adapter" />
   <assembly fullname="Models" />
+  <assembly fullname="RestClient" />
 
   <assembly fullname="AWSXRayRecorder.Core" />
   <assembly fullname="AWSXRayRecorder.Handlers.AwsSdk" />
