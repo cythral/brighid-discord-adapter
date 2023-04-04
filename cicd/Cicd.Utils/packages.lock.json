@@ -4,20 +4,20 @@
     "net7.0": {
       "AWSSDK.ECR": {
         "type": "Direct",
-        "requested": "[3.7.100.102, )",
-        "resolved": "3.7.100.102",
-        "contentHash": "wkqvCpWVxm+/rohjvYLxbzlXewwBuMX+Iga5X8CtnzmRz7QmOr4m8Funwj7JyIjd3jMPyLCELMp1vyjw80uV8A==",
+        "requested": "[3.7.100.104, )",
+        "resolved": "3.7.100.104",
+        "contentHash": "u372nNmuasE1QN8Yu8Gvxd6NdcQXoqiGkTBETXYj4n7Rd3Hhgek2dfB1LivOY5LmhOrlW+28yiiO04laiK1WLg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.106.9, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.11, 4.0.0)"
         }
       },
       "AWSSDK.ECRPublic": {
         "type": "Direct",
-        "requested": "[3.7.101.51, )",
-        "resolved": "3.7.101.51",
-        "contentHash": "MydkU913l0mdx+0k48MHp3V4Wk2sId8/NTYqESCZcZAhMbCafEbibDLvCvDLPGSOKtGKd+432Mh2VaKjKS0hsQ==",
+        "requested": "[3.7.101.53, )",
+        "resolved": "3.7.101.53",
+        "contentHash": "+MiYNodwsn9Yj+MF2BYaapQ3/vOz1DF3wzHsQZxPQ/EZ6NUzQ1TPYIH91sbls6RgI+Hv3eW0Zr4Kv0lmg2baHg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.106.9, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.11, 4.0.0)"
         }
       },
       "StyleCop.Analyzers": {
@@ -31,8 +31,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.106.9",
-        "contentHash": "K9+/j66LJysht1ab6BGAkOAgYNj/KNTkpWH63cOcvcim8qP51iorLUhWpxyGqE7kLC1ocsO7rvs4kZojZmUgBw=="
+        "resolved": "3.7.106.11",
+        "contentHash": "447pMAGuroYZSJh0xM85c22rQrLykEMTgYBVUJ6NoHiff/VgS5zBZj6gSExKa4ia97ez1T1cFm6gOrjYopVJ7w=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
