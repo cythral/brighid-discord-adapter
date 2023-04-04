@@ -1,12 +1,14 @@
+using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 
 using Amazon.ECS;
 using Amazon.ECS.Model;
 
 using AutoFixture.NUnit3;
+
+using Brighid.Discord.Serialization;
 
 using FluentAssertions;
 
@@ -18,6 +20,7 @@ using RichardSzalay.MockHttp;
 
 using static NSubstitute.Arg;
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Task = System.Threading.Tasks.Task;
 
 namespace Brighid.Discord.Adapter.Management
@@ -33,12 +36,15 @@ namespace Brighid.Discord.Adapter.Management
                 string deploymentId,
                 string cluster,
                 IPAddress ip,
+                [Frozen] TaskMetadata taskMetadata,
                 [Frozen] AdapterOptions options,
                 [Frozen] MockHttpMessageHandler handler,
+                [Frozen] ISerializer serializer,
                 [Target] NodeService service,
                 CancellationToken cancellationToken
             )
             {
+                taskMetadata.Containers[0].Networks[0].IPv6Addresses = new[] { ip.ToString() };
                 handler
                 .Expect(HttpMethod.Get, options.TaskMetadataUrl!.ToString())
                 .Respond("application/json", $@"{{ ""Containers"": [ {{ ""Networks"": [ {{ ""IPv6Addresses"": [ ""{ip}"" ] }} ] }} ] }}");
@@ -75,12 +81,16 @@ namespace Brighid.Discord.Adapter.Management
                 string cluster,
                 [Frozen] AdapterOptions options,
                 [Frozen] DescribeTasksResponse describeResponse,
+                [Frozen] TaskMetadata taskMetadata,
                 [Frozen] IAmazonECS ecs,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] NodeService service,
                 CancellationToken cancellationToken
             )
             {
+                taskMetadata.TaskArn = taskArn;
+                taskMetadata.Cluster = cluster;
+
                 handler
                 .Expect(HttpMethod.Get, options.TaskMetadataUrl!.ToString())
                 .Respond("application/json", $@"{{ ""Cluster"": ""{cluster}"", ""TaskARN"": ""{taskArn}"" }}");
@@ -115,10 +125,9 @@ namespace Brighid.Discord.Adapter.Management
         {
             [Test, Auto]
             public async Task ShouldReturnAListOfPeers(
-                NodeInfo node1,
-                NodeInfo node2,
                 [Frozen] IDnsService dnsService,
                 [Frozen] MockHttpMessageHandler handler,
+                [Frozen] ISerializer serializer,
                 [Target] NodeService service,
                 CancellationToken cancellationToken
             )
@@ -127,6 +136,10 @@ namespace Brighid.Discord.Adapter.Management
                 var node2Ip = IPAddress.Parse("8526:e466:415c:e5f2:4998:d840:bb1c:1e49");
                 var node3Ip = IPAddress.Parse("8193:6160:9ba4:8599:d274:b058:4b02:3dff");
 
+                var node1 = new NodeInfo { IpAddress = node1Ip };
+                var node2 = new NodeInfo { IpAddress = node2Ip };
+
+                serializer.Deserialize<NodeInfo>(Any<Stream>(), Any<CancellationToken>()).Returns(node1, node2);
                 dnsService.GetIPAddresses(Any<string>(), Any<CancellationToken>()).Returns(new[] { node1Ip, node2Ip, node3Ip });
 
                 handler
