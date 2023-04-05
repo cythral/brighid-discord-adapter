@@ -8,7 +8,6 @@ using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
-using Brighid.Discord;
 using Brighid.Discord.Adapter;
 using Brighid.Discord.Adapter.Database;
 using Brighid.Discord.Adapter.Management;
@@ -17,7 +16,9 @@ using Brighid.Discord.Tracing;
 using Destructurama;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Serilog;
@@ -73,17 +75,13 @@ builder.Services
 builder.Services.AddHealthChecks();
 builder.Services.AddLocalization(options => options.ResourcesPath = string.Empty);
 
-#pragma warning disable IL2026
+#pragma warning disable IL2026, IL2062
 var adapterOptionsSection = builder.Configuration.GetSection("Adapter");
 builder.Services.Configure<AdapterOptions>(adapterOptionsSection);
-#pragma warning restore IL2026
-
 builder.Services.TryAddSingleton<Random>();
-builder.Services.AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), typeof(Logger<>));
+builder.Services.AddSingleton(typeof(ILogger<>), typeof(Brighid.Discord.Logger<>));
 
 builder.Services.ConfigureBrighidIdentity<IdentityOptions>(builder.Configuration.GetSection("Identity"));
-
-#pragma warning disable IL2026
 builder.Services.AddBrighidCommands(builder.Configuration.GetSection("Commands").Bind);
 #pragma warning restore IL2026
 
@@ -114,17 +112,28 @@ builder.Services.ConfigureAuthServices(builder.Configuration.GetSection("Auth").
 #pragma warning restore IL2026
 
 using var host = builder.Build();
+host.UseExceptionHandler(handler =>
+{
+    handler.Run(context =>
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        var feature = context.Features.GetRequiredFeature<IExceptionHandlerPathFeature>();
+        logger.LogError(feature.Error, "Caught exception when executing API endpoint.");
+        return Task.CompletedTask;
+    });
+});
+
 host.UseForwardedHeaders();
 host.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider("/app/wwwroot"),
     ServeUnknownFileTypes = true,
 });
+host.MapHealthChecks("/healthcheck");
 
 host.UseAuthentication();
 host.UseRouting();
 host.UseAuthorization();
-host.MapHealthChecks("/healthcheck");
 host.MapControllers();
 
 SetupLogger(host);
