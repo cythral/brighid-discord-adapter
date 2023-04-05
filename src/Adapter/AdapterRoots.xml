@@ -1,38 +1,37 @@
 <linker>
-  <assembly fullname="Adapter" />
-  <assembly fullname="Models" />
-  <assembly fullname="RestClient" />
+  <assembly fullname="Adapter" preserve="all" />
+  <assembly fullname="Models" preserve="all" />
+  <assembly fullname="RestClient" preserve="all" />
 
-  <assembly fullname="AWSXRayRecorder.Core" />
-  <assembly fullname="AWSXRayRecorder.Handlers.AwsSdk" />
-  <assembly fullname="AWSXRayRecorder.Handlers.EntityFramework" />
-  <assembly fullname="AWSXRayRecorder.Handlers.System.Net" />
-  <assembly fullname="AWSXRayRecorder.Handlers.AspNetCore" />
+  <assembly fullname="AWSXRayRecorder.Core" preserve="all" />
+  <assembly fullname="AWSXRayRecorder.Handlers.AwsSdk" preserve="all" />
+  <assembly fullname="AWSXRayRecorder.Handlers.EntityFramework" preserve="all" />
+  <assembly fullname="AWSXRayRecorder.Handlers.System.Net" preserve="all" />
+  <assembly fullname="AWSXRayRecorder.Handlers.AspNetCore" preserve="all" />
   
-  <assembly fullname="Brighid.Identity.Client" />
-  <assembly fullname="Brighid.Commands.Client" />
+  <assembly fullname="Brighid.Commands.Client" preserve="all" />
   
-  <assembly fullname="AWSSDK.Core" />
-  <assembly fullname="AWSSDK.ECS" />
-  <assembly fullname="AWSSDK.SimpleNotificationService" />
-  <assembly fullname="AWSSDK.SQS" />
+  <assembly fullname="AWSSDK.Core" preserve="all" />
+  <assembly fullname="AWSSDK.ECS" preserve="all" />
+  <assembly fullname="AWSSDK.SimpleNotificationService" preserve="all" />
+  <assembly fullname="AWSSDK.SQS" preserve="all" />
 
-  <assembly fullname="Microsoft.AspNetCore.Mvc" />
+  <assembly fullname="Microsoft.AspNetCore.Mvc" preserve="all" />
   <assembly fullname="Microsoft.AspNetCore.Mvc.Razor">
-    <type fullname="Microsoft.AspNetCore.Mvc.ApplicationParts.ConsolidatedAssemblyApplicationPartFactory" />
+    <type fullname="Microsoft.AspNetCore.Mvc.ApplicationParts.ConsolidatedAssemblyApplicationPartFactory" preserve="all" />
   </assembly>
 
   <assembly fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect">
-    <type fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration" />
+    <type fullname="Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration" preserve="all" />
   </assembly>
 
   <assembly fullname="Microsoft.IdentityModel.Tokens">
-    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKeySet" />
-    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKey" />
+    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKeySet" preserve="all" />
+    <type fullname="Microsoft.IdentityModel.Tokens.JsonWebKey" preserve="all" />
   </assembly>
 
   <assembly fullname="System.IdentityModel.Tokens.Jwt">
-    <type fullname="System.IdentityModel.Tokens.Jwt.JwtHeader" />
-    <type fullname="System.IdentityModel.Tokens.Jwt.JwtPayload" />
+    <type fullname="System.IdentityModel.Tokens.Jwt.JwtHeader" preserve="all" />
+    <type fullname="System.IdentityModel.Tokens.Jwt.JwtPayload" preserve="all" />
   </assembly>
 </linker>

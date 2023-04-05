@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <NoWarn>CS1591</NoWarn>
-    <TrimMode>copyused</TrimMode>
     <RuntimeIdentifier>linux-musl-arm64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSelfContained>true</PublishSelfContained>
@@ -12,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Brighid.Identity.Client" Version="0.6.4.6" />
+    <PackageReference Include="Brighid.Identity.Client" Version="0.7.0.1" />
     <PackageReference Include="Brighid.Commands.Client" Version="0.3.0.119-beta1" />
   </ItemGroup>
 
