@@ -918,24 +918,24 @@
       },
       "MockQueryable.Core": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "l8+aU1yAl9Dmep0geZR2PCu7UWNwo6kKFaeuigDSimOTSd7U8ScHSAbNT1pLusUrkU2p6lwb28dJ+3wfbv2F3A=="
+        "resolved": "5.0.2",
+        "contentHash": "wq4G/H6HNgfedrGJGye6J4Ai29xQNgVuM+AjtNq3fkWiCNBMmRZ114aVUl1jeJO3LaTie/1yhW81Re8Ky/eM+w=="
       },
       "MockQueryable.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "LaS2NMn12kJO/tMLC3MHoGMw8JwLayjMPHHkO0oVDA1kZxF/cJ5+0zLXGN3j9pyA/3p0yHUrVya3JJFqF+16wQ==",
+        "resolved": "5.0.2",
+        "contentHash": "N553s6viItqzXo0WTSt/JkDTi0r2BN39D0vmgswukIjr3wtM5uXmBRFV1H9s4RjrVJSIKPCf4azEHVLLsNPcjw==",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "5.0.0",
-          "MockQueryable.Core": "5.0.1"
+          "MockQueryable.Core": "5.0.2"
         }
       },
       "MockQueryable.NSubstitute": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "uwqNZb/DVLAI++yYpOWkaCgIB6waOj9FU6jQwASvHlBgQa5ErZi6qCYfSPBWuHvMET73UH9uTe9jnbWWQ6yfAA==",
+        "resolved": "5.0.2",
+        "contentHash": "P28LL6pPIoXyfFM7ERlNE93w/cWS4pOYumtFwhtPt96n68cwGQDV5/hQr/O5ArwzPdqYuESOn/ZG82/BdBG8DA==",
         "dependencies": {
-          "MockQueryable.EntityFrameworkCore": "5.0.1",
+          "MockQueryable.EntityFrameworkCore": "5.0.2",
           "NSubstitute": "4.2.1"
         }
       },
@@ -1979,7 +1979,7 @@
           "CacheExpirer": "[1.0.0, )",
           "FluentAssertions": "[5.10.3, )",
           "Microsoft.NET.Test.Sdk": "[16.10.0, )",
-          "MockQueryable.NSubstitute": "[5.0.1, )",
+          "MockQueryable.NSubstitute": "[5.0.2, )",
           "Models": "[1.0.0, )",
           "NSubstitute": "[4.2.2, )",
           "NUnit3TestAdapter": "[4.0.0, )",
