@@ -94,10 +94,10 @@
       },
       "AutoFixture.NUnit3": {
         "type": "Transitive",
-        "resolved": "4.17.0",
-        "contentHash": "v5VkKkzHSsjdRNOccst/nYkiJsXdAWwKmgxidlToL9FFQAHicCT1zwl0IF4pGbwpAmqKi4+dl4qZ+31iyeAXmg==",
+        "resolved": "4.18.0",
+        "contentHash": "Zyb6K/ZI7h+i6W7iH+0ubGuYtX9jXD0msFWMR/LZSWh2VAE7nLBUib1s3QPMvy/ri2qf4XMdRup0/31Ssh7d1A==",
         "dependencies": {
-          "AutoFixture": "4.17.0",
+          "AutoFixture": "4.18.0",
           "NUnit": "[3.7.0, 4.0.0)"
         }
       },
@@ -1974,7 +1974,7 @@
           "AWSSDK.SimpleSystemsManagement": "[3.7.104.9, )",
           "Adapter": "[1.0.0, )",
           "AutoFixture.AutoNSubstitute": "[4.18.0, )",
-          "AutoFixture.NUnit3": "[4.17.0, )",
+          "AutoFixture.NUnit3": "[4.18.0, )",
           "Brighid.Discord.Core": "[1.0.0, )",
           "CacheExpirer": "[1.0.0, )",
           "FluentAssertions": "[5.10.3, )",
