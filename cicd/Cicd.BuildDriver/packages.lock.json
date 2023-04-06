@@ -140,18 +140,18 @@
       },
       "AWSSDK.Lambda": {
         "type": "Transitive",
-        "resolved": "3.7.4.27",
-        "contentHash": "dAxksY4pjB4WofIiyZLY4em/fT8sYeJ7eKMV3FmBYRkNFpvm/Z8AcCMtayaWvurjVlQV1n5meBMBmtRto8kgGg==",
+        "resolved": "3.7.105.26",
+        "contentHash": "2tdxgi7vuy2rdetZjprPsLA6vkd0r4T1kiKkgIwyaEwb6bwamnfvJHeAqdfCIMrsQ4qzzybP5IchNz141FSJlw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.13, 4.0.0)"
         }
       },
       "AWSSDK.Organizations": {
         "type": "Transitive",
-        "resolved": "3.7.0.101",
-        "contentHash": "pxBxya5C26dDXb/OXc1fZxn9IKMp71jtuYkopAPQHYC47SIUkx5hutStrWADSOovZ15FrNUIUnjWfXMntotTUA==",
+        "resolved": "3.7.102.23",
+        "contentHash": "LtxVJZ7ox5F6GFB8XV09+n+rMis8/lsyQj2BCFCGqNLqJBBp2MnK5R4i85fB3WFBC0e2Boxj+DkC+s/S1D4SdQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.13, 4.0.0)"
         }
       },
       "AWSSDK.SimpleNotificationService": {
@@ -164,10 +164,10 @@
       },
       "AWSSDK.SimpleSystemsManagement": {
         "type": "Transitive",
-        "resolved": "3.7.9.2",
-        "contentHash": "9slNFau3oy8vRFf/hYIPDaH37Y0kcQu1ZH8Jtyhj6Jyj5ndSSRM7HYEGe8vuIxgjl9Sc7lWqdKKQ48sms2CwSQ==",
+        "resolved": "3.7.104.9",
+        "contentHash": "hzd6CHorC68Glh6MieJRgd4b4qmLLz0ahdPTDMhhvwNSFCeRx6KOD9TjDOl6YqEz1XbuxQ2CVA0ZA7unjjotEg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.4.5, 4.0.0)"
+          "AWSSDK.Core": "[3.7.106.13, 4.0.0)"
         }
       },
       "AWSSDK.SQS": {
@@ -1968,10 +1968,10 @@
       "tests": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.Lambda": "[3.7.4.27, )",
-          "AWSSDK.Organizations": "[3.7.0.101, )",
-          "AWSSDK.SecurityToken": "[3.7.1.90, )",
-          "AWSSDK.SimpleSystemsManagement": "[3.7.9.2, )",
+          "AWSSDK.Lambda": "[3.7.105.26, )",
+          "AWSSDK.Organizations": "[3.7.102.23, )",
+          "AWSSDK.SecurityToken": "[3.7.101.41, )",
+          "AWSSDK.SimpleSystemsManagement": "[3.7.104.9, )",
           "Adapter": "[1.0.0, )",
           "AutoFixture.AutoNSubstitute": "[4.17.0, )",
           "AutoFixture.NUnit3": "[4.17.0, )",
