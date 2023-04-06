@@ -1005,8 +1005,8 @@
       },
       "NUnit": {
         "type": "Transitive",
-        "resolved": "3.13.2",
-        "contentHash": "u+fz/lXyR4vlamySNAEMrXvh+GhAQiB6/aVZtU5WjivR5zF26Ui0tfteDtWqT90k9D8y6g8rFKYQC97Z7d195w==",
+        "resolved": "3.13.3",
+        "contentHash": "KNPDpls6EfHwC3+nnA67fh5wpxeLb3VLFAfLxrug6JMYDLHH6InaQIWR7Sc3y75d/9IKzMksH/gi08W7XWbmnQ==",
         "dependencies": {
           "NETStandard.Library": "2.0.0"
         }
@@ -1987,7 +1987,7 @@
           "RestClient": "[1.0.0, )",
           "RichardSzalay.MockHttp": "[6.0.0, )",
           "System.Interactive.Async.Providers": "[5.0.0, )",
-          "nunit": "[3.13.2, )"
+          "nunit": "[3.13.3, )"
         }
       }
     }
