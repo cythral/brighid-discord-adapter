@@ -1430,19 +1430,19 @@
       },
       "System.Interactive.Async": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "QaqhQVDiULcu4vm6o89+iP329HcK44cETHOYgy/jfEjtzeFy0ZxmuM7nel9ocjnKxEM4yh1mli7hgh8Q9o+/Iw==",
+        "resolved": "5.1.0",
+        "contentHash": "PGAWrPUd4m0o3djNXpJWzp8RbzFtc5CfMZZsAhkAvrpkoCOO8ltfLdtxDX8RwY1hGGrSZASXCta3Hy5ZZQF4fg==",
         "dependencies": {
-          "System.Linq.Async": "5.0.0"
+          "System.Linq.Async": "5.1.0"
         }
       },
       "System.Interactive.Async.Providers": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "P8OJYg6pd/L1hdAUeTtJqAhNtL7GI1X9jad7n98Klz1Vq2dfkEvrPGioCgG6TIc2GFvhDh7krTnsX98gqP1hTQ==",
+        "resolved": "5.1.0",
+        "contentHash": "ljCshnbnSfYHg5aHsJ3F2dPlihtuR/kxcbM+Vzh7ZkHwfMb4tQ7KVazotdwFuUD88wr8PV0oxgkuCl5+yTQUzQ==",
         "dependencies": {
-          "System.Interactive.Async": "5.0.0",
-          "System.Linq.Async.Queryable": "5.0.0"
+          "System.Interactive.Async": "5.1.0",
+          "System.Linq.Async.Queryable": "5.1.0"
         }
       },
       "System.IO": {
@@ -1507,10 +1507,10 @@
       },
       "System.Linq.Async.Queryable": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "Yrh1M65oyimfRPHra+68psz2tYUN57LqhytxDjgUuX7o9iXqvbMfrC8yDr5QGP3CRuERxKeF8Qy8X/AUQgszuA==",
+        "resolved": "5.1.0",
+        "contentHash": "lCaWTfg9Psa8fNJI7CK71Pk+FIL2mgx5SMOS/4B8zENKhhoe/FvSEvmrh5GEPNYOQzw9QDjBxvJF04nuLJu1ew==",
         "dependencies": {
-          "System.Linq.Async": "5.0.0"
+          "System.Linq.Async": "5.1.0"
         }
       },
       "System.Linq.Expressions": {
@@ -1986,7 +1986,7 @@
           "ResponseHandler": "[1.0.0, )",
           "RestClient": "[1.0.0, )",
           "RichardSzalay.MockHttp": "[6.0.0, )",
-          "System.Interactive.Async.Providers": "[5.0.0, )",
+          "System.Interactive.Async.Providers": "[5.1.0, )",
           "nunit": "[3.13.3, )"
         }
       }
