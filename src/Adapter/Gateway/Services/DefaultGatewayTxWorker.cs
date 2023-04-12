@@ -1,4 +1,5 @@
 using System.Net.WebSockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly ITimerFactory timerFactory;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
         private readonly ILogger<DefaultGatewayTxWorker> logger;
-        private ITimer? timer;
+        private ITimer? worker;
         private IClientWebSocket? webSocket;
 
         /// <summary>
@@ -53,18 +54,17 @@ namespace Brighid.Discord.Adapter.Gateway
             IsRunning = true;
             this.webSocket = webSocket;
 
-            timer = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
-            timer.StopOnException = true;
-            timer.OnUnexpectedStop = () => gateway.Restart();
-            await timer.Start();
+            worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
+            worker.StopOnException = true;
+            worker.OnUnexpectedStop = () => gateway.Restart();
+            await worker.Start();
         }
 
         /// <inheritdoc />
         public async Task Stop()
         {
             IsRunning = false;
-            await timer!.Stop();
-            timer = null;
+            await StopWorker();
         }
 
         /// <inheritdoc />
@@ -102,6 +102,18 @@ namespace Brighid.Discord.Adapter.Gateway
             await webSocket!.Send(serializedMessage, WebSocketMessageType.Text, true, cancellationToken);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task StopWorker()
+        {
+            if (worker != null)
+            {
+                await worker.Stop();
+            }
+
+            worker = null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfNotRunning()
         {
             if (!IsRunning)

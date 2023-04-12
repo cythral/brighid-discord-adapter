@@ -1,5 +1,6 @@
 using System;
 using System.Net.WebSockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -124,12 +125,12 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             State &= ~GatewayState.Running;
             await StopHeartbeat();
-            await worker!.Stop();
+            await StopWorker();
+
             await rxWorker.Stop();
             await txWorker.Stop();
             webSocket?.Abort();
             webSocket = null;
-            worker = null;
             State &= ~GatewayState.Ready;
         }
 
@@ -207,12 +208,24 @@ namespace Brighid.Discord.Adapter.Gateway
             await txWorker.Emit(message, cancellationToken);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfNotRunning()
         {
             if (!State.HasFlag(GatewayState.Running))
             {
                 throw new OperationCanceledException();
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task StopWorker()
+        {
+            if (worker != null)
+            {
+                await worker.Stop();
+            }
+
+            worker = null;
         }
     }
 }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,11 +78,9 @@ namespace Brighid.Discord.Adapter.Gateway
         public async Task Stop()
         {
             IsRunning = false;
-            await worker!.Stop();
-            await stream!.DisposeAsync();
+            await StopWorker();
+            await DisposeStream();
 
-            stream = null;
-            worker = null;
             TaskQueue.Clear();
         }
 
@@ -149,12 +149,35 @@ namespace Brighid.Discord.Adapter.Gateway
             TaskQueue.Remove(task.Id);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfNotRunning()
         {
             if (!IsRunning)
             {
-                throw new System.OperationCanceledException();
+                throw new OperationCanceledException();
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task StopWorker()
+        {
+            if (worker != null)
+            {
+                await worker.Stop();
+            }
+
+            worker = null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task DisposeStream()
+        {
+            if (stream != null)
+            {
+                await stream.DisposeAsync();
+            }
+
+            stream = null;
         }
     }
 }

@@ -79,44 +79,48 @@ namespace Brighid.Discord.Threading
 
         private async void RunAsync()
         {
-            using var scope = logger.BeginScope("{@timerName}", timerName);
-            startPromise?.TrySetResult();
-
-            while (!cancellationToken.IsCancellationRequested)
+            var stoppedOnException = false;
+            using (var scope = logger.BeginScope("{@timerName}", timerName))
             {
-                try
-                {
-                    if (period > 0)
-                    {
-                        Thread.Sleep(period);
-                    }
+                startPromise?.TrySetResult();
 
-                    await callback(cancellationToken);
-                }
-                catch (OperationCanceledException)
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    logger.LogDebug("Timer canceled, shutting down gracefully.");
-                }
-                catch (Exception exception)
-                {
-                    logger.LogError("Received exception: {@exception}", exception);
-
-                    if (StopOnException)
+                    try
                     {
-                        if (OnUnexpectedStop != null)
+                        if (period > 0)
                         {
-                            scope?.Dispose();
-                            stopPromise?.TrySetResult();
-                            await OnUnexpectedStop();
+                            Thread.Sleep(period);
                         }
 
+                        await callback(cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        logger.LogDebug("Timer canceled, shutting down gracefully.");
                         break;
                     }
+                    catch (Exception exception)
+                    {
+                        logger.LogError("Received exception: {@exception}", exception);
+
+                        if (StopOnException)
+                        {
+                            stoppedOnException = true;
+                            cancellationTokenSource?.Cancel();
+                            break;
+                        }
+                    }
                 }
+
+                logger.LogDebug("Timer stopped.");
+                stopPromise?.TrySetResult();
             }
 
-            logger.LogDebug("Timer stopped.");
-            stopPromise?.TrySetResult();
+            if (stoppedOnException && OnUnexpectedStop != null)
+            {
+                await OnUnexpectedStop();
+            }
         }
     }
 }
