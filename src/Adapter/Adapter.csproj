@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.ECS" Version="3.7.106.2" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.101.46" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.101.47" />
   </ItemGroup>
 
   <ItemGroup>
