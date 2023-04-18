@@ -139,7 +139,7 @@ namespace Brighid.Discord.Adapter.Requests
                 );
 
                 var batchRequest = (from call in sqs.ReceivedCalls()
-                                    let arg = (DeleteMessageBatchRequest)call.GetArguments()[0]
+                                    let arg = (DeleteMessageBatchRequest)call.GetArguments()[0]!
                                     where arg.Entries.Any()
                                     select arg).First();
 
@@ -253,7 +253,7 @@ namespace Brighid.Discord.Adapter.Requests
 
                 var changeVisibilityEntries = (from call in sqs.ReceivedCalls()
                                                where call.GetMethodInfo().Name == nameof(IAmazonSQS.ChangeMessageVisibilityBatchAsync)
-                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]
+                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]!
                                                where entries.Any()
                                                select entries).First();
 
@@ -286,7 +286,7 @@ namespace Brighid.Discord.Adapter.Requests
 
                 var changeVisibilityEntries = (from call in sqs.ReceivedCalls()
                                                where call.GetMethodInfo().Name == nameof(IAmazonSQS.ChangeMessageVisibilityBatchAsync)
-                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]
+                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]!
                                                where entries.Any()
                                                select entries).First();
 
@@ -333,7 +333,7 @@ namespace Brighid.Discord.Adapter.Requests
 
                 var changeVisibilityEntries = (from call in sqs.ReceivedCalls()
                                                where call.GetMethodInfo().Name == nameof(IAmazonSQS.ChangeMessageVisibilityBatchAsync)
-                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]
+                                               let entries = (List<ChangeMessageVisibilityBatchRequestEntry>)call.GetArguments()[1]!
                                                where entries.Any()
                                                select entries).First();
 

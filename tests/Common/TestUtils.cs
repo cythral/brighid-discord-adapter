@@ -9,6 +9,6 @@ internal class TestUtils
         return (from call in target.ReceivedCalls()
                 let methodInfo = call.GetMethodInfo()
                 where methodInfo.Name == methodName
-                select (TArg)call.GetArguments()[arg]).First();
+                select (TArg)call.GetArguments()[arg]!).First();
     }
 }

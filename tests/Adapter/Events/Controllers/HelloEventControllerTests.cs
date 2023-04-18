@@ -79,7 +79,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 var message = (from call in gateway.ReceivedCalls()
                                where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                               select (GatewayMessage)call.GetArguments()[0]).First();
+                               select (GatewayMessage)call.GetArguments()[0]!).First();
 
                 message.Data.Should().BeOfType<ResumeEvent>();
             }
@@ -103,7 +103,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 var message = (from call in gateway.ReceivedCalls()
                                where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                               select (GatewayMessage)call.GetArguments()[0]).First();
+                               select (GatewayMessage)call.GetArguments()[0]!).First();
 
                 message.Data.Should().BeOfType<IdentifyEvent>();
             }
@@ -127,7 +127,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 var message = (from call in gateway.ReceivedCalls()
                                where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                               select (GatewayMessage)call.GetArguments()[0]).First();
+                               select (GatewayMessage)call.GetArguments()[0]!).First();
 
                 message.Data.Should().BeOfType<IdentifyEvent>();
             }
@@ -150,7 +150,7 @@ namespace Brighid.Discord.Adapter.Events
 
                 var message = (from call in gateway.ReceivedCalls()
                                where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                               select (GatewayMessage)call.GetArguments()[0]).First();
+                               select (GatewayMessage)call.GetArguments()[0]!).First();
 
                 message.Data.Should().BeOfType<IdentifyEvent>();
             }
@@ -182,7 +182,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     message.OpCode.Should().Be(GatewayOpCode.Resume);
                 }
@@ -209,7 +209,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var resumeEvent = (ResumeEvent)message.Data!;
                     resumeEvent.Token.Should().Be(token);
@@ -237,7 +237,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var resumeEvent = (ResumeEvent)message.Data!;
                     resumeEvent.SessionId.Should().Be(sessionId);
@@ -265,7 +265,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var resumeEvent = (ResumeEvent)message.Data!;
                     resumeEvent.SequenceNumber.Should().Be(sequenceNumber);
@@ -295,7 +295,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     message.OpCode.Should().Be(GatewayOpCode.Identify);
                 }
@@ -319,7 +319,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var identifyEvent = (IdentifyEvent)message.Data!;
 
@@ -345,7 +345,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var identifyEvent = (IdentifyEvent)message.Data!;
 
@@ -373,7 +373,7 @@ namespace Brighid.Discord.Adapter.Events
 
                     var message = (from call in gateway.ReceivedCalls()
                                    where call.GetMethodInfo().Name == nameof(IGatewayService.Send)
-                                   select (GatewayMessage)call.GetArguments()[0]).First();
+                                   select (GatewayMessage)call.GetArguments()[0]!).First();
 
                     var identifyEvent = (IdentifyEvent)message.Data!;
 
