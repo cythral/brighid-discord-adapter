@@ -27,7 +27,7 @@ namespace Brighid.Discord.Adapter.Users
                 cache.RemoveByIdentityId(identityId1.Id);
 
                 cache.Should().NotContainKey(discordId1);
-                cache.Should().ContainKey(discordId2).WhichValue.Should().Be(identityId2);
+                cache.Should().ContainKey(discordId2).WhoseValue.Should().Be(identityId2);
             }
         }
     }
