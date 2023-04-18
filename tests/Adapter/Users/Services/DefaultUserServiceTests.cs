@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Models;
 using Brighid.Identity.Client;
 
@@ -32,14 +33,14 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldMakeARequestToDiscordsTokenEndpointWithTheCode(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
                 .WithFormData("code", code)
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
@@ -52,15 +53,15 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldMakeARequestToDiscordsTokenEndpointWithTheClientId(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
-                .WithFormData("client_id", adapterOptions.ClientId)
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
+                .WithFormData("client_id", discordApiInfo.ClientId)
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
                 await service.ExchangeOAuth2CodeForToken(code, cancellationToken);
@@ -72,15 +73,15 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldMakeARequestToDiscordsTokenEndpointWithTheClientSecret(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
-                .WithFormData("client_secret", adapterOptions.ClientSecret)
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
+                .WithFormData("client_secret", discordApiInfo.ClientSecret)
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
                 await service.ExchangeOAuth2CodeForToken(code, cancellationToken);
@@ -92,14 +93,14 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldMakeARequestToDiscordsTokenEndpointWithTheGrantType(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
                 .WithFormData("grant_type", "authorization_code")
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
@@ -112,15 +113,15 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldMakeARequestToDiscordsTokenEndpointWithTheRedirectUri(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
-                .WithFormData("redirect_uri", adapterOptions.OAuth2RedirectUri.ToString())
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
+                .WithFormData("redirect_uri", discordApiInfo.OAuth2RedirectUri.ToString())
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
                 await service.ExchangeOAuth2CodeForToken(code, cancellationToken);
@@ -132,14 +133,14 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldReturnTheAccessTokenFromTheBody(
                 string code,
                 string accessToken,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Post, adapterOptions.OAuth2TokenEndpoint.ToString())
+                .Expect(HttpMethod.Post, discordApiInfo.OAuth2TokenEndpoint.ToString())
                 .Respond("application/json", @$"{{""access_token"":""{accessToken}""}}");
 
                 var result = await service.ExchangeOAuth2CodeForToken(code, cancellationToken);
@@ -156,14 +157,14 @@ namespace Brighid.Discord.Adapter.Users
             public async Task ShouldSendARequestToTheMeEndpointAndReturnTheUserId(
                 Snowflake userId,
                 string token,
-                [Frozen] AdapterOptions adapterOptions,
+                [Frozen] IDiscordApiInfoService discordApiInfo,
                 [Frozen] MockHttpMessageHandler handler,
                 [Target] DefaultUserService service,
                 CancellationToken cancellationToken
             )
             {
                 handler
-                .Expect(HttpMethod.Get, adapterOptions.OAuth2UserInfoEndpoint.ToString())
+                .Expect(HttpMethod.Get, discordApiInfo.OAuth2UserInfoEndpoint.ToString())
                 .WithHeaders("authorization", $"Bearer {token}")
                 .Respond("application/json", $@"{{""id"":""{userId.Value}""}}");
 

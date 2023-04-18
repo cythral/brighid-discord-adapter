@@ -33,10 +33,5 @@ namespace Brighid.Discord.Adapter.Requests
         /// Gets or sets the maximum amount of messages than can be received from SQS at once.
         /// </summary>
         public uint MessageBufferSize { get; set; } = 10;
-
-        /// <summary>
-        /// Gets or sets the base URL used for invoking requests.
-        /// </summary>
-        public Uri InvokeBaseUrl { get; set; } = new Uri("https://discord.com/api");
     }
 }

@@ -2,6 +2,7 @@ using System;
 
 using AutoFixture.NUnit3;
 
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Models;
 
 using FluentAssertions;
@@ -36,6 +37,7 @@ namespace Brighid.Discord.Adapter.Requests
                 Request request,
                 Uri baseUrl,
                 [Frozen] RequestOptions options,
+                [Frozen] IDiscordApiInfoService discordApiInfoService,
                 [Target] DefaultUrlBuilder builder
             )
             {
@@ -43,7 +45,7 @@ namespace Brighid.Discord.Adapter.Requests
                 request.Parameters["channel.id"] = channelId;
 
                 var result = builder.BuildFromRequest(request);
-                result.Should().Be($"{options.InvokeBaseUrl}/channels/{channelId}/messages");
+                result.Should().Be($"{discordApiInfoService.ApiBaseUrl}/channels/{channelId}/messages");
             }
 
             [Test, Auto]
