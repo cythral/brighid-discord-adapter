@@ -162,7 +162,7 @@ namespace Brighid.Discord.Adapter.Events
                     var createMessagePayload = new CreateMessagePayload
                     {
                         Content = result.Response,
-                        Embed = GetDebugEmbed(user, trace),
+                        Embeds = GetDebugEmbed(user, trace),
                     };
 
                     await discordChannelClient.CreateMessage(@event.Message.ChannelId, createMessagePayload, cancellationToken);
