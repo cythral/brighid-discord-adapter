@@ -360,7 +360,7 @@ namespace Brighid.Discord.Adapter.Events
                 await channelClient.Received().CreateMessage(
                     Is(channelId),
                     Is<CreateMessagePayload>(payload =>
-                        payload.Embeds!.Value.Fields.Any(field => field.Name == "TraceId" && field.Value == traceContext.Id)
+                        payload.Embeds![0].Fields.Any(field => field.Name == "TraceId" && field.Value == traceContext.Id)
                     ),
                     Is(cancellationToken)
                 );

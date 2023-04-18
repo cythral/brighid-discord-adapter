@@ -101,17 +101,20 @@ namespace Brighid.Discord.Adapter.Events
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Models.Embed? GetDebugEmbed(UserId userId, TraceContext trace)
+        private static Models.Embed[]? GetDebugEmbeds(UserId userId, TraceContext trace)
         {
             return !userId.Debug
                 ? null
-                : new Models.Embed
+                : new Models.Embed[]
                 {
-                    Title = "Debug Info",
-                    Color = 5763719,
-                    Fields = new[]
+                    new()
                     {
-                        new Models.EmbedField { Name = "TraceId", Value = trace.Id },
+                        Title = "Debug Info",
+                        Color = 5763719,
+                        Fields = new[]
+                        {
+                            new Models.EmbedField { Name = "TraceId", Value = trace.Id },
+                        },
                     },
                 };
         }
@@ -162,7 +165,7 @@ namespace Brighid.Discord.Adapter.Events
                     var createMessagePayload = new CreateMessagePayload
                     {
                         Content = result.Response,
-                        Embeds = GetDebugEmbed(user, trace),
+                        Embeds = GetDebugEmbeds(user, trace),
                     };
 
                     await discordChannelClient.CreateMessage(@event.Message.ChannelId, createMessagePayload, cancellationToken);

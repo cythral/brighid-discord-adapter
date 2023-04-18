@@ -29,7 +29,7 @@ namespace Brighid.Discord.Models.Payloads
         /// Gets or sets embedded rich content.
         /// </summary>
         [JsonPropertyName("embeds")]
-        public Embed? Embeds { get; set; }
+        public Embed[]? Embeds { get; set; }
 
         /// <summary>
         /// Gets or sets JSON encoded body of non-file params.
