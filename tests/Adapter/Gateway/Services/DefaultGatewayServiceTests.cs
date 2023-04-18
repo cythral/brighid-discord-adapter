@@ -151,7 +151,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 worker.Received().OnUnexpectedStop = Any<OnUnexpectedTimerStop>();
                 var arg = (from call in worker.ReceivedCalls()
                            where call.GetMethodInfo().Name.Contains(nameof(worker.OnUnexpectedStop))
-                           select (OnUnexpectedTimerStop)call.GetArguments()[0]).First();
+                           select (OnUnexpectedTimerStop)call.GetArguments()[0]!).First();
 
                 await arg();
                 await restartService.Received().Restart(Is(gateway), Is(true), Any<CancellationToken>());

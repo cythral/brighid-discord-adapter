@@ -69,7 +69,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 timer.Received().OnUnexpectedStop = Any<OnUnexpectedTimerStop>();
                 var arg = (from call in timer.ReceivedCalls()
                            where call.GetMethodInfo().Name.Contains(nameof(timer.OnUnexpectedStop))
-                           select (OnUnexpectedTimerStop)call.GetArguments()[0]).First();
+                           select (OnUnexpectedTimerStop)call.GetArguments()[0]!).First();
 
                 await arg();
                 await gateway.Received().Restart();
