@@ -15,5 +15,10 @@ namespace Brighid.Discord.Adapter.Events
         /// Gets or sets the event message.
         /// </summary>
         public Message Message { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the message originates from a bot user or not.
+        /// </summary>
+        public bool IsBotMessage => Message.Author.IsBot ?? false;
     }
 }
