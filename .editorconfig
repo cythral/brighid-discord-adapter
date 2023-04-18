@@ -3,6 +3,10 @@ root = true
 [*.{cs,csx}]
 insert_final_newline = true
 
+# Allow one-liner if-returns
+dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1137.severity = error
+
 # Namespace must match folder structure
 dotnet_diagnostic.IDE0130.severity = none
 

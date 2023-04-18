@@ -70,6 +70,27 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
+            public async Task ShouldDoNothingIfMessageWasFromABot(
+                string content,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Frozen, Substitute] ITracingService tracing,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var message = new Message { Content = content, Author = new User { IsBot = true } };
+                var @event = new MessageCreateEvent { Message = message };
+
+                await controller.Handle(@event, cancellationToken);
+
+                tracing.DidNotReceive().StartTrace();
+                await emitter.DidNotReceive().Emit(Any<Message>(), Any<Snowflake>(), Any<CancellationToken>());
+                await userService.DidNotReceive().IsUserRegistered(Any<User>(), Any<CancellationToken>());
+            }
+
+            [Test, Auto]
             public async Task ShouldStartAndStopATraceWithMessageAndEventAnnotations(
                 string content,
                 Snowflake userId,

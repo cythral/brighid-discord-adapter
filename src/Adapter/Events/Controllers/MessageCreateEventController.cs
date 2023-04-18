@@ -16,6 +16,8 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+#pragma warning disable IDE0011 // Relax required braces
+
 namespace Brighid.Discord.Adapter.Events
 {
     /// <summary>
@@ -78,6 +80,7 @@ namespace Brighid.Discord.Adapter.Events
         {
             cancellationToken.ThrowIfCancellationRequested();
             gateway.ThrowIfNotReady();
+            if (@event.IsBotMessage) return;
 
             using var trace = tracingService.StartTrace();
             using var scope = logger.BeginScope("{@Event} {@TraceId}", nameof(MessageCreateEvent), trace.Id);
