@@ -82,5 +82,25 @@ namespace Brighid.Discord.Models
         /// The DIRECT_MESSAGE_TYPING intent.
         /// </summary>
         DirectMessageTyping = 1 << 14,
+
+        /// <summary>
+        /// The MESSAGE_CONTENT intent.
+        /// </summary>
+        MessageContent = 1 << 15,
+
+        /// <summary>
+        /// The GUILD_SCHEDULED_EVENTS intent.
+        /// </summary>
+        GuildScheduledEvents = 1 << 16,
+
+        /// <summary>
+        /// The AUTO_MODERATION_CONFIGURATION intent.
+        /// </summary>
+        AutoModerationConfiguration = 1 << 20,
+
+        /// <summary>
+        /// The AUTO_MODERATION_EXECUTION intent.
+        /// </summary>
+        AutoModerationExecution = 1 << 21,
     }
 }

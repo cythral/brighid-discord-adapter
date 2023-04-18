@@ -25,6 +25,7 @@ namespace Brighid.Discord.Adapter.Events
     public class HelloEventControllerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -155,6 +156,7 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [TestFixture]
+            [Category("Unit")]
             public class ResumeFlow
             {
                 [Test, Auto]
@@ -271,6 +273,7 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [TestFixture]
+            [Category("Unit")]
             public class IdentifyFlow
             {
                 [Test, Auto]
@@ -377,6 +380,7 @@ namespace Brighid.Discord.Adapter.Events
                     identifyEvent.Intents.Should().HaveFlag(Intent.Guilds);
                     identifyEvent.Intents.Should().HaveFlag(Intent.GuildMessages);
                     identifyEvent.Intents.Should().HaveFlag(Intent.DirectMessages);
+                    identifyEvent.Intents.Should().HaveFlag(Intent.MessageContent);
                 }
             }
         }
