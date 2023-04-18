@@ -1,25 +1,24 @@
 using System;
 
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Models;
-
-using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.Adapter.Requests
 {
     /// <inheritdoc />
     public class DefaultUrlBuilder : IUrlBuilder
     {
-        private readonly RequestOptions options;
+        private readonly IDiscordApiInfoService discordApiInfoService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultUrlBuilder" /> class.
         /// </summary>
-        /// <param name="options">Options to use when making requests.</param>
+        /// <param name="discordApiInfoService">Discord API Info Service.</param>
         public DefaultUrlBuilder(
-            IOptions<RequestOptions> options
+            IDiscordApiInfoService discordApiInfoService
         )
         {
-            this.options = options.Value;
+            this.discordApiInfoService = discordApiInfoService;
         }
 
         /// <inheritdoc />
@@ -47,10 +46,10 @@ namespace Brighid.Discord.Adapter.Requests
                     : $"/{part}";
             }
 
-            return new Uri(options.InvokeBaseUrl + result);
+            return new Uri(discordApiInfoService.ApiBaseUrl + result);
         }
 
-        private bool IsParameter(string value, out string name)
+        private static bool IsParameter(string value, out string name)
         {
             var result = value.StartsWith('{') && value.EndsWith('}');
             name = result ? value.TrimStart('{').TrimEnd('}') : string.Empty;

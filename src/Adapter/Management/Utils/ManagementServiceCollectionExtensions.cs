@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IAdapterContext, AdapterContext>();
             services.AddSingleton<IDnsService, DnsService>();
             services.AddSingleton<INodeService, NodeService>();
+            services.AddSingleton<IDiscordApiInfoService, DiscordApiInfoService>();
             services.UseBrighidIdentityWithHttp2<ITrafficShifter, TrafficShifter>();
         }
     }

@@ -9,11 +9,11 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Discord.Adapter.Management;
 using Brighid.Discord.Models;
 using Brighid.Identity.Client;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Brighid.Discord.Adapter.Users
 {
@@ -25,7 +25,7 @@ namespace Brighid.Discord.Adapter.Users
         private readonly IUsersClientFactory usersClientFactory;
         private readonly JwtSecurityTokenHandler tokenHandler;
         private readonly HttpClient httpClient;
-        private readonly AdapterOptions adapterOptions;
+        private readonly IDiscordApiInfoService discordApiInfoService;
         private readonly ILogger<DefaultUserService> logger;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Brighid.Discord.Adapter.Users
         /// <param name="httpClient">Client used to make arbitrary HTTP requests.</param>
         /// <param name="usersClientFactory">Factory for creating Brighid Identity Users clients with.</param>
         /// <param name="tokenHandler">The security token handler used for reading ID Token JWTs.</param>
-        /// <param name="adapterOptions">Misc options used across adapter services.</param>
+        /// <param name="discordApiInfoService">Service providing info for connecting to the discord API.</param>
         /// <param name="logger">Logger used to log info to some destination(s).</param>
         public DefaultUserService(
             IUserIdCache userIdCache,
@@ -44,7 +44,7 @@ namespace Brighid.Discord.Adapter.Users
             HttpClient httpClient,
             IUsersClientFactory usersClientFactory,
             JwtSecurityTokenHandler tokenHandler,
-            IOptions<AdapterOptions> adapterOptions,
+            IDiscordApiInfoService discordApiInfoService,
             ILogger<DefaultUserService> logger
         )
         {
@@ -53,7 +53,7 @@ namespace Brighid.Discord.Adapter.Users
             this.usersClientFactory = usersClientFactory;
             this.tokenHandler = tokenHandler;
             this.httpClient = httpClient;
-            this.adapterOptions = adapterOptions.Value;
+            this.discordApiInfoService = discordApiInfoService;
             this.logger = logger;
         }
 
@@ -64,15 +64,15 @@ namespace Brighid.Discord.Adapter.Users
             cancellationToken.ThrowIfCancellationRequested();
             var request = new HttpRequestMessage
             {
-                RequestUri = adapterOptions.OAuth2TokenEndpoint,
+                RequestUri = discordApiInfoService.OAuth2TokenEndpoint,
                 Method = HttpMethod.Post,
                 Content = new FormUrlEncodedContent((IEnumerable<KeyValuePair<string?, string?>>)new Dictionary<string, string?>
                 {
                     ["grant_type"] = "authorization_code",
                     ["code"] = code,
-                    ["client_id"] = adapterOptions.ClientId,
-                    ["client_secret"] = adapterOptions.ClientSecret,
-                    ["redirect_uri"] = adapterOptions.OAuth2RedirectUri.ToString(),
+                    ["client_id"] = discordApiInfoService.ClientId,
+                    ["client_secret"] = discordApiInfoService.ClientSecret,
+                    ["redirect_uri"] = discordApiInfoService.OAuth2RedirectUri.ToString(),
                 }),
             };
 
@@ -89,7 +89,7 @@ namespace Brighid.Discord.Adapter.Users
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = adapterOptions.OAuth2UserInfoEndpoint,
+                RequestUri = discordApiInfoService.OAuth2UserInfoEndpoint,
             };
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

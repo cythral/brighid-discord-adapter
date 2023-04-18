@@ -36,6 +36,11 @@ namespace Brighid.Discord.Adapter
         public string Host { get; set; } = "discord.brigh.id";
 
         /// <summary>
+        /// Gets or sets the discord api version to use.
+        /// </summary>
+        public string ApiVersion { get; set; } = "v10";
+
+        /// <summary>
         /// Gets or sets the token to authenticate against the gateway and REST API with.
         /// </summary>
         [NotLogged]
@@ -63,14 +68,9 @@ namespace Brighid.Discord.Adapter
         public string StaticAssetsRepositoryUrl { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the OAuth2 User Info Endpoint.
+        /// Gets or sets the Discord API Base URL.
         /// </summary>
-        public Uri OAuth2UserInfoEndpoint { get; set; } = new Uri("https://discord.com/api/users/@me");
-
-        /// <summary>
-        /// Gets or sets the Discord OAuth2 Token Endpoint.
-        /// </summary>
-        public Uri OAuth2TokenEndpoint { get; set; } = new Uri("https://discord.com/api/oauth2/token");
+        public Uri DiscordApiBaseUrl { get; set; } = new Uri("https://discord.com/api/");
 
         /// <summary>
         /// Gets or sets the Redirect URI used for Discord OAuth2.
