@@ -295,8 +295,8 @@
       },
       "FluentAssertions": {
         "type": "Transitive",
-        "resolved": "6.10.0",
-        "contentHash": "Da3YsiRDnOHKBfxutjnupL1rOX0K/jnG6crn5AgwukeqZ/yi+HNCOFshic01ke0ztZFWzpfQMXH8fO9aAbG0Gw==",
+        "resolved": "6.11.0",
+        "contentHash": "aBaagwdNtVKkug1F3imGXUlmoBd8ZUZX8oQ5niThaJhF79SpESe1Gzq7OFuZkQdKD5Pa4Mone+jrbas873AT4g==",
         "dependencies": {
           "System.Configuration.ConfigurationManager": "4.4.0"
         }
@@ -1503,7 +1503,7 @@
           "AutoFixture.NUnit3": "[4.18.0, )",
           "Brighid.Discord.Core": "[1.0.0, )",
           "CacheExpirer": "[1.0.0, )",
-          "FluentAssertions": "[6.10.0, )",
+          "FluentAssertions": "[6.11.0, )",
           "Microsoft.NET.Test.Sdk": "[17.5.0, )",
           "MockQueryable.NSubstitute": "[7.0.0, )",
           "Models": "[1.0.0, )",
