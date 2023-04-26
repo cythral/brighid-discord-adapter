@@ -20,6 +20,7 @@ namespace Brighid.Discord.Adapter.Events
     public class InvalidSessionEventControllerTests
     {
         [TestFixture]
+        [Category("Unit")]
         public class HandleTests
         {
             [Test, Auto]
@@ -36,6 +37,21 @@ namespace Brighid.Discord.Adapter.Events
 
                 await func.Should().ThrowAsync<OperationCanceledException>();
                 await gateway.DidNotReceive().Restart();
+            }
+
+            [Test, Auto]
+            public async Task ShouldSetGatewayUrlToNullIfNotResumable(
+                [Frozen, Substitute] IGatewayMetadataService metadataService,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] InvalidSessionEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var @event = new InvalidSessionEvent(false);
+
+                await controller.Handle(@event, cancellationToken);
+
+                metadataService.Received().SetGatewayUrl(Is(null as Uri));
             }
 
             [Test, Auto]

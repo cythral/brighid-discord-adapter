@@ -13,6 +13,18 @@ namespace Brighid.Discord.Adapter.Management
     public class DiscordApiInfoServiceTests
     {
         [Test, Auto]
+        public void ClientIdShouldReturnApiVersion(
+            string version,
+            [Frozen] AdapterOptions options,
+            [Target] DiscordApiInfoService service
+        )
+        {
+            options.ApiVersion = version;
+
+            service.ApiVersion.Should().Be(version);
+        }
+
+        [Test, Auto]
         public void ClientIdShouldReturnClientId(
             string clientId,
             [Frozen] AdapterOptions options,
@@ -46,7 +58,7 @@ namespace Brighid.Discord.Adapter.Management
             options.DiscordApiBaseUrl = new Uri("https://discord.com/api");
             options.ApiVersion = apiVersion;
 
-            service.ApiBaseUrl.Should().Be($"https://discord.com/api/{apiVersion}");
+            service.ApiBaseUrl.Should().Be($"https://discord.com/api/v{apiVersion}");
         }
 
         [Test, Auto]
@@ -59,7 +71,7 @@ namespace Brighid.Discord.Adapter.Management
             options.DiscordApiBaseUrl = new Uri("https://discord.com/api");
             options.ApiVersion = apiVersion;
 
-            service.OAuth2TokenEndpoint.Should().Be($"https://discord.com/api/{apiVersion}/oauth2/token");
+            service.OAuth2TokenEndpoint.Should().Be($"https://discord.com/api/v{apiVersion}/oauth2/token");
         }
 
         [Test, Auto]
@@ -72,7 +84,7 @@ namespace Brighid.Discord.Adapter.Management
             options.DiscordApiBaseUrl = new Uri("https://discord.com/api");
             options.ApiVersion = apiVersion;
 
-            service.OAuth2UserInfoEndpoint.Should().Be($"https://discord.com/api/{apiVersion}/users/@me");
+            service.OAuth2UserInfoEndpoint.Should().Be($"https://discord.com/api/v{apiVersion}/users/@me");
         }
 
         [Test, Auto]

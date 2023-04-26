@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Models;
@@ -26,7 +27,8 @@ namespace Brighid.Discord.RestClient.Responses
         /// </summary>
         /// <param name="requestId">ID of the request to listen for a response for.</param>
         /// <param name="promise">Promise that will be completed when the response comes back.</param>
+        /// <param name="cancellationToken">Token used for cancelling the operation.</param>
         /// <returns>The response.</returns>
-        Task<Response> ListenForResponse(Guid requestId, TaskCompletionSource<Response> promise);
+        Task<Response> ListenForResponse(Guid requestId, TaskCompletionSource<Response> promise, CancellationToken cancellationToken);
     }
 }

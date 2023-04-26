@@ -437,12 +437,15 @@ namespace Brighid.Discord.Adapter.Gateway
 
             [Test, Auto]
             public async Task RunShouldConnectToTheWebSocketServerIfNotConnected(
-                [Frozen, Options] IOptions<GatewayOptions> options,
+                Uri gatewayUri,
+                [Frozen, Substitute] IGatewayMetadataService metadataService,
                 [Frozen, Substitute] IClientWebSocket webSocket,
                 [Frozen, Substitute] IGatewayRxWorker rxWorker,
                 [Target] DefaultGatewayService gateway
             )
             {
+                metadataService.GetGatewayUrl(Any<CancellationToken>()).Returns(gatewayUri);
+
                 var cancellationToken = new CancellationToken(false);
                 webSocket.State.Returns(WebSocketState.None);
                 webSocket.Receive(Any<Memory<byte>>(), Any<CancellationToken>()).Returns(x => new ValueWebSocketReceiveResult(0, WebSocketMessageType.Text, true));
@@ -450,7 +453,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 await gateway.StartAsync();
                 await gateway.Run(cancellationToken);
 
-                await webSocket.Received().Connect(Is(options.Value.Uri), Is(cancellationToken));
+                await webSocket.Received().Connect(Is(gatewayUri), Is(cancellationToken));
             }
 
             [Test, Auto]

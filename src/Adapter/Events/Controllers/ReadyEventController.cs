@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace Brighid.Discord.Adapter.Events
     public class ReadyEventController : IEventController<ReadyEvent>
     {
         private readonly IGatewayService gateway;
+        private readonly IGatewayMetadataService metadataService;
         private readonly ITrafficShifter shifter;
         private readonly ILogger<ReadyEventController> logger;
 
@@ -22,15 +24,18 @@ namespace Brighid.Discord.Adapter.Events
         /// Initializes a new instance of the <see cref="ReadyEventController" /> class.
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
+        /// <param name="metadataService">Service for managing gateway metadata.</param>
         /// <param name="shifter">Service used for shifting traffic from previous shards to the current gateway.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public ReadyEventController(
             IGatewayService gateway,
+            IGatewayMetadataService metadataService,
             ITrafficShifter shifter,
             ILogger<ReadyEventController> logger
         )
         {
             this.gateway = gateway;
+            this.metadataService = metadataService;
             this.shifter = shifter;
             this.logger = logger;
         }
@@ -44,6 +49,7 @@ namespace Brighid.Discord.Adapter.Events
             gateway.SessionId = @event.SessionId;
             gateway.BotId = @event.User.Id;
 
+            metadataService.SetGatewayUrl(new Uri(@event.ResumeGatewayUrl));
             await shifter.PerformTrafficShift(cancellationToken);
             gateway.SetReadyState(true);
         }

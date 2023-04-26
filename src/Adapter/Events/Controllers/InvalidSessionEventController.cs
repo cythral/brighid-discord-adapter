@@ -15,6 +15,7 @@ namespace Brighid.Discord.Adapter.Events
     {
         private readonly IGatewayService gateway;
         private readonly IGatewayUtilsFactory utilsFactory;
+        private readonly IGatewayMetadataService metadataService;
         private readonly ILogger<InvalidSessionEventController> logger;
 
         /// <summary>
@@ -22,15 +23,18 @@ namespace Brighid.Discord.Adapter.Events
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
         /// <param name="utilsFactory">Factory to create utilities with.</param>
+        /// <param name="metadataService">Service for managing gateway metadata.</param>
         /// <param name="logger">Logger used to log information to some destination(s).</param>
         public InvalidSessionEventController(
             IGatewayService gateway,
             IGatewayUtilsFactory utilsFactory,
+            IGatewayMetadataService metadataService,
             ILogger<InvalidSessionEventController> logger
         )
         {
             this.gateway = gateway;
             this.utilsFactory = utilsFactory;
+            this.metadataService = metadataService;
             this.logger = logger;
         }
 
@@ -40,9 +44,12 @@ namespace Brighid.Discord.Adapter.Events
             using (var scope = logger.BeginScope("{@Event}", nameof(InvalidSessionEvent)))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var cancellationTokenSource = new CancellationTokenSource();
-
                 logger.LogWarning(LogEvents.InvalidSessionEvent, "Received an invalid session event");
+
+                if (!@event.IsResumable)
+                {
+                    metadataService.SetGatewayUrl(null);
+                }
             }
 
             await gateway.Restart(@event.IsResumable, CancellationToken.None);

@@ -25,13 +25,16 @@ namespace Brighid.Discord.Adapter.Management
         }
 
         /// <inheritdoc />
+        public string ApiVersion => adapterOptions.ApiVersion;
+
+        /// <inheritdoc />
         public string ClientId => adapterOptions.ClientId;
 
         /// <inheritdoc />
         public string ClientSecret => adapterOptions.ClientSecret;
 
         /// <inheritdoc />
-        public Uri ApiBaseUrl => apiBaseUrl ??= CombineUris(adapterOptions.DiscordApiBaseUrl, adapterOptions.ApiVersion);
+        public Uri ApiBaseUrl => apiBaseUrl ??= CombineUris(adapterOptions.DiscordApiBaseUrl, $"v{adapterOptions.ApiVersion}");
 
         /// <inheritdoc />
         public Uri OAuth2TokenEndpoint => oauth2TokenEndpoint ??= CombineUris(ApiBaseUrl, "/oauth2/token");

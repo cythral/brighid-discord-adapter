@@ -27,6 +27,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly ITimerFactory timerFactory;
         private readonly IGatewayRestartService restartService;
         private readonly IGatewayUtilsFactory gatewayUtilsFactory;
+        private readonly IGatewayMetadataService metadataService;
         private readonly ILogger<DefaultGatewayService> logger;
         private readonly byte[] buffer;
         private readonly Memory<byte> memoryBuffer;
@@ -39,6 +40,7 @@ namespace Brighid.Discord.Adapter.Gateway
         /// </summary>
         /// <param name="rxWorker">The worker to use for receiving message chunks and parsing messages.</param>
         /// <param name="txWorker">The worker to use for sending messages to the gateway.</param>
+        /// <param name="metadataService">Service for getting/setting gateway metadata.</param>
         /// <param name="timerFactory">Factory to create timers with.</param>
         /// <param name="restartService">Service used to restart the gateway.</param>
         /// <param name="gatewayUtilsFactory">Factory to create various utils with.</param>
@@ -47,6 +49,7 @@ namespace Brighid.Discord.Adapter.Gateway
         public DefaultGatewayService(
             IGatewayRxWorker rxWorker,
             IGatewayTxWorker txWorker,
+            IGatewayMetadataService metadataService,
             ITimerFactory timerFactory,
             IGatewayRestartService restartService,
             IGatewayUtilsFactory gatewayUtilsFactory,
@@ -56,6 +59,7 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             this.rxWorker = rxWorker;
             this.txWorker = txWorker;
+            this.metadataService = metadataService;
             this.timerFactory = timerFactory;
             this.restartService = restartService;
             this.gatewayUtilsFactory = gatewayUtilsFactory;
@@ -179,9 +183,11 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfNotRunning();
+
             if (webSocket!.State != WebSocketState.Open)
             {
-                await webSocket!.Connect(options.Uri, cancellationToken);
+                var gatewayUri = await metadataService.GetGatewayUrl(cancellationToken);
+                await webSocket!.Connect(gatewayUri!, cancellationToken);
             }
 
             var result = await webSocket!.Receive(memoryBuffer, cancellationToken);
@@ -199,7 +205,7 @@ namespace Brighid.Discord.Adapter.Gateway
             cancellationToken.ThrowIfCancellationRequested();
             if (AwaitingHeartbeatAcknowledgement)
             {
-                await restartService.Restart(this, true, cancellationToken);
+                await restartService.Restart(this, true, CancellationToken.None);
                 return;
             }
 
