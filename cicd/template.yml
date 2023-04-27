@@ -20,6 +20,7 @@ Parameters:
   AdapterToken:
     Type: String
     Description: Token to use for authenticating against the Discord gateway and API.
+    NoEcho: true
 
   MetricsNamespace:
     Type: String
@@ -68,6 +69,7 @@ Parameters:
   ClientSecret:
     Type: String
     Description: Encrypted Client Secret of the Discord Application.
+    NoEcho: true
 
   CommandsServiceUri:
     Type: String

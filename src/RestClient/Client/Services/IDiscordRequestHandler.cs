@@ -35,5 +35,16 @@ namespace Brighid.Discord.RestClient.Client
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting response.</returns>
         Task<TResponse?> Handle<TRequest, TResponse>(Endpoint endpoint, TRequest request, Dictionary<string, string>? parameters = null, Dictionary<string, string>? headers = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Queue a request without a body and wait for its response.
+        /// </summary>
+        /// <typeparam name="TResponse">The type of response to receive.</typeparam>
+        /// <param name="endpoint">Endpoint to send the request to.</param>
+        /// <param name="parameters">URL parameters to send with the request.</param>
+        /// <param name="headers">Headers to send with the request.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting response.</returns>
+        Task<TResponse?> Handle<TResponse>(Endpoint endpoint, Dictionary<string, string>? parameters = null, Dictionary<string, string>? headers = null, CancellationToken cancellationToken = default);
     }
 }

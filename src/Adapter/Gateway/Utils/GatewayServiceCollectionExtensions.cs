@@ -28,6 +28,7 @@ namespace Brighid.Discord.Adapter
             services.AddSingleton<IGatewayTxWorker, DefaultGatewayTxWorker>();
             services.AddSingleton<IGatewayUtilsFactory, DefaultGatewayUtilsFactory>();
             services.AddSingleton<IGatewayRestartService, DefaultGatewayRestartService>();
+            services.AddSingleton<IGatewayMetadataService, DefaultGatewayMetadataService>();
             services.AddSingleton<IGatewayService, DefaultGatewayService>();
             services.AddSingleton<IHostedService>(provider => provider.GetRequiredService<IGatewayService>());
             services.AddTransient(provider => new MemoryStream());

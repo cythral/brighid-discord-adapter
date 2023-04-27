@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Models;
@@ -65,10 +66,20 @@ namespace Brighid.Discord.RestClient.Responses
         }
 
         /// <inheritdoc />
-        public async Task<Response> ListenForResponse(Guid requestId, TaskCompletionSource<Response> promise)
+        public async Task<Response> ListenForResponse(Guid requestId, TaskCompletionSource<Response> promise, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             requestMap.Add(requestId, promise);
-            return await promise.Task;
+
+            try
+            {
+                return await promise.Task.WaitAsync(cancellationToken);
+            }
+            catch (OperationCanceledException exception)
+            {
+                requestMap.Remove(requestId);
+                throw exception;
+            }
         }
     }
 }

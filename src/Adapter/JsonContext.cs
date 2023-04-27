@@ -18,6 +18,8 @@ namespace Brighid.Discord.Adapter
     [JsonSerializable(typeof(Models.EmbedType))]
     [JsonSerializable(typeof(Models.Request))]
     [JsonSerializable(typeof(Models.Channel))]
+    [JsonSerializable(typeof(Models.GatewayBotInfo))]
+    [JsonSerializable(typeof(Models.GatewayInfo))]
     [JsonSerializable(typeof(GatewayMessage))]
     [JsonSerializable(typeof(GatewayMessageWithoutData))]
     [JsonSerializable(typeof(HelloEvent))]

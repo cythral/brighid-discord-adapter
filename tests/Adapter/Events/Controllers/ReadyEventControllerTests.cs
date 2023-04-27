@@ -43,13 +43,14 @@ namespace Brighid.Discord.Adapter.Events
 
             [Test, Auto]
             public async Task ShouldSetTheGatewayServiceSessionId(
+                Uri resumeGatewayUrl,
                 string sessionId,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Target] ReadyEventController controller
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                var @event = new ReadyEvent { SessionId = sessionId };
+                var @event = new ReadyEvent { SessionId = sessionId, ResumeGatewayUrl = resumeGatewayUrl.ToString() };
 
                 await controller.Handle(@event, cancellationToken);
 
@@ -57,14 +58,31 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
+            public async Task ShouldSetTheGatewayUrlToTheResumeGatewayUrl(
+                Uri resumeGatewayUrl,
+                [Frozen, Substitute] IGatewayMetadataService metadataService,
+                [Frozen, Substitute] IGatewayService gateway,
+                [Target] ReadyEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var @event = new ReadyEvent { ResumeGatewayUrl = resumeGatewayUrl.ToString() };
+
+                await controller.Handle(@event, cancellationToken);
+
+                metadataService.Received().SetGatewayUrl(Is(resumeGatewayUrl));
+            }
+
+            [Test, Auto]
             public async Task ShouldSetTheGatewayServiceBotId(
+                Uri resumeGatewayUrl,
                 Snowflake botId,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Target] ReadyEventController controller
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                var @event = new ReadyEvent { User = new User { Id = botId } };
+                var @event = new ReadyEvent { User = new User { Id = botId }, ResumeGatewayUrl = resumeGatewayUrl.ToString() };
 
                 await controller.Handle(@event, cancellationToken);
 
@@ -73,6 +91,7 @@ namespace Brighid.Discord.Adapter.Events
 
             [Test, Auto]
             public async Task ShouldShiftTrafficThenSetTheGatewayServiceReadyPropertyToTrue(
+                Uri resumeGatewayUrl,
                 string sessionId,
                 [Frozen, Substitute] ITrafficShifter shifter,
                 [Frozen, Substitute] IGatewayService gateway,
@@ -80,7 +99,7 @@ namespace Brighid.Discord.Adapter.Events
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                var @event = new ReadyEvent { SessionId = sessionId };
+                var @event = new ReadyEvent { SessionId = sessionId, ResumeGatewayUrl = resumeGatewayUrl.ToString() };
 
                 await controller.Handle(@event, cancellationToken);
 

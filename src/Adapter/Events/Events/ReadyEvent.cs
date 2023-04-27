@@ -36,6 +36,12 @@ namespace Brighid.Discord.Adapter.Events
         public string SessionId { get; set; }
 
         /// <summary>
+        /// Gets or sets the url used for resuming connections.
+        /// </summary>
+        [JsonPropertyName("resume_gateway_url")]
+        public string ResumeGatewayUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the shard information associated with this session, if sent when identifying.
         /// </summary>
         [JsonPropertyName("shard")]

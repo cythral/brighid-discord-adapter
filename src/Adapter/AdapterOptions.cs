@@ -38,7 +38,7 @@ namespace Brighid.Discord.Adapter
         /// <summary>
         /// Gets or sets the discord api version to use.
         /// </summary>
-        public string ApiVersion { get; set; } = "v10";
+        public string ApiVersion { get; set; } = "10";
 
         /// <summary>
         /// Gets or sets the token to authenticate against the gateway and REST API with.

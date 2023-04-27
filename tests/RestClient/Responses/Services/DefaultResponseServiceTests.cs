@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using AutoFixture.AutoNSubstitute;
@@ -65,6 +66,32 @@ namespace Brighid.Discord.RestClient.Responses
                 var result = await promise.Task;
                 result.Should().Be(response);
 
+                requestMap.Received().Remove(Is(response.RequestId));
+            }
+        }
+
+        [TestFixture]
+        [Category("Unit")]
+        public class ListenForResponseTests
+        {
+            [Test, Auto]
+            public async Task ShouldRemovePromiseFromMapWhenCanceled(
+                Response response,
+                [Frozen, Substitute] IRequestMap requestMap,
+                [Target] DefaultResponseService service
+            )
+            {
+                var cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = cancellationTokenSource.Token;
+                var promise = new TaskCompletionSource<Response>();
+
+                var responseTask = service.ListenForResponse(response.RequestId, promise, cancellationToken);
+                var func = async () => await responseTask;
+
+                var expectation = func.Should().ThrowAsync<OperationCanceledException>();
+                cancellationTokenSource.CancelAfter(10);
+
+                await expectation;
                 requestMap.Received().Remove(Is(response.RequestId));
             }
         }

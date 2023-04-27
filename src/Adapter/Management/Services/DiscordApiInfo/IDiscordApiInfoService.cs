@@ -8,6 +8,11 @@ namespace Brighid.Discord.Adapter.Management
     public interface IDiscordApiInfoService
     {
         /// <summary>
+        /// Gets the version of the API to use.
+        /// </summary>
+        string ApiVersion { get; }
+
+        /// <summary>
         /// Gets the client id used to authenticate with the discord API.
         /// </summary>
         string ClientId { get; }

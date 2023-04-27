@@ -36,5 +36,10 @@ namespace Brighid.Discord.Adapter
         /// Event for when the gateway is restarted.
         /// </summary>
         public static readonly EventId GatewayRestarted = new(0x00000005, nameof(GatewayRestarted));
+
+        /// <summary>
+        /// Event for when the gateway receives a hello message.
+        /// </summary>
+        public static readonly EventId HelloEvent = new(0x00000006, nameof(HelloEvent));
     }
 }
