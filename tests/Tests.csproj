@@ -8,10 +8,10 @@
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.0" />
         <PackageReference Include="AutoFixture.NUnit3" Version="4.18.0" />
-        <PackageReference Include="AWSSDK.Lambda" Version="3.7.109" />
-        <PackageReference Include="AWSSDK.Organizations" Version="3.7.102.38" />
-        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.101.56" />
-        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="3.7.104.24" />
+        <PackageReference Include="AWSSDK.Lambda" Version="3.7.109.1" />
+        <PackageReference Include="AWSSDK.Organizations" Version="3.7.102.39" />
+        <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.101.57" />
+        <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="3.7.104.25" />
         <PackageReference Include="FluentAssertions" Version="6.11.0" />
         <PackageReference Include="MockQueryable.NSubstitute" Version="7.0.0" />
         <PackageReference Include="NSubstitute" Version="5.0.0" />
