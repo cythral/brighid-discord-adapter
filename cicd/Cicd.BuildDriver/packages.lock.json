@@ -172,8 +172,8 @@
       },
       "AWSSDK.SQS": {
         "type": "Transitive",
-        "resolved": "3.7.101",
-        "contentHash": "czkXsa0Z+CxbzaBUjNjwvjfsj0lk80NGC+y8rHKHJSiE+TZJYNpGx3nGT7Y30OXtuE2hVnZqSZooCmLKz9Chmg==",
+        "resolved": "3.7.102",
+        "contentHash": "x6ZcaL8GafMpZSYAq5cUuMhb3y3nj8J90WhvG5OIF3pjAnQybZo6ID4JAIW5gOBsnYPYl58rAXgl8tbvcEyJWQ==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.106.32, 4.0.0)"
         }
@@ -1473,7 +1473,7 @@
       "responsehandler": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "[3.7.101, )",
+          "AWSSDK.SQS": "[3.7.102, )",
           "Lambdajection": "[0.10.0-beta3, )",
           "Lambdajection.Layer": "[0.10.0-beta3, )",
           "Lambdajection.Runtime": "[0.10.0-beta3, )",
@@ -1484,7 +1484,7 @@
       "restclient": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SQS": "[3.7.101, )",
+          "AWSSDK.SQS": "[3.7.102, )",
           "Brighid.Discord.Core": "[1.0.0, )",
           "Microsoft.Extensions.Hosting": "[7.0.1, )",
           "Microsoft.Extensions.Options": "[7.0.1, )",
