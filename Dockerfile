@@ -1,6 +1,6 @@
 ARG CONFIGURATION=Release
 
-FROM public.ecr.aws/cythral/brighid/base:0.4.0.43
+FROM public.ecr.aws/cythral/brighid/base:0.4.0.44
 ARG CONFIGURATION
 
 ENV CONFIGURATION=${CONFIGURATION}
