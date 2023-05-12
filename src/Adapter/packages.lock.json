@@ -22,17 +22,17 @@
       },
       "Brighid.Commands.Client": {
         "type": "Direct",
-        "requested": "[0.3.0.119-beta1, )",
-        "resolved": "0.3.0.119-beta1",
-        "contentHash": "rOFSL7+7uaMs0lQhDjh2eqYI6jME2XOUVkX6BFUYjT1/MSsxJHRzsLKJ9WB5HrTh8Fjx1zqqmoJ7BsPOBsHEdQ==",
+        "requested": "[0.3.0.445-beta1, )",
+        "resolved": "0.3.0.445-beta1",
+        "contentHash": "nrJUInz0eIcISuxcv6rxF2u9Oc2d5ApQ2poeb2Xpns/8OUpagxy3QSbWcRsGFG6AG6gaudsJqNT3NQBqszvxRw==",
         "dependencies": {
-          "Brighid.Identity.Client": "0.6.3",
-          "Microsoft.Extensions.Caching.Memory": "6.0.1",
-          "Microsoft.Extensions.Configuration": "6.0.1",
-          "Microsoft.Extensions.DependencyInjection": "6.0.0",
-          "Microsoft.Extensions.Http": "6.0.0",
-          "Microsoft.Extensions.Options": "6.0.0",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0"
+          "Brighid.Identity.Client": "0.7.0.3",
+          "Microsoft.Extensions.Caching.Memory": "7.0.0",
+          "Microsoft.Extensions.Configuration": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection": "7.0.0",
+          "Microsoft.Extensions.Http": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.1",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "7.0.0"
         }
       },
       "Brighid.Identity.Client": {
@@ -449,13 +449,13 @@
       },
       "Microsoft.Extensions.Http": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "15+pa2G0bAMHbHewaQIdr/y6ag2H3yh4rd9hTXavtWDzQBkvpe2RMqFg8BxDpcQWssmjmBApGPcw93QRz6YcMg==",
+        "resolved": "7.0.0",
+        "contentHash": "9Pq9f/CvOSz0t9yQa6g1uWpxa2sm13daLFm8EZwy9MaQUjKXWdNUXQwIxwhmba5N83UIqURiPHSNqGK1vfWF2w==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
-          "Microsoft.Extensions.Logging": "6.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
-          "Microsoft.Extensions.Options": "6.0.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Logging": "7.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.0"
         }
       },
       "Microsoft.Extensions.Logging": {
