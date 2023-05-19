@@ -87,7 +87,12 @@ namespace Brighid.Discord.Adapter.Gateway
 
             while (webSocket?.State != WebSocketState.Open)
             {
-                await gatewayUtilsFactory.CreateDelay(100, cancellationToken);
+                if (webSocket!.State > WebSocketState.Open)
+                {
+                    throw new System.Exception("WebSocket is not open.");
+                }
+
+                await gatewayUtilsFactory.CreateDelay(1000, cancellationToken);
             }
 
             if (!await channel.WaitToRead(cancellationToken))

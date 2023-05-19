@@ -3,6 +3,8 @@ root = true
 [*.{cs,csx}]
 insert_final_newline = true
 
+dotnet_diagnostic.IDE0251.severity = none
+
 # Allow one-liner if-returns
 dotnet_diagnostic.SA1503.severity = none
 dotnet_diagnostic.SA1137.severity = error

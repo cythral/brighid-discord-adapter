@@ -22,7 +22,7 @@ services:
     ports:
       - "80"
     volumes:
-      - ./bin/Adapter/Debug/linux-musl-arm64/publish:/app
+      - ./bin/Adapter/Debug/linux-musl-arm64:/app
       - ~/.aws:/home/brighid/.aws
     environment:
       Environment: local
