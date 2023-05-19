@@ -140,8 +140,8 @@
       },
       "AWSSDK.Lambda": {
         "type": "Transitive",
-        "resolved": "3.7.109.10",
-        "contentHash": "qw5VZjTlw5r+51fXxRXs3T7jzGUQWj26gDimZ8nedvFZZdI2BVFsd+G6mLBe5H+HHQsbEMO+FCfWcI3X7yC57g==",
+        "resolved": "3.7.110",
+        "contentHash": "OMdOeDaiXU+63/yq0qktBVeyk9BgptI+OolC7No5rigYL8BRF0ntvC7Efai4k6fHkGjhnZMmgtVyxX2HSkN0OA==",
         "dependencies": {
           "AWSSDK.Core": "[3.7.106.38, 4.0.0)"
         }
@@ -1494,7 +1494,7 @@
       "tests": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.Lambda": "[3.7.109.10, )",
+          "AWSSDK.Lambda": "[3.7.110, )",
           "AWSSDK.Organizations": "[3.7.102.48, )",
           "AWSSDK.SecurityToken": "[3.7.103, )",
           "AWSSDK.SimpleSystemsManagement": "[3.7.104.34, )",
