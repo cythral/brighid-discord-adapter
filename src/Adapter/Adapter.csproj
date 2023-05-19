@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Brighid.Identity.Client" Version="0.7.0.57" />
+    <PackageReference Include="Brighid.Identity.Client" Version="0.7.0.62" />
     <PackageReference Include="Brighid.Commands.Client" Version="0.3.0.445-beta1" />
   </ItemGroup>
 
