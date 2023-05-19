@@ -159,6 +159,7 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class RunTests
         {
             [Test, Auto, Timeout(1000)]
@@ -190,7 +191,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 await worker.Start(gateway, clientWebSocket);
                 await worker.Run(cancellationToken);
-                await factory.Received(2).CreateDelay(100, Is(cancellationToken));
+                await factory.Received(2).CreateDelay(1000, Is(cancellationToken));
             }
 
             [Test, Auto, Timeout(1000)]
