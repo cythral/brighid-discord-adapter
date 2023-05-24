@@ -104,17 +104,6 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             [Test, Auto]
-            public async Task StartShouldStartTheRxWorker(
-                [Frozen, Substitute] IGatewayRxWorker rxWorker,
-                [Target] DefaultGatewayService gateway
-            )
-            {
-                await gateway.StartAsync();
-
-                await rxWorker.Received().Start(Is(gateway));
-            }
-
-            [Test, Auto]
             public async Task StartShouldStartTheMasterWorker(
                 [Frozen, Substitute] ITimer timer,
                 [Target] DefaultGatewayService gateway
@@ -424,7 +413,7 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             [Test, Auto]
-            public async Task RunShouldConnectToTheWebSocketServerThenStartTxWorkerIfNotConnected(
+            public async Task RunShouldConnectToTheWebSocketServerThenStartWorkersIfNotConnected(
                 Uri gatewayUri,
                 [Frozen, Substitute] IGatewayMetadataService metadataService,
                 [Frozen, Substitute] IClientWebSocket webSocket,
@@ -445,6 +434,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 Received.InOrder(async () =>
                 {
                     await webSocket.Received().Connect(Is(gatewayUri), Is(cancellationToken));
+                    await rxWorker.Received().Start(Is(gateway));
                     await txWorker.Received().Start(Is(gateway), Is(webSocket));
                 });
             }
