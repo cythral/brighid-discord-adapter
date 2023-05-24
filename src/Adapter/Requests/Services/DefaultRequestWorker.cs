@@ -78,7 +78,7 @@ namespace Brighid.Discord.Adapter.Requests
         public async Task Run(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            logger.LogInformation("Running REST API Queue Worker");
+            logger.LogDebug("Running REST API Queue Worker");
 
             var messages = await relay.Receive(cancellationToken);
             var tasks = from message in messages select Invoke(message, cancellationToken);

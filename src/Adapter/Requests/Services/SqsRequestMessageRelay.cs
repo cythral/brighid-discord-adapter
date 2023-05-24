@@ -109,7 +109,7 @@ namespace Brighid.Discord.Adapter.Requests
         {
             cancellationToken.ThrowIfCancellationRequested();
             var response = await sqs.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
-            logger.LogInformation("Received sqs:ReceiveMessage response: {@response}", response);
+            logger.LogDebug("Received sqs:ReceiveMessage response: {@response}", response);
 
             var tasks = from message in response.Messages select ParseSqsMessage(message, cancellationToken);
             var messages = await Task.WhenAll(tasks);

@@ -186,6 +186,6 @@ static async Task InitializeDatabase(IHost host, CancellationToken cancellationT
     var databaseOptions = host.Services.GetRequiredService<IOptions<DatabaseOptions>>();
     if (databaseOptions.Value.RunMigrationsOnStartup)
     {
-        database.Database.Migrate();
+        await database.Database.MigrateAsync(cancellationToken);
     }
 }

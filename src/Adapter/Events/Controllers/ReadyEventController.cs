@@ -46,6 +46,7 @@ namespace Brighid.Discord.Adapter.Events
             using var scope = logger.BeginScope("{@Event}", nameof(ReadyEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
+            logger.LogInformation(LogEvents.ReadyEvent, "Received ready event from gateway.");
             gateway.SessionId = @event.SessionId;
             gateway.BotId = @event.User.Id;
 

@@ -114,9 +114,6 @@ namespace Brighid.Discord.Adapter.Gateway
             State |= GatewayState.Running;
             webSocket = gatewayUtilsFactory.CreateWebSocketClient();
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            await rxWorker.Start(this);
-
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
             worker.StopOnException = true;
             worker.OnUnexpectedStop = () => Restart();
@@ -187,6 +184,7 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 var gatewayUri = await metadataService.GetGatewayUrl(cancellationToken);
                 await webSocket!.Connect(gatewayUri, cancellationToken);
+                await rxWorker.Start(this);
                 await txWorker.Start(this, webSocket);
             }
 

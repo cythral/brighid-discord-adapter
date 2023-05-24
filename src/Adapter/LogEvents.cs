@@ -41,5 +41,10 @@ namespace Brighid.Discord.Adapter
         /// Event for when the gateway receives a hello message.
         /// </summary>
         public static readonly EventId HelloEvent = new(0x00000006, nameof(HelloEvent));
+
+        /// <summary>
+        /// Event for when the gateway receives a ready message.
+        /// </summary>
+        public static readonly EventId ReadyEvent = new(0x00000007, nameof(ReadyEvent));
     }
 }

@@ -48,6 +48,7 @@ namespace Brighid.Discord.Adapter.Events
             using var scope = logger.BeginScope("{@Event}", nameof(HelloEvent));
             cancellationToken.ThrowIfCancellationRequested();
 
+            logger.LogInformation(LogEvents.HelloEvent, "Received hello event from gateway.  Starting heartbeat.");
             await gateway.StartHeartbeat(@event.HeartbeatInterval);
 
             var message = gateway.SessionId == null || gateway.SequenceNumber == null ? CreateIdentifyMessage() : CreateResumeMessage();
