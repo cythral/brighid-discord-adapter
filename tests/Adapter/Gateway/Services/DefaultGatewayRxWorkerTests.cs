@@ -37,7 +37,7 @@ namespace Brighid.Discord.Adapter.Gateway
             )
             {
                 var cancellationToken = new CancellationToken(false);
-                await rxWorker.Start(gateway);
+                await rxWorker.Start(gateway, cancellationToken);
 
                 timerFactory.Received().CreateTimer(Is((AsyncTimerCallback)rxWorker.Run), Is(0), Is("Gateway RX"));
             }
@@ -46,12 +46,13 @@ namespace Brighid.Discord.Adapter.Gateway
             public async Task StartShouldStartTheTimer(
                 [Frozen, Substitute] ITimer timer,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker rxWorker
+                [Target] DefaultGatewayRxWorker rxWorker,
+                CancellationToken cancellationToken
             )
             {
-                await rxWorker.Start(gateway);
+                await rxWorker.Start(gateway, cancellationToken);
 
-                await timer.Received().Start();
+                await timer.Received().Start(Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -63,7 +64,7 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
 
                 timer.Received().StopOnException = Is(true);
                 timer.Received().OnUnexpectedStop = Any<OnUnexpectedTimerStop>();
@@ -84,10 +85,11 @@ namespace Brighid.Discord.Adapter.Gateway
             public async Task StopShouldStopTheWorkerThread(
                 [Frozen, Substitute] ITimer timer,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker rxWorker
+                [Target] DefaultGatewayRxWorker rxWorker,
+                CancellationToken cancellationToken
             )
             {
-                await rxWorker.Start(gateway);
+                await rxWorker.Start(gateway, cancellationToken);
                 await rxWorker.Stop();
 
                 await timer.Received().Stop();
@@ -110,7 +112,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var message = new GatewayMessageChunk { Bytes = Encoding.UTF8.GetBytes(chunk) };
                 var cancellationToken = new CancellationToken(false);
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Emit(message, cancellationToken);
 
                 await channel.Received().Write(Is(message), Is(cancellationToken));
@@ -126,7 +128,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var message = new GatewayMessageChunk { Bytes = Encoding.UTF8.GetBytes(chunk) };
                 var cancellationToken = new CancellationToken(false);
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Stop();
 
                 var operationCancellationToken = new CancellationToken(false);
@@ -145,7 +147,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var message = new GatewayMessageChunk { Bytes = Encoding.UTF8.GetBytes(chunk) };
                 var cancellationToken = new CancellationToken(false);
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
 
                 var operationCancellationToken = new CancellationToken(true);
                 Func<Task> func = () => worker.Emit(message, operationCancellationToken);
@@ -165,12 +167,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, 0, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -184,13 +187,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
-                var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, 0, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -204,13 +207,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
-                var cancellationToken = new CancellationToken(false);
                 channel.WaitToRead(Any<CancellationToken>()).Returns(false);
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -231,7 +234,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 channel.WaitToRead(Any<CancellationToken>()).Returns(true);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, 0, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -251,7 +254,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -265,12 +268,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -291,7 +295,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -307,7 +311,8 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ISerializer serializer,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
@@ -315,7 +320,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 serializer.Deserialize<GatewayMessage>(Any<Stream>(), Any<CancellationToken>()).Returns(message);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -342,7 +347,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 serializer.Deserialize<GatewayMessage>(Any<Stream>(), Any<CancellationToken>()).Returns(message);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -356,12 +361,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IChannel<GatewayMessageChunk> channel,
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -382,7 +388,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -403,7 +409,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 var cancellationToken = new CancellationToken(false);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(Array.Empty<byte>(), 0, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run(cancellationToken);
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -419,7 +425,8 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ISerializer serializer,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
@@ -427,7 +434,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 serializer.Deserialize<GatewayMessage>(Any<Stream>(), Any<CancellationToken>()).Returns(message);
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -443,7 +450,8 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayUtilsFactory factory,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ISerializer serializer,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = null };
@@ -453,7 +461,7 @@ namespace Brighid.Discord.Adapter.Gateway
 
                 gateway.SequenceNumber = sequenceNumber;
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -471,12 +479,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ISerializer serializer,
                 [Frozen, Substitute] IEventRouter router,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, false));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 
@@ -494,12 +503,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ISerializer serializer,
                 [Frozen, Substitute] IEventRouter router,
-                [Target] DefaultGatewayRxWorker worker
+                [Target] DefaultGatewayRxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 channel.Read(Any<CancellationToken>()).Returns(new GatewayMessageChunk(bytes, bytes.Length, true));
 
-                await worker.Start(gateway);
+                await worker.Start(gateway, cancellationToken);
                 await worker.Run();
                 await Task.WhenAll(worker.TaskQueue.Values);
 

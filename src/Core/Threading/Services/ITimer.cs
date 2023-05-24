@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Brighid.Discord.Threading
@@ -21,8 +22,9 @@ namespace Brighid.Discord.Threading
         /// <summary>
         /// Start the timer.
         /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        Task Start();
+        Task Start(CancellationToken cancellationToken);
 
         /// <summary>
         /// Stop the timer.

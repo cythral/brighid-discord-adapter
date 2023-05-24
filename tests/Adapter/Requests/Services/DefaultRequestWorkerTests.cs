@@ -60,7 +60,7 @@ namespace Brighid.Discord.Adapter.Requests
                 await worker.StartAsync(cancellationToken);
 
                 timerFactory.Received().CreateTimer(Is<AsyncTimerCallback>(worker.Run), Is(options.PollingInterval), Is(nameof(DefaultRequestWorker)));
-                await timer.Received().Start();
+                await timer.Received().Start(Is(cancellationToken));
             }
         }
 

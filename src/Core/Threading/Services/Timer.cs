@@ -57,16 +57,16 @@ namespace Brighid.Discord.Threading
         public OnUnexpectedTimerStop? OnUnexpectedStop { get; set; }
 
         /// <inheritdoc />
-        public async Task Start()
+        public async Task Start(CancellationToken cancellationToken)
         {
             logger.LogDebug("Starting Timer.");
             cancellationTokenSource = new CancellationTokenSource();
-            cancellationToken = cancellationTokenSource.Token;
+            this.cancellationToken = cancellationTokenSource.Token;
             startPromise = new TaskCompletionSource();
             stopPromise = new TaskCompletionSource();
             thread = new Thread(RunAsync);
             thread.Start();
-            await startPromise.Task;
+            await startPromise.Task.WaitAsync(cancellationToken);
         }
 
         /// <inheritdoc />

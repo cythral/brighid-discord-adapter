@@ -25,8 +25,9 @@ namespace Brighid.Discord.Adapter.Gateway
         /// Start the worker.
         /// </summary>
         /// <param name="gateway">The gateway to work on.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        Task Start(IGatewayService gateway);
+        Task Start(IGatewayService gateway, CancellationToken cancellationToken);
 
         /// <summary>
         /// Stop the gateway worker.

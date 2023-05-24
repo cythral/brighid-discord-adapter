@@ -61,8 +61,10 @@ namespace Brighid.Discord.Adapter.Gateway
         public Dictionary<int, Task> TaskQueue { get; private set; } = new Dictionary<int, Task>();
 
         /// <inheritdoc />
-        public async Task Start(IGatewayService gateway)
+        public async Task Start(IGatewayService gateway, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            logger.LogInformation("Starting Gateway RX Worker.");
             this.gateway = gateway;
             IsRunning = true;
             TaskQueue.Clear();
@@ -71,7 +73,8 @@ namespace Brighid.Discord.Adapter.Gateway
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
             worker.StopOnException = true;
             worker.OnUnexpectedStop = () => gateway.Restart();
-            await worker.Start();
+            await worker.Start(cancellationToken);
+            logger.LogInformation("Gateway RX Worker became ready.");
         }
 
         /// <inheritdoc />

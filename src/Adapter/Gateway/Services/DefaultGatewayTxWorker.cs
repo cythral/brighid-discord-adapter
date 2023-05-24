@@ -49,15 +49,18 @@ namespace Brighid.Discord.Adapter.Gateway
         public bool IsRunning { get; private set; }
 
         /// <inheritdoc />
-        public async Task Start(IGatewayService gateway, IClientWebSocket webSocket)
+        public async Task Start(IGatewayService gateway, IClientWebSocket webSocket, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            logger.LogInformation("Starting Gateway TX Worker.");
             IsRunning = true;
             this.webSocket = webSocket;
 
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
             worker.StopOnException = true;
             worker.OnUnexpectedStop = () => gateway.Restart();
-            await worker.Start();
+            await worker.Start(cancellationToken);
+            logger.LogInformation("Gateway TX Worker became ready.");
         }
 
         /// <inheritdoc />

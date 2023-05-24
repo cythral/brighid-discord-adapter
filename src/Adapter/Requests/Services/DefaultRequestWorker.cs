@@ -59,7 +59,7 @@ namespace Brighid.Discord.Adapter.Requests
         {
             cancellationToken.ThrowIfCancellationRequested();
             timer = timerFactory.CreateTimer(Run, options.PollingInterval, nameof(DefaultRequestWorker));
-            await timer.Start();
+            await timer.Start(cancellationToken);
         }
 
         /// <inheritdoc />

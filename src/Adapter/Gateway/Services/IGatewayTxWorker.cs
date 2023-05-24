@@ -20,8 +20,9 @@ namespace Brighid.Discord.Adapter.Gateway
         /// </summary>
         /// <param name="gateway">The gateway service to use.</param>
         /// <param name="webSocket">The webSocket to send messages to.</param>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting task.</returns>
-        Task Start(IGatewayService gateway, IClientWebSocket webSocket);
+        Task Start(IGatewayService gateway, IClientWebSocket webSocket, CancellationToken cancellationToken);
 
         /// <summary>
         /// Stop the gateway worker.

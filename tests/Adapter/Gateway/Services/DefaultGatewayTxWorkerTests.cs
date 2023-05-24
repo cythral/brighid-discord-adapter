@@ -33,10 +33,11 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ITimerFactory timerFactory,
-                [Target] DefaultGatewayTxWorker txWorker
+                [Target] DefaultGatewayTxWorker txWorker,
+                CancellationToken cancellationToken
             )
             {
-                await txWorker.Start(gateway, clientWebSocket);
+                await txWorker.Start(gateway, clientWebSocket, cancellationToken);
 
                 timerFactory.Received().CreateTimer(Is((AsyncTimerCallback)txWorker.Run), Is(0), Is("Gateway TX"));
             }
@@ -46,12 +47,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ITimer timer,
-                [Target] DefaultGatewayTxWorker txWorker
+                [Target] DefaultGatewayTxWorker txWorker,
+                CancellationToken cancellationToken
             )
             {
-                await txWorker.Start(gateway, clientWebSocket);
+                await txWorker.Start(gateway, clientWebSocket, cancellationToken);
 
-                await timer.Received().Start();
+                await timer.Received().Start(Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -59,12 +61,11 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] ITimer timer,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayTxWorker worker
+                [Target] DefaultGatewayTxWorker worker,
+                CancellationToken cancellationToken
             )
             {
-                var cancellationToken = new CancellationToken(false);
-                var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
 
                 timer.Received().StopOnException = Is(true);
                 timer.Received().OnUnexpectedStop = Any<OnUnexpectedTimerStop>();
@@ -85,10 +86,11 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] ITimer timer,
-                [Target] DefaultGatewayTxWorker txWorker
+                [Target] DefaultGatewayTxWorker txWorker,
+                CancellationToken cancellationToken
             )
             {
-                await txWorker.Start(gateway, clientWebSocket);
+                await txWorker.Start(gateway, clientWebSocket, cancellationToken);
                 timer.ClearReceivedCalls();
                 await txWorker.Stop();
 
@@ -105,13 +107,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 [Frozen, Substitute] IGatewayService gateway,
                 [Frozen, Substitute] IClientWebSocket webSocket,
                 [Frozen, Substitute] IChannel<GatewayMessage> channel,
-                [Target] DefaultGatewayTxWorker worker
+                [Target] DefaultGatewayTxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
-                var cancellationToken = new CancellationToken(false);
 
-                await worker.Start(gateway, webSocket);
+                await worker.Start(gateway, webSocket, cancellationToken);
                 await worker.Emit(message, cancellationToken);
 
                 await channel.Received().Write(Is(message), Is(cancellationToken));
@@ -122,14 +124,14 @@ namespace Brighid.Discord.Adapter.Gateway
                 int sequenceNumber,
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayTxWorker worker
+                [Target] DefaultGatewayTxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
-                var cancellationToken = new CancellationToken(false);
                 var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Stop();
 
                 var operationCancellationToken = new CancellationToken(false);
@@ -143,13 +145,13 @@ namespace Brighid.Discord.Adapter.Gateway
                 int sequenceNumber,
                 [Substitute] IClientWebSocket clientWebSocket,
                 [Frozen, Substitute] IGatewayService gateway,
-                [Target] DefaultGatewayTxWorker worker
+                [Target] DefaultGatewayTxWorker worker,
+                CancellationToken cancellationToken
             )
             {
                 var message = new GatewayMessage { SequenceNumber = sequenceNumber };
-                var cancellationToken = new CancellationToken(false);
 
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
 
                 var operationCancellationToken = new CancellationToken(true);
                 Func<Task> func = () => worker.Emit(message, operationCancellationToken);
@@ -189,7 +191,7 @@ namespace Brighid.Discord.Adapter.Gateway
                     await Task.CompletedTask;
                 });
 
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Run(cancellationToken);
                 await factory.Received(2).CreateDelay(1000, Is(cancellationToken));
             }
@@ -208,7 +210,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 channel.WaitToRead(Any<CancellationToken>()).Returns(false);
 
                 clientWebSocket.State.Returns(WebSocketState.Open);
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Run(cancellationToken);
 
                 await channel.DidNotReceive().Read(Is(cancellationToken));
@@ -230,7 +232,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 channel.Read(Any<CancellationToken>()).Returns(new ValueTask<GatewayMessage>(message));
 
                 clientWebSocket.State.Returns(WebSocketState.Open);
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Run(cancellationToken);
 
                 await channel.Received().WaitToRead(Is(cancellationToken));
@@ -254,7 +256,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 channel.Read(Any<CancellationToken>()).Returns(new ValueTask<GatewayMessage>(message));
 
                 clientWebSocket.State.Returns(WebSocketState.Open);
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Run(cancellationToken);
 
                 serializer.Received().SerializeToBytes(Is(message));
@@ -279,7 +281,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 channel.Read(Any<CancellationToken>()).Returns(new ValueTask<GatewayMessage>(message));
 
                 clientWebSocket.State.Returns(WebSocketState.Open);
-                await worker.Start(gateway, clientWebSocket);
+                await worker.Start(gateway, clientWebSocket, cancellationToken);
                 await worker.Run(cancellationToken);
 
                 await clientWebSocket.Received().Send(Is<ArraySegment<byte>>(bytes), Is(WebSocketMessageType.Text), Is(true), Is(cancellationToken));

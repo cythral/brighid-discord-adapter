@@ -117,7 +117,7 @@ namespace Brighid.Discord.Adapter.Gateway
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
             worker.StopOnException = true;
             worker.OnUnexpectedStop = () => Restart();
-            await worker.Start();
+            await worker.Start(cancellationToken);
         }
 
         /// <inheritdoc />
@@ -154,7 +154,7 @@ namespace Brighid.Discord.Adapter.Gateway
             ThrowIfNotRunning();
             logger.LogInformation("Starting Heartbeat. Interval: {@heartbeatInterval}", heartbeatInterval);
             heartbeat = timerFactory.CreateTimer(Heartbeat, (int)heartbeatInterval, "Heartbeat");
-            await heartbeat.Start();
+            await heartbeat.Start(CancellationToken.None);
         }
 
         /// <inheritdoc />
@@ -180,12 +180,14 @@ namespace Brighid.Discord.Adapter.Gateway
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfNotRunning();
 
-            if (webSocket!.State != WebSocketState.Open)
+            if (webSocket!.State < WebSocketState.Open)
             {
-                var gatewayUri = await metadataService.GetGatewayUrl(cancellationToken);
-                await webSocket!.Connect(gatewayUri, cancellationToken);
-                await rxWorker.Start(this);
-                await txWorker.Start(this, webSocket);
+                var gatewayUrl = await metadataService.GetGatewayUrl(cancellationToken);
+                logger.LogInformation("Connecting to Discord with Gateway URL: {@gatewayUrl}", gatewayUrl);
+
+                await webSocket!.Connect(gatewayUrl, cancellationToken);
+                await rxWorker.Start(this, cancellationToken);
+                await txWorker.Start(this, webSocket, cancellationToken);
             }
 
             var result = await webSocket!.Receive(memoryBuffer, cancellationToken);

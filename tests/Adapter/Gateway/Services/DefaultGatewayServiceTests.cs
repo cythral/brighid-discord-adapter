@@ -106,12 +106,13 @@ namespace Brighid.Discord.Adapter.Gateway
             [Test, Auto]
             public async Task StartShouldStartTheMasterWorker(
                 [Frozen, Substitute] ITimer timer,
-                [Target] DefaultGatewayService gateway
+                [Target] DefaultGatewayService gateway,
+                CancellationToken cancellationToken
             )
             {
-                await gateway.StartAsync();
+                await gateway.StartAsync(cancellationToken);
 
-                await timer.Received().Start();
+                await timer.Received().Start(Is(cancellationToken));
             }
 
             [Test, Auto]
@@ -347,7 +348,7 @@ namespace Brighid.Discord.Adapter.Gateway
                 await gateway.StartHeartbeat(interval);
 
                 timerFactory.Received().CreateTimer(Is<AsyncTimerCallback>(gateway.Heartbeat), Is((int)interval), Is("Heartbeat"));
-                await timer.Received().Start();
+                await timer.Received().Start(Is(cancellationToken));
             }
         }
 
@@ -434,8 +435,8 @@ namespace Brighid.Discord.Adapter.Gateway
                 Received.InOrder(async () =>
                 {
                     await webSocket.Received().Connect(Is(gatewayUri), Is(cancellationToken));
-                    await rxWorker.Received().Start(Is(gateway));
-                    await txWorker.Received().Start(Is(gateway), Is(webSocket));
+                    await rxWorker.Received().Start(Is(gateway), Is(cancellationToken));
+                    await txWorker.Received().Start(Is(gateway), Is(webSocket), Is(cancellationToken));
                 });
             }
 
