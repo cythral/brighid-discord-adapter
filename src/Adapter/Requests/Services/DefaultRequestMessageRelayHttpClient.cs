@@ -40,11 +40,16 @@ namespace Brighid.Discord.Adapter.Requests
             cancellationToken.ThrowIfCancellationRequested();
             var @bytes = serializer.SerializeToBytes(response);
             var content = new ByteArrayContent(@bytes);
-            var postResponse = await httpClient.PostAsync(url, content, cancellationToken);
 
-            if (!postResponse.IsSuccessStatusCode)
+            try
             {
-                logger.LogError("An error occurred while responding to a discord API request.  Client returned {@statusCode} status code.", postResponse.StatusCode);
+                var postResponse = await httpClient.PostAsync(url, content, cancellationToken);
+                logger.LogDebug("Responded to a discord API request {@requestId} with status code {@statusCode}", response.RequestId, response.StatusCode);
+                postResponse.EnsureSuccessStatusCode();
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "An error occurred while responding to a discord API request.");
             }
         }
     }
