@@ -46,6 +46,13 @@ namespace Brighid.Discord.Adapter.Gateway
         Stream CreateStream();
 
         /// <summary>
+        /// Creates a task that completes when the application has been started up.
+        /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        Task CreateApplicationStartupDelay(CancellationToken cancellationToken);
+
+        /// <summary>
         /// Creates a task that completes after a delay.
         /// </summary>
         /// <param name="millisecondsDelay">Milliseconds to delay for.</param>

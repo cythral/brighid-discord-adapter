@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Threading;
 
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Adapter.Gateway
@@ -15,6 +16,7 @@ namespace Brighid.Discord.Adapter.Gateway
     {
         private readonly Random random;
         private readonly ILoggerFactory loggerFactory;
+        private readonly IHostApplicationLifetime lifetime;
         private readonly ILogger<DefaultGatewayUtilsFactory> logger;
 
         /// <summary>
@@ -22,15 +24,18 @@ namespace Brighid.Discord.Adapter.Gateway
         /// </summary>
         /// <param name="random">Random number generator.</param>
         /// <param name="loggerFactory">Logger factory for creating logger objects.</param>
+        /// <param name="lifetime">Service used to detect application lifetime changes.</param>
         /// <param name="logger">Logger used for logging info to some destination(s).</param>
         public DefaultGatewayUtilsFactory(
             Random random,
             ILoggerFactory loggerFactory,
+            IHostApplicationLifetime lifetime,
             ILogger<DefaultGatewayUtilsFactory> logger
         )
         {
             this.random = random;
             this.loggerFactory = loggerFactory;
+            this.lifetime = lifetime;
             this.logger = logger;
         }
 
@@ -57,6 +62,17 @@ namespace Brighid.Discord.Adapter.Gateway
         public IChannel<TMessage> CreateChannel<TMessage>()
         {
             return new Channel<TMessage>();
+        }
+
+        /// <inheritdoc />
+        public async Task CreateApplicationStartupDelay(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            while (!lifetime.ApplicationStarted.IsCancellationRequested)
+            {
+                await Task.Delay(100, cancellationToken);
+            }
         }
 
         /// <inheritdoc />

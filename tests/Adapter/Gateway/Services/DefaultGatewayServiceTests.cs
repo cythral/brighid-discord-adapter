@@ -14,6 +14,7 @@ using Brighid.Discord.Threading;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using NSubstitute;

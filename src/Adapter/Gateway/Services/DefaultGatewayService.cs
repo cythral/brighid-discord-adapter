@@ -180,6 +180,8 @@ namespace Brighid.Discord.Adapter.Gateway
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfNotRunning();
 
+            await gatewayUtilsFactory.CreateApplicationStartupDelay(cancellationToken);
+
             if (webSocket!.State < WebSocketState.Open)
             {
                 var gatewayUrl = await metadataService.GetGatewayUrl(cancellationToken);
