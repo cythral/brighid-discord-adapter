@@ -20,6 +20,11 @@ namespace Brighid.Discord.Threading
         OnUnexpectedTimerStop? OnUnexpectedStop { get; set; }
 
         /// <summary>
+        /// Gets or sets a function that gets invoked after the timer has started up, but before the first run.
+        /// </summary>
+        OnTimerStart? OnTimerStart { get; set; }
+
+        /// <summary>
         /// Start the timer.
         /// </summary>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>

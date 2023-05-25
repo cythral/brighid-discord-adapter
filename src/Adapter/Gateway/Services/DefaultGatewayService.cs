@@ -117,6 +117,7 @@ namespace Brighid.Discord.Adapter.Gateway
             worker = timerFactory.CreateTimer(Run, 0, WorkerThreadName);
             worker.StopOnException = true;
             worker.OnUnexpectedStop = () => Restart();
+            worker.OnTimerStart = OnTimerStart;
             await worker.Start(cancellationToken);
         }
 
@@ -171,6 +172,24 @@ namespace Brighid.Discord.Adapter.Gateway
         }
 
         /// <summary>
+        /// Performs initialization needed to run the gateway, including waiting for kestrel to become ready, as well as connect to the websocket.
+        /// </summary>
+        /// <param name="cancellationToken">Token used to cancel the operation.</param>
+        /// <returns>The resulting task.</returns>
+        public async Task OnTimerStart(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await gatewayUtilsFactory.CreateApplicationStartupDelay(cancellationToken);
+
+            var gatewayUrl = await metadataService.GetGatewayUrl(cancellationToken);
+            logger.LogInformation("Connecting to Discord with Gateway URL: {@gatewayUrl}", gatewayUrl);
+
+            await webSocket!.Connect(gatewayUrl, cancellationToken);
+            await rxWorker.Start(this, cancellationToken);
+            await txWorker.Start(this, webSocket, cancellationToken);
+        }
+
+        /// <summary>
         /// Runs the gateway service.
         /// </summary>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
@@ -179,18 +198,6 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfNotRunning();
-
-            await gatewayUtilsFactory.CreateApplicationStartupDelay(cancellationToken);
-
-            if (webSocket!.State < WebSocketState.Open)
-            {
-                var gatewayUrl = await metadataService.GetGatewayUrl(cancellationToken);
-                logger.LogInformation("Connecting to Discord with Gateway URL: {@gatewayUrl}", gatewayUrl);
-
-                await webSocket!.Connect(gatewayUrl, cancellationToken);
-                await rxWorker.Start(this, cancellationToken);
-                await txWorker.Start(this, webSocket, cancellationToken);
-            }
 
             var result = await webSocket!.Receive(memoryBuffer, cancellationToken);
             var chunk = new GatewayMessageChunk(memoryBuffer, result.Count, result.EndOfMessage);
@@ -219,7 +226,7 @@ namespace Brighid.Discord.Adapter.Gateway
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfNotRunning()
         {
-            if (!State.HasFlag(GatewayState.Running))
+            if (!State.HasFlag(GatewayState.Running) || webSocket?.State != WebSocketState.Open)
             {
                 throw new OperationCanceledException();
             }

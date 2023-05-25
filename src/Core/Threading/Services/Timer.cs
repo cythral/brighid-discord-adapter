@@ -17,6 +17,13 @@ namespace Brighid.Discord.Threading
     /// <returns>The resulting task.</returns>
     public delegate Task OnUnexpectedTimerStop();
 
+    /// <summary>
+    /// Callback that gets called after the timer starts running.
+    /// </summary>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>The resulting task.</returns>
+    public delegate Task OnTimerStart(CancellationToken cancellationToken);
+
     /// <inheritdoc />
     public class Timer : ITimer
     {
@@ -57,6 +64,9 @@ namespace Brighid.Discord.Threading
         public OnUnexpectedTimerStop? OnUnexpectedStop { get; set; }
 
         /// <inheritdoc />
+        public OnTimerStart? OnTimerStart { get; set; }
+
+        /// <inheritdoc />
         public async Task Start(CancellationToken cancellationToken)
         {
             logger.LogDebug("Starting Timer.");
@@ -83,6 +93,10 @@ namespace Brighid.Discord.Threading
             using (var scope = logger.BeginScope("{@timerName}", timerName))
             {
                 startPromise?.TrySetResult();
+                if (OnTimerStart != null)
+                {
+                    await OnTimerStart(cancellationToken);
+                }
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
