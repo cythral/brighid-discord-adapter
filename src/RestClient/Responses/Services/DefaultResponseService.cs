@@ -39,7 +39,7 @@ namespace Brighid.Discord.RestClient.Responses
                         var ips =
                             from address in networkInterface.GetIPProperties().UnicastAddresses
                             where address.Address.AddressFamily == AddressFamily.InterNetworkV6 &&
-                                !IPAddress.IsLoopback(address.Address)
+                                !IPAddress.IsLoopback(address.Address) && !address.Address.IsIPv6LinkLocal
                             select address.Address;
 
                         if (ips.Any())
