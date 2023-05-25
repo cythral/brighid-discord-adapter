@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -50,6 +51,7 @@ namespace Brighid.Discord.Adapter.Requests
         {
             cancellationToken.ThrowIfCancellationRequested();
             Bucket? bucket = null;
+            var tasks = new List<Task>();
 
             try
             {
@@ -64,8 +66,8 @@ namespace Brighid.Discord.Adapter.Requests
                 logger.LogDebug("Sending request uri:{@uri} method:{@method} body:{@body}", httpRequest.RequestUri, httpRequest.Method, httpRequest.Content);
                 var httpResponse = await client.SendAsync(httpRequest, cancellationToken);
                 var responseString = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-                _ = relay.Respond(request, httpResponse.StatusCode, responseString, cancellationToken);
-                _ = relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken);
+                tasks.Add(relay.Respond(request, httpResponse.StatusCode, responseString, cancellationToken));
+                tasks.Add(relay.Complete(request, httpResponse.StatusCode, responseString, cancellationToken));
                 logger.LogDebug("Received response from {@uri}: {@response}", httpRequest.RequestUri, responseString);
 
                 bucket = await bucketService.MergeBucketIds(bucket, httpResponse, cancellationToken);
@@ -81,13 +83,15 @@ namespace Brighid.Discord.Adapter.Requests
             catch (Exception exception)
             {
                 logger.LogError(LogEvents.RestApiFailed, exception, "Rest API call failed.");
-                _ = relay.Fail(request, 0, cancellationToken);
+                tasks.Add(relay.Fail(request, 0, cancellationToken));
             }
 
             if (bucket != null)
             {
                 await bucketRepository.Save(bucket, cancellationToken);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private static HttpContent? CreateContent(RequestMessage request)
