@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Brighid.Discord.Models;
 using Brighid.Discord.Serialization;
 
+using Microsoft.Extensions.Logging;
+
 namespace Brighid.Discord.Adapter.Requests
 {
     /// <inheritdoc />
     public class DefaultRequestMessageRelayHttpClient : IRequestMessageRelayHttpClient
     {
         private readonly System.Net.Http.HttpClient httpClient;
+        private readonly ILogger<DefaultRequestMessageRelayHttpClient> logger;
         private readonly ISerializer serializer;
 
         /// <summary>
@@ -19,13 +22,16 @@ namespace Brighid.Discord.Adapter.Requests
         /// </summary>
         /// <param name="httpClient">Inner HTTP Client to use.</param>
         /// <param name="serializer">Service for deserializing/serializing messages.</param>
+        /// <param name="logger">Service used for logging info to the console.</param>
         public DefaultRequestMessageRelayHttpClient(
             System.Net.Http.HttpClient httpClient,
-            ISerializer serializer
+            ISerializer serializer,
+            ILogger<DefaultRequestMessageRelayHttpClient> logger
         )
         {
             this.httpClient = httpClient;
             this.serializer = serializer;
+            this.logger = logger;
         }
 
         /// <inheritdoc />
@@ -34,7 +40,12 @@ namespace Brighid.Discord.Adapter.Requests
             cancellationToken.ThrowIfCancellationRequested();
             var @bytes = serializer.SerializeToBytes(response);
             var content = new ByteArrayContent(@bytes);
-            await httpClient.PostAsync(url, content, cancellationToken);
+            var postResponse = await httpClient.PostAsync(url, content, cancellationToken);
+
+            if (!postResponse.IsSuccessStatusCode)
+            {
+                logger.LogError("An error occurred while responding to a discord API request.  Client returned {@statusCode} status code.", postResponse.StatusCode);
+            }
         }
     }
 }

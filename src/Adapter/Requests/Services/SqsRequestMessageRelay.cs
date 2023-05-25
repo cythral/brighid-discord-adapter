@@ -139,6 +139,7 @@ namespace Brighid.Discord.Adapter.Requests
                 return;
             }
 
+            logger.LogInformation("Sending response for request {@requestId} to URL: {@url}", message.RequestDetails.Id, message.RequestDetails.ResponseURL);
             await httpClient.Post(message.RequestDetails.ResponseURL, response, cancellationToken);
         }
 
