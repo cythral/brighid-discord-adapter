@@ -43,6 +43,7 @@ namespace Brighid.Discord.Adapter.Requests
 
             try
             {
+                logger.LogDebug("Sending response to {@url} for discord API request {@requestId}", url, response.RequestId);
                 var postResponse = await httpClient.PostAsync(url, content, cancellationToken);
                 logger.LogDebug("Responded to a discord API request {@requestId} with status code {@statusCode}", response.RequestId, response.StatusCode);
                 postResponse.EnsureSuccessStatusCode();
