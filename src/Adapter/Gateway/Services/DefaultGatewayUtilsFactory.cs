@@ -1,11 +1,11 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Brighid.Discord.Threading;
 
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Brighid.Discord.Adapter.Gateway
@@ -15,27 +15,27 @@ namespace Brighid.Discord.Adapter.Gateway
     public class DefaultGatewayUtilsFactory : IGatewayUtilsFactory
     {
         private readonly Random random;
+        private readonly HttpClient httpClient;
         private readonly ILoggerFactory loggerFactory;
-        private readonly IHostApplicationLifetime lifetime;
         private readonly ILogger<DefaultGatewayUtilsFactory> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayUtilsFactory" /> class.
         /// </summary>
         /// <param name="random">Random number generator.</param>
+        /// <param name="httpClient">Client for making HTTP Requests.</param>
         /// <param name="loggerFactory">Logger factory for creating logger objects.</param>
-        /// <param name="lifetime">Service used to detect application lifetime changes.</param>
         /// <param name="logger">Logger used for logging info to some destination(s).</param>
         public DefaultGatewayUtilsFactory(
             Random random,
+            HttpClient httpClient,
             ILoggerFactory loggerFactory,
-            IHostApplicationLifetime lifetime,
             ILogger<DefaultGatewayUtilsFactory> logger
         )
         {
             this.random = random;
+            this.httpClient = httpClient;
             this.loggerFactory = loggerFactory;
-            this.lifetime = lifetime;
             this.logger = logger;
         }
 
@@ -69,8 +69,28 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            while (!lifetime.ApplicationStarted.IsCancellationRequested)
+            var ready = false;
+            while (!ready)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                var request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri("http://localhost/healthcheck"),
+                    Method = HttpMethod.Get,
+                    Version = new Version(2, 0),
+                    VersionPolicy = HttpVersionPolicy.RequestVersionExact,
+                };
+
+                try
+                {
+                    var response = await httpClient.SendAsync(request, cancellationToken);
+                    ready = response.IsSuccessStatusCode;
+                }
+                catch (Exception)
+                {
+                    ready = false;
+                }
+
                 await Task.Delay(100, cancellationToken);
             }
         }
