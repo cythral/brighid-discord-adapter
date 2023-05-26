@@ -18,6 +18,7 @@ namespace Brighid.Discord.Adapter.Gateway
         private readonly HttpClient httpClient;
         private readonly ILoggerFactory loggerFactory;
         private readonly ILogger<DefaultGatewayUtilsFactory> logger;
+        private bool applicationStarted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultGatewayUtilsFactory" /> class.
@@ -69,8 +70,12 @@ namespace Brighid.Discord.Adapter.Gateway
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var ready = false;
-            while (!ready)
+            if (applicationStarted)
+            {
+                return;
+            }
+
+            for (var tries = 0; tries < 20; tries++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var request = new HttpRequestMessage
@@ -84,15 +89,18 @@ namespace Brighid.Discord.Adapter.Gateway
                 try
                 {
                     var response = await httpClient.SendAsync(request, cancellationToken);
-                    ready = response.IsSuccessStatusCode;
+                    response.EnsureSuccessStatusCode();
+                    applicationStarted = true;
+                    return;
                 }
                 catch (Exception)
                 {
-                    ready = false;
                 }
 
                 await Task.Delay(100, cancellationToken);
             }
+
+            throw new Exception("Application failed to become ready.");
         }
 
         /// <inheritdoc />
