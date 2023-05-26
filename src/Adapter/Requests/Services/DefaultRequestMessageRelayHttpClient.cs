@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,6 +41,7 @@ namespace Brighid.Discord.Adapter.Requests
             cancellationToken.ThrowIfCancellationRequested();
             var @bytes = serializer.SerializeToBytes(response);
             var content = new ByteArrayContent(@bytes);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             try
             {
