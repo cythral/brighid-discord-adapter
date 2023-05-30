@@ -979,8 +979,8 @@
       },
       "NUnit3TestAdapter": {
         "type": "Transitive",
-        "resolved": "4.4.2",
-        "contentHash": "vA/iHYcR+LYw+pRWQugckC/zW2fXHaqMr2uA82NOBt8v4YK4wMJrQ7QC8XLc7PjetEZ96cPbBTWsDDtmQiRZTA=="
+        "resolved": "4.5.0",
+        "contentHash": "s8JpqTe9bI2f49Pfr3dFRfoVSuFQyraTj68c3XXjIS/MRGvvkLnrg6RLqnTjdShX+AdFUCCU/4Xex58AdUfs6A=="
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Transitive",
@@ -1508,7 +1508,7 @@
           "MockQueryable.NSubstitute": "[7.0.0, )",
           "Models": "[1.0.0, )",
           "NSubstitute": "[5.0.0, )",
-          "NUnit3TestAdapter": "[4.4.2, )",
+          "NUnit3TestAdapter": "[4.5.0, )",
           "ResponseHandler": "[1.0.0, )",
           "RestClient": "[1.0.0, )",
           "RichardSzalay.MockHttp": "[6.0.0, )",
