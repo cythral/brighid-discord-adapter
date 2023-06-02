@@ -373,6 +373,37 @@ namespace Brighid.Discord.Adapter.Gateway
                 timerFactory.Received().CreateTimer(Is<AsyncTimerCallback>(gateway.Heartbeat), Is((int)interval), Is("Heartbeat"));
                 await timer.Received().Start(Is(cancellationToken));
             }
+
+            [Test, Auto]
+            public async Task ShouldSetupHeartbeatToRestartGatewayOnUnexpectedStop(
+                uint interval,
+                int sequenceNumber,
+                [Frozen] ITimer timer,
+                [Frozen] IClientWebSocket webSocket,
+                [Frozen, Substitute] IGatewayUtilsFactory factory,
+                [Frozen, Substitute] IGatewayRestartService restartService,
+                [Frozen, Substitute] IGatewayTxWorker txWorker,
+                [Frozen, Substitute] ITimerFactory timerFactory,
+                [Target] DefaultGatewayService gateway
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+
+                webSocket.State.Returns(WebSocketState.Open);
+
+                gateway.SequenceNumber = sequenceNumber;
+                await gateway.StartAsync();
+                await gateway.StartHeartbeat(interval);
+
+                timer.Received().StopOnException = Is(true);
+                timer.Received().OnUnexpectedStop = Any<OnUnexpectedTimerStop>();
+                var arg = (from call in timer.ReceivedCalls()
+                           where call.GetMethodInfo().Name.Contains(nameof(timer.OnUnexpectedStop))
+                           select (OnUnexpectedTimerStop)call.GetArguments()[0]!).First();
+
+                await arg();
+                await restartService.Received().Restart(Is(gateway), Is(true), Any<CancellationToken>());
+            }
         }
 
         [TestFixture]
@@ -605,7 +636,7 @@ namespace Brighid.Discord.Adapter.Gateway
             }
 
             [Test, Auto]
-            public async Task ShouldRestartTheGatewayIfStillAwaitingHeartbeatAck(
+            public async Task ShouldThrowIfStillAwaitingHeartbeatAck(
                 int sequenceNumber,
                 [Frozen, Substitute] IGatewayRestartService restartService,
                 [Target] DefaultGatewayService gateway,
@@ -614,28 +645,9 @@ namespace Brighid.Discord.Adapter.Gateway
             {
                 gateway.SequenceNumber = sequenceNumber;
                 gateway.AwaitingHeartbeatAcknowledgement = true;
-                await gateway.Heartbeat(cancellationToken);
+                Func<Task> func = () => gateway.Heartbeat(cancellationToken);
 
-                await restartService.Received().Restart(Is(gateway), Is(true), Is(cancellationToken));
-            }
-
-            [Test, Auto]
-            public async Task ShouldNotEmitHeartbeatIfStillAwaitingHeartbeatAck(
-                int sequenceNumber,
-                [Frozen, Substitute] IGatewayRestartService restartService,
-                [Frozen, Substitute] IGatewayTxWorker txWorker,
-                [Target] DefaultGatewayService gateway,
-                CancellationToken cancellationToken
-            )
-            {
-                gateway.SequenceNumber = sequenceNumber;
-                gateway.AwaitingHeartbeatAcknowledgement = true;
-                await gateway.Heartbeat(cancellationToken);
-
-                await txWorker.DidNotReceiveWithAnyArgs().Emit(
-                    Any<GatewayMessage>(),
-                    Any<CancellationToken>()
-                );
+                await func.Should().ThrowAsync<Exception>();
             }
 
             [Test, Auto]

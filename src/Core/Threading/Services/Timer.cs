@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,6 +37,7 @@ namespace Brighid.Discord.Threading
         private CancellationTokenSource? cancellationTokenSource;
         private CancellationToken cancellationToken;
         private Thread? thread;
+        private bool stoppedOnException;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer" /> class.
@@ -74,6 +76,7 @@ namespace Brighid.Discord.Threading
             this.cancellationToken = cancellationTokenSource.Token;
             startPromise = new TaskCompletionSource();
             stopPromise = new TaskCompletionSource();
+            stoppedOnException = false;
             thread = new Thread(RunAsync);
             thread.Start();
             await startPromise.Task.WaitAsync(cancellationToken);
@@ -89,24 +92,16 @@ namespace Brighid.Discord.Threading
 
         private async void RunAsync()
         {
-            var stoppedOnException = false;
             using (var scope = logger.BeginScope("{@timerName}", timerName))
             {
                 startPromise?.TrySetResult();
-                if (OnTimerStart != null)
-                {
-                    await OnTimerStart(cancellationToken);
-                }
+                await HandleStartup();
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     try
                     {
-                        if (period > 0)
-                        {
-                            Thread.Sleep(period);
-                        }
-
+                        await Sleep();
                         await callback(cancellationToken);
                     }
                     catch (OperationCanceledException)
@@ -116,14 +111,7 @@ namespace Brighid.Discord.Threading
                     }
                     catch (Exception exception)
                     {
-                        logger.LogError("Received exception: {@exception}", exception);
-
-                        if (StopOnException)
-                        {
-                            stoppedOnException = true;
-                            cancellationTokenSource?.Cancel();
-                            break;
-                        }
+                        HandleException(exception);
                     }
                 }
 
@@ -134,6 +122,48 @@ namespace Brighid.Discord.Threading
             if (stoppedOnException && OnUnexpectedStop != null)
             {
                 await OnUnexpectedStop();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task HandleStartup()
+        {
+            if (OnTimerStart != null)
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await OnTimerStart(cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    logger.LogDebug("Timer canceled, shutting down gracefully.");
+                }
+                catch (Exception exception)
+                {
+                    HandleException(exception);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task Sleep()
+        {
+            if (period > 0)
+            {
+                await Task.Delay(period, cancellationToken);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void HandleException(Exception exception)
+        {
+            logger.LogError(exception, "Received exception");
+
+            if (StopOnException)
+            {
+                stoppedOnException = true;
+                cancellationTokenSource?.Cancel();
             }
         }
     }

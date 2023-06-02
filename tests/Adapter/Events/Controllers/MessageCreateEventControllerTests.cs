@@ -197,7 +197,7 @@ namespace Brighid.Discord.Adapter.Events
                 Received.InOrder(async () =>
                 {
                     await userService.Received().GetIdentityServiceUserId(Is(author), Is(cancellationToken));
-                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(channelId.ToString()), Is(cancellationToken));
+                    await commandsClient.Received().ParseAndExecuteCommandAsUser(Is(message.Content), Is(identityUserId.Id.ToString()), Is(channelId.ToString()), Is(userId.ToString()), Is(cancellationToken));
                 });
             }
 
@@ -218,7 +218,7 @@ namespace Brighid.Discord.Adapter.Events
                 var message = new Message { Content = content, Author = author, ChannelId = channelId };
                 var @event = new MessageCreateEvent { Message = message };
 
-                commandsClient.ParseAndExecuteCommandAsUser(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Throws<Exception>();
+                commandsClient.ParseAndExecuteCommandAsUser(Any<string>(), Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Throws<Exception>();
 
                 userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
                 userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
@@ -260,6 +260,7 @@ namespace Brighid.Discord.Adapter.Events
                         Is(@event.Message.Content),
                         Is(identityUserId.Id.ToString()),
                         Is(channelId.ToString()),
+                        Is(userId.ToString()),
                         Is(cancellationToken)
                     );
                     await channelClient.Received().CreateMessage(Is(channelId), Is<CreateMessagePayload>(payload => payload.Content == executeCommandResponse.Response), Is(cancellationToken));

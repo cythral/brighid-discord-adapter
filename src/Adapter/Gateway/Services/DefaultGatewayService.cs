@@ -155,6 +155,8 @@ namespace Brighid.Discord.Adapter.Gateway
             ThrowIfNotRunning();
             logger.LogInformation("Starting Heartbeat. Interval: {@heartbeatInterval}", heartbeatInterval);
             heartbeat = timerFactory.CreateTimer(Heartbeat, (int)heartbeatInterval, "Heartbeat");
+            heartbeat.StopOnException = true;
+            heartbeat.OnUnexpectedStop = () => Restart();
             await heartbeat.Start(CancellationToken.None);
         }
 
@@ -214,8 +216,7 @@ namespace Brighid.Discord.Adapter.Gateway
             cancellationToken.ThrowIfCancellationRequested();
             if (AwaitingHeartbeatAcknowledgement)
             {
-                await restartService.Restart(this, true, CancellationToken.None);
-                return;
+                throw new Exception("Last heartbeat was not acknowledged.");
             }
 
             var message = new GatewayMessage { OpCode = GatewayOpCode.Heartbeat, Data = (HeartbeatEvent?)SequenceNumber };

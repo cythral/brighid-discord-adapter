@@ -8,23 +8,29 @@ using System.Threading.Tasks;
 
 using Brighid.Discord.Models;
 
+using Microsoft.Extensions.Logging;
+
 namespace Brighid.Discord.RestClient.Responses
 {
     /// <inheritdoc />
     public class DefaultResponseService : IResponseService
     {
         private readonly IRequestMap requestMap;
+        private readonly ILogger<DefaultResponseService> logger;
         private Uri? uri;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultResponseService" /> class.
         /// </summary>
         /// <param name="requestMap">Map that keeps track of requests waiting for a response.</param>
+        /// <param name="logger">Service used for logging info.</param>
         public DefaultResponseService(
-            IRequestMap requestMap
+            IRequestMap requestMap,
+            ILogger<DefaultResponseService> logger
         )
         {
             this.requestMap = requestMap;
+            this.logger = logger;
         }
 
         /// <inheritdoc />
@@ -58,6 +64,8 @@ namespace Brighid.Discord.RestClient.Responses
         /// <inheritdoc />
         public void HandleResponse(Response response)
         {
+            logger.LogInformation("Handling response for {@requestId}: {@statusCode} {@body}", response.RequestId, response.StatusCode, response.Body);
+
             if (requestMap.TryGetValue(response.RequestId, out var promise))
             {
                 promise.SetResult(response);
