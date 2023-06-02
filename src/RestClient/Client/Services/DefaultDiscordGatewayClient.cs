@@ -24,12 +24,14 @@ namespace Brighid.Discord.RestClient.Client
         /// <inheritdoc />
         public async Task<GatewayInfo> GetGatewayInfo(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             return await handler.Handle<GatewayInfo>(GatewayEndpoint.GetGateway, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc />
         public async Task<GatewayBotInfo> GetGatewayBotInfo(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             return await handler.Handle<GatewayBotInfo>(GatewayEndpoint.GetGatewayBot, cancellationToken: cancellationToken);
         }
     }

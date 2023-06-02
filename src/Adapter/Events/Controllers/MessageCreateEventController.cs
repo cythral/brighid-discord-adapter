@@ -154,11 +154,12 @@ namespace Brighid.Discord.Adapter.Events
                 var result = await commandsService.ParseAndExecuteCommandAsUser(
                     message: @event.Message.Content,
                     userId: user.Id.ToString(),
-                    sourceSystemId: @event.Message.ChannelId,
+                    sourceSystemChannel: @event.Message.ChannelId,
+                    sourceSystemUser: @event.Message.Author.Id,
                     cancellationToken: cancellationToken
                 );
 
-                logger.LogInformation("Got result: {@result}", result);
+                logger.LogInformation("Got execute command result: {@result}", result);
 
                 if (result?.ReplyImmediately == true)
                 {

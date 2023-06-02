@@ -266,10 +266,10 @@
       },
       "Brighid.Commands.Client": {
         "type": "Transitive",
-        "resolved": "0.3.0.445-beta1",
-        "contentHash": "nrJUInz0eIcISuxcv6rxF2u9Oc2d5ApQ2poeb2Xpns/8OUpagxy3QSbWcRsGFG6AG6gaudsJqNT3NQBqszvxRw==",
+        "resolved": "0.3.0.516-beta1",
+        "contentHash": "ql1rkxbbZqavjaSwv6OLai+nK2fB5hgRbBCoCN9DZ1ynpWCDquYcXv4WcUFFvHpIC1hvBsl2rqa+lITBn0No3g==",
         "dependencies": {
-          "Brighid.Identity.Client": "0.7.0.3",
+          "Brighid.Identity.Client": "0.7.0.62",
           "Microsoft.Extensions.Caching.Memory": "7.0.0",
           "Microsoft.Extensions.Configuration": "7.0.0",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
@@ -1405,7 +1405,7 @@
         "dependencies": {
           "AWSSDK.ECS": "[3.7.108.14, )",
           "AWSSDK.SimpleNotificationService": "[3.7.101.75, )",
-          "Brighid.Commands.Client": "[0.3.0.445-beta1, )",
+          "Brighid.Commands.Client": "[0.3.0.516-beta1, )",
           "Brighid.Discord.Core": "[1.0.0, )",
           "Brighid.Identity.Client": "[0.7.0.62, )",
           "Destructurama.Attributed": "[3.0.0, )",
