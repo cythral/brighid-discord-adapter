@@ -326,6 +326,8 @@ Resources:
               Value: !Ref ValidateScopes
             - Name: Commands__ServiceUri
               Value: !Ref CommandsServiceUri
+            - Name: Commands__SystemName
+              Value: discord
             - Name: Commands__DefaultPrefix
               Value: !Ref CommandsDefaultPrefix
             - Name: Auth__MetadataAddress
