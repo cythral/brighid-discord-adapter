@@ -368,6 +368,42 @@ namespace Brighid.Discord.Adapter.Events
             }
 
             [Test, Auto]
+            public async Task ShouldReplyWithCommandVersionIfUserHasDebugModeEnabled(
+                string content,
+                Snowflake userId,
+                Snowflake channelId,
+                [Frozen] Command command,
+                [Frozen] TraceContext traceContext,
+                [Frozen] ExecuteCommandResponse executeCommandResponse,
+                [Frozen, Substitute] IMessageEmitter emitter,
+                [Frozen, Substitute] IBrighidCommandsService commandsClient,
+                [Frozen, Substitute] IDiscordChannelClient channelClient,
+                [Frozen, Substitute] IUserService userService,
+                [Target] MessageCreateEventController controller
+            )
+            {
+                var cancellationToken = new CancellationToken(false);
+                var author = new User { Id = userId };
+                var message = new Message { Content = content, Author = author, ChannelId = channelId };
+                var @event = new MessageCreateEvent { Message = message };
+                var identityUserId = new UserId(Guid.NewGuid(), true, true);
+
+                executeCommandResponse.ReplyImmediately = true;
+                userService.GetIdentityServiceUserId(Any<User>(), Any<CancellationToken>()).Returns(identityUserId);
+                userService.IsUserRegistered(Any<User>(), Any<CancellationToken>()).Returns(true);
+
+                await controller.Handle(@event, cancellationToken);
+
+                await channelClient.Received().CreateMessage(
+                    Is(channelId),
+                    Is<CreateMessagePayload>(payload =>
+                        payload.Embeds![0].Fields.Any(field => field.Name == "CommandVersion" && field.Value == executeCommandResponse.Version)
+                    ),
+                    Is(cancellationToken)
+                );
+            }
+
+            [Test, Auto]
             public async Task ShouldNotEmitMessageIfUserIsNotRegistered(
                 string content,
                 Snowflake userId,
