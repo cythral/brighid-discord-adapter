@@ -51,11 +51,11 @@
       },
       "Destructurama.Attributed": {
         "type": "Direct",
-        "requested": "[3.0.0, )",
-        "resolved": "3.0.0",
-        "contentHash": "Wam0fvMhCrtN0HvRIiHpNsW8HhlKHM5CkAlUzrAdzqkzuHVBj3zd/zfY9610NELW296Vugcnmf/TMiaUMvepvA==",
+        "requested": "[3.2.0, )",
+        "resolved": "3.2.0",
+        "contentHash": "c8zQMIdRJa7fvVo02FUuHr9jVvckSnpyEtTvSlpe0XjOqIvhC1VokH3lTPSHNIMETBvdnReR0e0cxe11IiBHUw==",
         "dependencies": {
-          "Serilog": "[2.8.0, 3.0.0)"
+          "Serilog": "[2.10.0, 4.0.0)"
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
@@ -131,6 +131,18 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
           "Microsoft.Extensions.Primitives": "7.0.0"
         }
+      },
+      "Microsoft.NET.ILLink.Analyzers": {
+        "type": "Direct",
+        "requested": "[7.0.100-1.23211.1, )",
+        "resolved": "7.0.100-1.23211.1",
+        "contentHash": "0GvbEgDGcUQA9KuWcQU1WwYHXt1tBzNr1Nls/M57rM7NA/AndFwCaCEoJpJkmxRY7xLlPDBnmGp8h5+FNqUngg=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[7.0.100-1.23211.1, )",
+        "resolved": "7.0.100-1.23211.1",
+        "contentHash": "tvG8XZYLjT0o3WicCyKBZysVWo1jC9HdCFmNRmddx3WbAz0UCsd0qKZqpiEo99VLA8Re+FzWK51OcRldQPbt2Q=="
       },
       "Pomelo.EntityFrameworkCore.MySql": {
         "type": "Direct",
