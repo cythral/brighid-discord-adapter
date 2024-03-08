@@ -4,21 +4,33 @@
     "net7.0": {
       "AWSSDK.ECR": {
         "type": "Direct",
-        "requested": "[3.7.200.1, )",
-        "resolved": "3.7.200.1",
-        "contentHash": "kWD6nNwjOdAaAPWRNtW8bkIraFB/6z91sp276tZ0CSozOmFR233YGEC0cFdm4lCc8mJF9C7snkidDt3erACF2Q==",
+        "requested": "[3.7.301.50, )",
+        "resolved": "3.7.301.50",
+        "contentHash": "Y8KKAaVYUbxK+NWbh7d5HFbHOUbT10bHgho7+kHFDLDt0jn9NQ7mZxzm9ITxNmpM/3XqISnCA02MW2gbtNKquQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.200.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.302.16, 4.0.0)"
         }
       },
       "AWSSDK.ECRPublic": {
         "type": "Direct",
-        "requested": "[3.7.200.1, )",
-        "resolved": "3.7.200.1",
-        "contentHash": "mFXhFbecHAuSFgvdaOl/OG07H1VT2MJZ3+Z4e1PRshtt6CNQhKckt8gjdZIyiEM4Zl39sr55SZoy12qj7rUKgQ==",
+        "requested": "[3.7.300.55, )",
+        "resolved": "3.7.300.55",
+        "contentHash": "HdXlb3xV3nBrWi0TIbQYjuJguIRlZrxy+wdhLkvXtvbhnbIuMN6CRH1LbLgeHP6CXRi0lt/QpTp7tEdds1Kdvg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.200.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.302.16, 4.0.0)"
         }
+      },
+      "Microsoft.NET.ILLink.Analyzers": {
+        "type": "Direct",
+        "requested": "[7.0.100-1.23211.1, )",
+        "resolved": "7.0.100-1.23211.1",
+        "contentHash": "0GvbEgDGcUQA9KuWcQU1WwYHXt1tBzNr1Nls/M57rM7NA/AndFwCaCEoJpJkmxRY7xLlPDBnmGp8h5+FNqUngg=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[7.0.100-1.23211.1, )",
+        "resolved": "7.0.100-1.23211.1",
+        "contentHash": "tvG8XZYLjT0o3WicCyKBZysVWo1jC9HdCFmNRmddx3WbAz0UCsd0qKZqpiEo99VLA8Re+FzWK51OcRldQPbt2Q=="
       },
       "StyleCop.Analyzers": {
         "type": "Direct",
@@ -31,8 +43,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.200.1",
-        "contentHash": "YFMtDEYDm0rEBIxf7wltUHJI7G4vviXiR4/EcCG8ztR0iy0Oy1Riwbn7MkAJetx1EglLtoUcNFJVr4Y2yNVXVA=="
+        "resolved": "3.7.302.16",
+        "contentHash": "iR/YHr8gkDqXHlOcSEzPFljboB8B7UhXdm3NfzvMeLGDW+pD3Xfs1+oh98DS1+PfC7rZKGco8jYEjOZgt7vwpw=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
