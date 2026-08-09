@@ -134,11 +134,6 @@
           "AWSXRayRecorder.Core": "2.14.0"
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg=="
-      },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -488,11 +483,8 @@
       },
       "System.Linq.Async": {
         "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
-        }
+        "resolved": "6.0.3",
+        "contentHash": "hSHiq2m1ky7zUQgTp+/2h1K3lABIQ+GltRixoclHPg/Sc1vnfeS6g/Uy5moOVZKrZJdQiFPFZd6OobBp3tZcFg=="
       },
       "System.Runtime.CompilerServices.Unsafe": {
         "type": "Transitive",
@@ -543,7 +535,7 @@
           "AWSXRayRecorder": "[2.14.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "Microsoft.Extensions.Logging": "[7.0.0, )",
-          "System.Linq.Async": "[6.0.1, )"
+          "System.Linq.Async": "[6.0.3, )"
         }
       },
       "models": {
